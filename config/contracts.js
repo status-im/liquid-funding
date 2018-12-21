@@ -111,6 +111,34 @@ module.exports = {
   // used with "embark run testnet"
   testnet: {},
 
+  rinkeby: {
+    dappConnection: [
+      '$WEB3', // uses pre existing web3 object if available (e.g in Mist)
+      'ws://localhost:8546',
+      'http://localhost:8545',
+    ],
+    strategy: 'explicit',
+    contracts: {
+      LPVault: {},
+      LiquidPledging: {},
+      RecoveryVault: {},
+      LPFactory: {
+        args: {
+          _vaultBase: '$LPVault',
+          _lpBase: '$LiquidPledging',
+        },
+      },
+      // contracts for testing
+      StandardToken: {},
+      Kernel: {
+        file: "@aragon/os/contracts/kernel/Kernel.sol"
+      },
+      ACL: {
+        file: "@aragon/os/contracts/acl/ACL.sol"
+      }
+    }
+  },
+
   // merges with the settings in default
   // used with "embark run livenet"
   livenet: {},

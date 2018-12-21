@@ -104,6 +104,13 @@ module.exports = {
       password: "config/testnet/password"
     }
   },
+  rinkeby: {
+    networkType: "rinkeby",
+    syncMode: "light",
+    account: {
+      password: "config/testnet/password"
+    }
+  },
 
   // merges with the settings in default
   // used with "embark run livenet" and/or "embark blockchain livenet"
