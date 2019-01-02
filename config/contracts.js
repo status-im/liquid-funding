@@ -119,22 +119,33 @@ module.exports = {
     ],
     strategy: 'explicit',
     contracts: {
-      LPVault: {},
-      LiquidPledging: {},
-      RecoveryVault: {},
+      LPVault: {
+        address: "0x6732c6Cd8DA14C7E065b51689410058815657427",
+      },
+      LiquidPledging: {
+        address: "0x314159265dd8dbb310642f98f50c066173c1259b"
+      },
+      RecoveryVault: {
+        address: "0xeF6daB6A9b17379DBaAF4d6d54C96F8Bf3c945e5"
+      },
       LPFactory: {
-        args: {
-          _vaultBase: '$LPVault',
-          _lpBase: '$LiquidPledging',
+        address: "0x4d3d8aB9b20B6D95215Bc7Df0426c9DFcB0D61fb"
+      //  args: {
+      //    _vaultBase: '$LPVault',
+      //    _lpBase: '$LiquidPledging',
         },
       },
       // contracts for testing
-      StandardToken: {},
-      Kernel: {
-        file: "@aragon/os/contracts/kernel/Kernel.sol"
+    StandardToken: {
+      address: "0x6732c6Cd8DA14C7E065b51689410058815657427"
+    },
+    Kernel: {
+      address: "0x31CE00C0F0126cff08E91A83271f4e1a3624Fa6A",
+      file: "@aragon/os/contracts/kernel/Kernel.sol"
       },
-      ACL: {
-        file: "@aragon/os/contracts/acl/ACL.sol"
+    ACL: {
+      address: "0x74dDdbaFD8001Ae38971c23c6dc250A82aD37552",
+      file: "@aragon/os/contracts/acl/ACL.sol"
       }
     }
   },

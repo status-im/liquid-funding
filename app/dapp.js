@@ -31,7 +31,7 @@ class App extends React.Component {
         const { environment } = EmbarkJS
         const isInitialized = await vaultPledgingNeedsInit()
         if (!!isInitialized) {
-          console.log('mock_time:', await LiquidPledging.mock_time.call())
+          if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
           const lpAllowance = await getLpAllowance()
           const fundProfiles = await getProfileEvents()
           const allPledges = await getAllPledges()
