@@ -59,6 +59,7 @@
     "async": "^2.4.0",
     "chai": "^4.1.0",
     "chart.js": "^2.7.3",
+    "cryptocurrency-icons": "^0.9.3",
     "cytoscape": "^3.3.0",
     "cytoscape-cose-bilkent": "^4.0.0",
     "cytoscape-dagre": "^2.2.2",
