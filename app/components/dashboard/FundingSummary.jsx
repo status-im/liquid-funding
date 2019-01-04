@@ -68,7 +68,7 @@ function SimpleCard(props) {
                          </Typography>
                          <CardContent className={classes.fundingSummaries}>
                            <Typography variant="h2">
-                             {Number(deposits) - Number(withdraws)}
+                             {Number(deposits) - Number(withdraws || 0)}
                            </Typography>
                            <Typography variant="h5" key={name + 'total'} className={classes.pos} color="textSecondary">
                              Remaining In Pledges
@@ -80,7 +80,7 @@ function SimpleCard(props) {
                              Funded
                            </Typography>
                            <Typography variant="h3">
-                             {withdraws}
+                             {withdraws || 0}
                            </Typography>
                            <Typography variant="h6" key={name + 'deposit'} className={classes.pos} color="textSecondary">
                              Withdrawn

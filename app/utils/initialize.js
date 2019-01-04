@@ -1,6 +1,6 @@
 import LPVault from 'Embark/contracts/LPVault'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
-import StandardToken from 'Embark/contracts/StandardToken'
+import SNT from 'Embark/contracts/SNT'
 import web3 from 'Embark/web3'
 
 export const initVaultAndLP = async () => {
@@ -26,7 +26,7 @@ export const vaultPledgingNeedsInit = async () => {
 }
 
 export const standardTokenApproval = async () => {
-  const { approve } = StandardToken.methods
+  const { approve } = SNT.methods
   const spender = LiquidPledging._address
   return await approve(
     spender,
@@ -35,7 +35,7 @@ export const standardTokenApproval = async () => {
 }
 
 export const getLpAllowance = async () => {
-  const { allowance } = StandardToken.methods
+  const { allowance } = SNT.methods
   const account = await web3.eth.getCoinbase()
   const spender = LiquidPledging._address
   const allowanceAmt = Number(await allowance(account, spender).call())
