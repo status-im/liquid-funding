@@ -112,6 +112,7 @@ module.exports = {
   testnet: {},
 
   rinkeby: {
+    enabled: true,
     dappConnection: [
       '$WEB3', // uses pre existing web3 object if available (e.g in Mist)
       'ws://localhost:8546',
@@ -120,36 +121,39 @@ module.exports = {
     strategy: 'explicit',
     contracts: {
       LPVault: {
-        address: "0x6732c6Cd8DA14C7E065b51689410058815657427",
+        address: "0xa25AB823c5A79941a8a9d0ab525D888cA1513419"
       },
       LiquidPledging: {
-        address: "0x314159265dd8dbb310642f98f50c066173c1259b"
+        address: "0x07E92635AF5e524C20B20F2770aE0E0Ef597eD07"
       },
       RecoveryVault: {
-        address: "0xeF6daB6A9b17379DBaAF4d6d54C96F8Bf3c945e5"
+        address: "0x835c1ab7CB9f0545164D7fE9827C5e43E3476809"
       },
       LPFactory: {
-        address: "0x4d3d8aB9b20B6D95215Bc7Df0426c9DFcB0D61fb"
-      //  args: {
-      //    _vaultBase: '$LPVault',
-      //    _lpBase: '$LiquidPledging',
-        },
+        address: "0x968F0a788F29b5B33296C61cEB34F1c40C55e52c",
+        args: {
+          _vaultBase: '$LPVault',
+          _lpBase: '$LiquidPledging',
+        }
       },
       // contracts for testing
-    StandardToken: {
-      address: "0x6732c6Cd8DA14C7E065b51689410058815657427"
-    },
-    Kernel: {
-      address: "0x31CE00C0F0126cff08E91A83271f4e1a3624Fa6A",
-      file: "@aragon/os/contracts/kernel/Kernel.sol"
+      StandardToken: {
+        address: "0x6732c6Cd8DA14C7E065b51689410058815657427"
       },
-    ACL: {
-      address: "0x74dDdbaFD8001Ae38971c23c6dc250A82aD37552",
-      file: "@aragon/os/contracts/acl/ACL.sol"
+      SNT: {
+        // minting address: 0xEdEB948dE35C6ac414359f97329fc0b4be70d3f1
+        address: "0x43d5adC3B49130A575ae6e4b00dFa4BC55C71621"
+      },
+      Kernel: {
+        address: "0x6Fc67b94c1431EC423D6598b092F2a8bCcD4e698",
+        file: "@aragon/os/contracts/kernel/Kernel.sol"
+      },
+      ACL: {
+        address: "0xEb14c564dfA6ac88d28087138Dde59c8888bF928",
+        file: "@aragon/os/contracts/acl/ACL.sol"
       }
     }
   },
-
   // merges with the settings in default
   // used with "embark run livenet"
   livenet: {},
@@ -158,4 +162,4 @@ module.exports = {
   // "embark run custom_name" or "embark blockchain custom_name"
   //custom_name: {
   //}
-};
+}

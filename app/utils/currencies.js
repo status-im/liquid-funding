@@ -1,4 +1,5 @@
 import StandardToken from 'Embark/contracts/StandardToken'
+import SNT from 'Embark/contracts/SNT'
 
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
 export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/coins'
@@ -9,7 +10,7 @@ export const currencies = [
     img: `${TOKEN_COIN_API}/60.png`,
   },
   {
-    value: '0x744d70fdbe2ba4cf95131626614a1763df805b9e',
+    value: SNT._address,
     label: 'Status (SNT)',
   },
   {
