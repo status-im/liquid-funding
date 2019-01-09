@@ -13,9 +13,8 @@ const pledgeStateMap = {
   2: 'Paid'
 }
 const convertToDatetime = (field, fundProfiles) => {
-  const { commitTime, id } = field
-  const profile = fundProfiles[id - 1]
-  //TODO fix - add commitTime from funder and delegates to get actual dateTime
+  const { commitTime, owner } = field
+  const profile = fundProfiles[Number(owner) - 1]
   if (!profile || Number(commitTime) === 0) return 0
   const time = Number(commitTime) + Number(profile.commitTime)
   const date = new Date(time * 1000)
