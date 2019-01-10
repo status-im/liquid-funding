@@ -66,6 +66,7 @@ class PledgesTable extends PureComponent {
           ]}
           data={data.map((f) => formatField(f, fundProfiles))}
           title="Pledges"
+          options={{ showEmptyDataSourceMessage: true }}
           actions={[
             {
               icon: 'compare_arrows',

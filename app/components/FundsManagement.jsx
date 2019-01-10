@@ -12,8 +12,8 @@ const FundsManagement = ({ open }) => {
     <FundingContext.Consumer>
       {({ allPledges, appendPledges, appendFundProfile, transferPledgeAmounts, fundProfiles, cancelFundProfile }) =>
         <div style={{ maxWidth }}>
-          {!!allPledges.length && <PledgesTable data={allPledges} transferPledgeAmounts={transferPledgeAmounts} fundProfiles={fundProfiles} />}
-          {!!fundProfiles.length && <FunderProfilesTable data={fundProfiles} cancelFundProfile={cancelFundProfile}/>}
+          <PledgesTable data={allPledges} transferPledgeAmounts={transferPledgeAmounts} fundProfiles={fundProfiles} />
+          <FunderProfilesTable data={fundProfiles} cancelFundProfile={cancelFundProfile}/>
           <AddFunder appendFundProfile={appendFundProfile} />
           <Divider variant="middle" />
           <CreateFunding refreshTable={appendPledges} />

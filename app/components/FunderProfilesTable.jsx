@@ -28,8 +28,9 @@ const FunderProfilesTable = ({ data, cancelFundProfile }) => (
           ]}
           data={data.map(formatField)}
           title="Funding Profiles"
+          options={{ showEmptyDataSourceMessage: true }}
           actions={[
-           rowData => ({
+            rowData => ({
               icon: 'cancel',
               disabled: rowData.addr.toLowerCase() != account.toLowerCase(),
               tooltip: 'Cancel',
