@@ -18,6 +18,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import { ScaleLoader } from 'react-spinners'
 import FundsManagement from './FundsManagement'
 import ContractAdmin from './ContractAdmin'
 import TransferGraph from './TransfersGraph'
@@ -105,7 +106,7 @@ class PersistentDrawerLeft extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props
+    const { classes, theme, loading } = this.props
     const { open } = this.state
 
     return (
@@ -122,9 +123,17 @@ class PersistentDrawerLeft extends React.Component {
               color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
-              className={classNames(classes.menuButton, open && classes.hide)}
+              className={classNames(classes.menuButton, open && !loading && classes.hide)}
             >
-              <MenuIcon />
+              {loading
+               ? <ScaleLoader
+                   sizeUnit={"px"}
+                   height={20}
+                   width={2}
+                   margin="3px"
+                   color={'#FFFFFF'}
+               />
+               : <MenuIcon />}
             </IconButton>
             <Typography variant="h6" color="inherit" noWrap>
               Liquid Funding
@@ -206,6 +215,7 @@ class PersistentDrawerLeft extends React.Component {
 PersistentDrawerLeft.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles, { withTheme: true })(PersistentDrawerLeft)

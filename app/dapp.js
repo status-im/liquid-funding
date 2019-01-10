@@ -16,6 +16,7 @@ const { getNetworkType } = web3.eth.net
 
 class App extends React.Component {
   state = {
+    loading: true,
     lpAllowance: 0,
     fundProfiles: [],
     allPledges: [],
@@ -44,14 +45,15 @@ class App extends React.Component {
             account,
             network,
             environment,
-            needsInit: false,
             lpAllowance,
             fundProfiles,
             allPledges,
             authorizedPayments,
             allLpEvents,
             vaultEvents,
-            transfers
+            transfers,
+            needsInit: false,
+            loading: false
           })
         }
       })
@@ -83,13 +85,13 @@ class App extends React.Component {
   }
 
   render() {
-    const { account, needsInit, lpAllowance, fundProfiles, allPledges, allLpEvents, authorizedPayments, transfers, vaultEvents } = this.state
+    const { account, needsInit, lpAllowance, loading, fundProfiles, allPledges, allLpEvents, authorizedPayments, transfers, vaultEvents } = this.state
     const { appendFundProfile, appendPledges, transferPledgeAmounts, cancelFundProfile } = this
     const fundingContext = { allPledges, allLpEvents, appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, cancelFundProfile, fundProfiles, needsInit, initVaultAndLP, standardTokenApproval, transfers, vaultEvents }
     return (
       <FundingContext.Provider value={fundingContext}>
         <Router>
-          <MainCointainer />
+          <MainCointainer loading={loading} />
         </Router>
       </FundingContext.Provider>
     )
