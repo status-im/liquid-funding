@@ -6,7 +6,8 @@ import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { FundingContext } from '../../context'
-import { getDepositWithdrawTotals } from '../../selectors/pledging'
+import { getDepositWithdrawTotals, getPledgesWaitingCommit } from '../../selectors/pledging'
+import { getTokenAddress } from '../../utils/currencies'
 
 const styles = {
   card: {
@@ -61,16 +62,18 @@ function SimpleCard(props) {
                    .map(token => {
                      const [name, amounts] = token
                      const { deposits, withdraws } = amounts
+                     const address = getTokenAddress(name)
+                     const pledgesForCommit = getPledgesWaitingCommit({ allPledges }).filter(p => p.token == address)
                      return (
                        <Card key={name}>
                          <Typography variant="h5" className={classes.titleText}>
                            {name}
                          </Typography>
                          <CardContent className={classes.fundingSummaries}>
-                           <Typography variant="h2">
+                           <Typography variant="h3">
                              {Number(deposits) - Number(withdraws || 0)}
                            </Typography>
-                           <Typography variant="h5" key={name + 'total'} className={classes.pos} color="textSecondary">
+                           <Typography variant="h6" key={name + 'total'} className={classes.pos} color="textSecondary">
                              Remaining In Pledges
                            </Typography>
                            <Typography variant="h3" >
@@ -84,6 +87,12 @@ function SimpleCard(props) {
                            </Typography>
                            <Typography variant="h6" key={name + 'deposit'} className={classes.pos} color="textSecondary">
                              Withdrawn
+                           </Typography>
+                           <Typography variant="h3">
+                             {pledgesForCommit.length}
+                           </Typography>
+                           <Typography variant="h6" key={name + 'deposit'} className={classes.pos} color="textSecondary">
+                             Pledges that can be vetoed / approved
                            </Typography>
                          </CardContent>
                          <LinearProgress

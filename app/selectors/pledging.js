@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { toEther } from '../utils/conversions'
-import { getTokenLabel } from '../utils/currencies'
+import { getTokenLabel, getTokenAddress } from '../utils/currencies'
 
 export const getTransfers = state => state.allLpEvents.filter(
   obj => obj.event === 'Transfer'
@@ -29,6 +29,16 @@ export const sumDeposits = deposits => deposits.reduce(
   BigInt(0)
 ).toString()
 
+const pledgesWaitingCommit = pledges => {
+  const date = Date.now()
+  return pledges.filter(p => Number(p.commitTime) * 1000 > date)
+}
+
+export const getPledgesWaitingCommit = createSelector(
+  getPledges,
+  pledgesWaitingCommit
+)
+
 const formatAndSumDepositWithdraws = (deposits, pledges, withdraws) => {
   const tokens = {}
   deposits.forEach(deposit => {
@@ -52,6 +62,7 @@ const formatAndSumDepositWithdraws = (deposits, pledges, withdraws) => {
     .entries(tokens)
     .forEach(token => {
       const [key, value] = token
+      const address = getTokenAddress(key)
       tokens[key]['deposits'] = toEther(value['deposits'].toString())
       if (tokens[key]['withdraws']) tokens[key]['withdraws'] = toEther(value['withdraws'].toString())
     })

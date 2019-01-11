@@ -30,3 +30,8 @@ export const getTokenLabel = value => {
   const token = currencies.find(currency => currency.value === value)
   return token ? token.label : null
 }
+
+export const getTokenAddress = label => {
+  const token = currencies.find(currency => currency.label == label)
+  return token ? token.value : null
+}
