@@ -22,11 +22,12 @@ const lookups = {
   }
 }
 
+const hexToDecimal = hex => Number(parseInt(hex, 16))
 const formatVaultEvent = async event => {
   const { returnValues } = event
   return {
     ...returnValues,
-    ref: Number(returnValues.ref.slice(2))
+    ref: hexToDecimal(returnValues.ref)
   }
 }
 
