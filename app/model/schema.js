@@ -9,6 +9,7 @@ export default appSchema({
         { name: 'address', type: 'string' },
         { name: 'event', type: 'string' },
         { name: 'event_id', type: 'string' },
+        { name: 'block_number', type: 'number', isIndexed: true },
       ]
     })
   ]

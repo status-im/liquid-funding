@@ -11,7 +11,7 @@ import { FundingContext } from './context'
 import { cancelProfile } from './utils/fundProfiles'
 import MainCointainer from './components/MainCointainer'
 import { getTransfersMemo } from './selectors/pledging'
-import database from './db'
+import { getLpEventById, addEvent, batchAddEvents } from './actions/lpEvents'
 
 const { getNetworkType } = web3.eth.net
 
@@ -33,6 +33,9 @@ class App extends React.Component {
         const { environment } = EmbarkJS
         const isInitialized = await vaultPledgingNeedsInit()
         if (!!isInitialized) {
+          const events = await getLpEventById(5)
+          console.log({events})
+
           if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
           const lpAllowance = await getLpAllowance()
           const fundProfiles = await getProfileEvents()
@@ -42,8 +45,16 @@ class App extends React.Component {
           const allLpEvents = await getAllLPEvents()
           const vaultEvents = await getAllVaultEvents()
           const transfers = getTransfersMemo({ allLpEvents })
-          const lpCollection = database.collections.get('lp_events')
-          console.log({lpCollection})
+
+          //TODO remove
+          const batching = await batchAddEvents(allLpEvents)
+          console.log({batching})
+
+          /* allLpEvents.forEach(async e => {
+           *   const event = await getLpEventById(e.id)
+           *   //const event = await addEvent(e)
+           *   console.log({e, event})
+           * }) */
           this.setState({
             account,
             network,
