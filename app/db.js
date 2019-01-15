@@ -2,6 +2,7 @@ import { Database } from '@nozbe/watermelondb'
 import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 
 import schema from './model/schema'
+import LpEvent from './model/lpEvents'
 
 const adapter = new LokiJSAdapter({
   schema,
@@ -10,7 +11,9 @@ const adapter = new LokiJSAdapter({
 const database = new Database({
   adapter,
   modelClasses: [
-    // Post, // ⬅️ You'll add Models to Watermelon here
+    LpEvent
   ],
   actionsEnabled: true,
 })
+
+export default database

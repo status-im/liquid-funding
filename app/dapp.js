@@ -11,6 +11,7 @@ import { FundingContext } from './context'
 import { cancelProfile } from './utils/fundProfiles'
 import MainCointainer from './components/MainCointainer'
 import { getTransfersMemo } from './selectors/pledging'
+import database from './db'
 
 const { getNetworkType } = web3.eth.net
 
@@ -41,6 +42,8 @@ class App extends React.Component {
           const allLpEvents = await getAllLPEvents()
           const vaultEvents = await getAllVaultEvents()
           const transfers = getTransfersMemo({ allLpEvents })
+          const lpCollection = database.collections.get('lp_events')
+          console.log({lpCollection})
           this.setState({
             account,
             network,
