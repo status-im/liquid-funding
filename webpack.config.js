@@ -143,8 +143,8 @@ const base = {
             ],
             [
               '@babel/plugin-transform-runtime', {
-                corejs: 2,
-                useESModules: true
+                helpers: true,
+                regenerator: true
               }
             ],
             '@babel/plugin-syntax-dynamic-import'
