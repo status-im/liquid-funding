@@ -11,6 +11,19 @@ export default appSchema({
         { name: 'event_id', type: 'string' },
         { name: 'block_number', type: 'number', isIndexed: true },
       ]
+    }),
+    tableSchema({
+      name: 'profiles',
+      columns: [
+        { name: 'addr', type: 'string' },
+        { name: 'canceled', type: 'boolean' },
+        { name: 'commit_time', type: 'number' },
+        { name: 'type', type: 'string' },
+        { name: 'name', type: 'string' },
+        { name: 'url', type: 'string' },
+        { name: 'id_profile', type: 'number' }
+      ]
+
     })
   ]
 })
