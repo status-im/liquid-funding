@@ -10,7 +10,6 @@ export const addEvent = async data => {
       lpEvent.address = address
       lpEvent.event = event
       lpEvent.blockNumber = blockNumber
-      return lpEvent
     })
     return res
   })
@@ -24,7 +23,6 @@ export const batchAddEvents = async events => {
       lpEvent.address = address
       lpEvent.event = event
       lpEvent.blockNumber = blockNumber
-      return lpEvent
     })
   })
   console.log({batch})
@@ -34,7 +32,7 @@ export const batchAddEvents = async events => {
 
 export const getLpEventById = async id => {
   const event = await lpCollection.query(
-    //Q.where('event_id', id)
+    Q.where('event_id', id)
   ).fetch()
   console.log({event})
   return event
