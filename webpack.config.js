@@ -220,13 +220,13 @@ const baseBabelLoader = base.module.rules[3];
 // -----------------------------------------------------------------------------
 
 // should be false in configs that have isTypeScriptEnabled = true
-const isFlowEnabled = !embarkPipeline.typescript;
-if (isFlowEnabled) {
-  // position @babel/plugin-transform-flow-strip-types per babel-preset-react-app
-  baseBabelLoader.options.plugins.unshift(
-    requireFromEmbark.resolve('@babel/plugin-transform-flow-strip-types')
-  );
-}
+// const isFlowEnabled = !embarkPipeline.typescript;
+// if (isFlowEnabled) {
+//   // position @babel/plugin-transform-flow-strip-types per babel-preset-react-app
+//   baseBabelLoader.options.plugins.unshift(
+//     requireFromEmbark.resolve('@babel/plugin-transform-flow-strip-types')
+//   );
+// }
 
 // TypeScript
 // -----------------------------------------------------------------------------
@@ -244,9 +244,9 @@ if (isTypeScriptEnabled) {
   base.resolve.extensions.push('.ts', '.tsx');
 }
 
-if (isFlowEnabled && isTypeScriptEnabled) {
-  throw new Error('isFlowEnabled and isTypeScriptEnabled cannot both be true');
-}
+// if (isFlowEnabled && isTypeScriptEnabled) {
+//   throw new Error('isFlowEnabled and isTypeScriptEnabled cannot both be true');
+// }
 
 // development config
 // -----------------------------------------------------------------------------
