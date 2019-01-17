@@ -3,6 +3,7 @@ import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 
 import schema from './model/schema'
 import LpEvent from './model/lpEvents'
+import Profiles from './model/profiles'
 
 const adapter = new LokiJSAdapter({
   schema,
@@ -11,7 +12,8 @@ const adapter = new LokiJSAdapter({
 const database = new Database({
   adapter,
   modelClasses: [
-    LpEvent
+    LpEvent,
+    Profiles
   ],
   actionsEnabled: true,
 })

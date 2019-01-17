@@ -1,20 +1,17 @@
 import { Model } from '@nozbe/watermelondb'
-import { fieldGenerator } from '../utils/db'
+import { field } from '@nozbe/watermelondb/decorators'
+
 
 export default class Profiles extends Model {
-  constructor(...args) {
-    super(...args)
-    const field = fieldGenerator(this)
-    field('addr')
-    field('canceled')
-    field('commit_time', 'commitTime')
-    field('type')
-    field('name')
-    field('url')
-    field('id_profile', 'idProfile')
-  }
 
   static table = 'profiles'
 
-}
+  @field('addr') addr
+  @field('canceled') canceled
+  @field('commit_time') commitTime
+  @field('type') type
+  @field('name') name
+  @field('url') url
+  @field('id_profile') idProfile
 
+}

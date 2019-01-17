@@ -18,11 +18,11 @@ export const batchAddProfiles = async profiles => {
       const { addr, canceled, commitTime, type, name, url, idProfile } = data
       profile.addr = addr
       profile.canceled = canceled
-      profile.commitTime = commitTime
+      profile.commitTime = Number(commitTime)
       profile.type = type
       profile.name = name
       profile.url = url
-      profile.idProfile = idProfile
+      profile.idProfile = Number(idProfile)
     })
   })
   console.log({batch})
