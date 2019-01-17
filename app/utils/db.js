@@ -6,3 +6,7 @@ export const fieldGenerator = self => (column, name) => {
     configurable: true
   })
 }
+
+export function initialize(target, name, descriptor) {
+  descriptor.initializer = true
+}
