@@ -5,7 +5,9 @@ import schema from './model/schema'
 import LpEvent from './model/lpEvents'
 import Profile from './model/profile'
 
+const dbName = 'LiquidFunding'
 const adapter = new LokiJSAdapter({
+  dbName,
   schema,
 })
 
