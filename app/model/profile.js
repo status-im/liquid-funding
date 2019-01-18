@@ -2,7 +2,7 @@ import { action, field } from '@nozbe/watermelondb/decorators'
 import { LiquidModel } from '../utils/models'
 
 
-export default class Profiles extends LiquidModel {
+export default class Profile extends LiquidModel {
   static table = 'profiles'
 
   @field('addr') addr
