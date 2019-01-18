@@ -3,10 +3,16 @@ import database from '../db'
 
 const profilesCollection = database.collections.get('profiles')
 export const addProfile = async data => {
-  await database.action(async () => {
+  return await database.action(async () => {
     const res = await profilesCollection.create(profile => {
       const { addr, canceled, commitTime, type, name, url, idProfile } = data
-      //TODO add assignemnts
+      profile.addr = addr
+      profile.canceled = canceled
+      profile.commitTime = Number(commitTime)
+      profile.type = type
+      profile.name = name
+      profile.url = url
+      profile.idProfile = Number(idProfile)
     })
     return res
   })

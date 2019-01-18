@@ -53,5 +53,5 @@ const FunderProfilesTable = ({ cancelFundProfile, profiles }) => (
 )
 
 export default withDatabase(withObservables([], ({ database }) => ({
-  profiles: database.collections.get('profiles').query().fetch(),
+  profiles: database.collections.get('profiles').query().observe(),
 }))(FunderProfilesTable))
