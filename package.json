@@ -58,6 +58,7 @@
     "@material-ui/core": "^3.6.0",
     "@material-ui/icons": "^3.0.1",
     "@nozbe/watermelondb": "^0.9.0",
+    "@nozbe/with-observables": "^1.0.2",
     "async": "^2.4.0",
     "chai": "^4.1.0",
     "chart.js": "^2.7.3",

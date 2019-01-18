@@ -1,9 +1,8 @@
-import { Model } from '@nozbe/watermelondb'
 import { field } from '@nozbe/watermelondb/decorators'
+import { LiquidModel } from '../utils/models'
 
 
-export default class Profiles extends Model {
-
+export default class Profiles extends LiquidModel {
   static table = 'profiles'
 
   @field('addr') addr
@@ -13,5 +12,4 @@ export default class Profiles extends Model {
   @field('name') name
   @field('url') url
   @field('id_profile') idProfile
-
 }
