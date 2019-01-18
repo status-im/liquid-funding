@@ -1,4 +1,4 @@
-import { field } from '@nozbe/watermelondb/decorators'
+import { action, field } from '@nozbe/watermelondb/decorators'
 import { LiquidModel } from '../utils/models'
 
 
@@ -12,4 +12,10 @@ export default class Profiles extends LiquidModel {
   @field('name') name
   @field('url') url
   @field('id_profile') idProfile
+
+  @action async markAsCanceled() {
+    await this.update(profile => {
+      profile.canceled = true
+    })
+  }
 }

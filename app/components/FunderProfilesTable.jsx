@@ -14,7 +14,7 @@ const formatField = field => ({
   commitTime: convertToHours(field.commitTime),
   canceled: cancelText(field.canceled)
 })
-const FunderProfilesTable = ({ cancelFundProfile, profiles }) => (
+const FunderProfilesTable = ({ profiles }) => (
   <FundingContext.Consumer>
     {({ account }) =>
       <Fragment>
@@ -39,9 +39,10 @@ const FunderProfilesTable = ({ cancelFundProfile, profiles }) => (
               onClick: (event, rowData) => {
                 cancelProject(rowData.idProject || rowData.idProfile)
                   .send()
-                  .then(res => {
+                  .then(async res => {
                     console.log({res})
-                    cancelFundProfile(rowData.idProfile)
+                    const profile = profiles.find(p => p.idProfile == rowData.idProfile)
+                    await profile.markAsCanceled()
                   })
               }
             })
@@ -53,5 +54,5 @@ const FunderProfilesTable = ({ cancelFundProfile, profiles }) => (
 )
 
 export default withDatabase(withObservables([], ({ database }) => ({
-  profiles: database.collections.get('profiles').query().observe(),
+  profiles: database.collections.get('profiles').query().observeWithColumns(['canceled']),
 }))(FunderProfilesTable))
