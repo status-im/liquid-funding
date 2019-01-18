@@ -14,7 +14,7 @@ const formatField = field => ({
   commitTime: convertToHours(field.commitTime),
   canceled: cancelText(field.canceled)
 })
-const FunderProfilesTable = ({ data, cancelFundProfile, profiles }) => (
+const FunderProfilesTable = ({ cancelFundProfile, profiles }) => (
   <FundingContext.Consumer>
     {({ account }) =>
       <Fragment>
