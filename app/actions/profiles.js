@@ -1,5 +1,7 @@
 import { Q } from '@nozbe/watermelondb'
 import database from '../db'
+import { getLatestProfileEvents } from './lpEvents'
+import { formatFundProfileEvent } from '../utils/events'
 
 const profilesCollection = database.collections.get('profiles')
 export const addProfile = async data => {
@@ -23,7 +25,7 @@ export const batchAddProfiles = async profiles => {
   const batch = profiles.map(data => {
     return profilesCollection.prepareCreate(profile => {
       const { id, addr, canceled, commitTime, type, name, url, idProfile } = data
-      profile.eventId = id
+      profile.eventId = id //TODO Possible FK relationship to LpEvent
       profile.addr = addr
       profile.canceled = canceled
       profile.commitTime = Number(commitTime)
@@ -35,6 +37,21 @@ export const batchAddProfiles = async profiles => {
   })
   console.log({batch})
   return await database.action(async () => await database.batch(...batch))
+}
+
+export const addFormattedProfiles = async () => {
+  const allProfiles = await getAllProfiles()
+  const allEventIds = allProfiles.map(p => p.eventId)
+  const events = await getLatestProfileEvents(allEventIds)
+  const formattedEvents = await Promise.all(
+    events.map(formatFundProfileEvent)
+  )
+  await batchAddProfiles(formattedEvents)
+}
+
+export const getAllProfiles = async () => {
+  const events = await profilesCollection.query().fetch()
+  return events
 }
 
 export const getProfileById = async id => {

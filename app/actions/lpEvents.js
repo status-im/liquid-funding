@@ -1,5 +1,6 @@
 import { Q } from '@nozbe/watermelondb'
 import database from '../db'
+import { GIVER_ADDED, DELEGATE_ADDED, PROJECT_ADDED } from '../utils/events'
 
 const lpCollection = database.collections.get('lp_events')
 export const addEvent = async data => {
@@ -18,17 +19,30 @@ export const addEvent = async data => {
 export const batchAddEvents = async events => {
   const batch = events.map(e => {
     return lpCollection.prepareCreate(lpEvent => {
-      const { event, address, id, blockNumber } = e
+      const { event, address, id, blockNumber, returnValues } = e
       lpEvent.eventId = id
       lpEvent.address = address
       lpEvent.event = event
       lpEvent.blockNumber = blockNumber
+      lpEvent.returnValues = returnValues
     })
   })
   return await database.action(async () => await database.batch(...batch))
 }
 
-//TODO getProfileEvents
+export const getLatestProfileEvents = async eventIds => {
+  const events = await lpCollection.query(
+    Q.where(
+      'id',
+      Q.notIn(eventIds)
+    ),
+    Q.where(
+      'event',
+      Q.oneOf([GIVER_ADDED, DELEGATE_ADDED, PROJECT_ADDED])
+    )
+  ).fetch()
+  return events
+}
 
 
 export const getLpEventById = async id => {

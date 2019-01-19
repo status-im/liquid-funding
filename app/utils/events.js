@@ -5,9 +5,9 @@ import { getLastBlockStored } from '../actions/lpEvents'
 
 
 const AUTHORIZE_PAYMENT = 'AuthorizePayment'
-const GIVER_ADDED = 'GiverAdded'
-const DELEGATE_ADDED = 'DelegateAdded'
-const PROJECT_ADDED = 'ProjectAdded'
+export const GIVER_ADDED = 'GiverAdded'
+export const DELEGATE_ADDED = 'DelegateAdded'
+export const PROJECT_ADDED = 'ProjectAdded'
 const ALL_EVENTS = 'allEvents'
 const lookups = {
   [GIVER_ADDED]: {
@@ -49,13 +49,12 @@ const getPastVaultEvents = async (event, raw = false) => {
 const { getPledgeAdmin } = LiquidPledging.methods
 export const formatFundProfileEvent = async event => {
   const lookup = lookups[event.event]
-  const { id, returnValues: { url, idProject } } = event
+  const { id, returnValues: { url } } = event
   const idProfile = event.returnValues[lookup.id]
   const { addr, commitTime, name, canceled } = await getPledgeAdmin(idProfile).call()
   return {
     id,
     idProfile,
-    idProject,
     url,
     commitTime,
     name,

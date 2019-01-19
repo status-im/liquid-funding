@@ -1,6 +1,8 @@
 import { Model } from '@nozbe/watermelondb'
-import { action, field } from '@nozbe/watermelondb/decorators'
+import { action, field, json } from '@nozbe/watermelondb/decorators'
 
+
+const sanitizeValues = json => json
 export default class LpEvent extends Model {
   static table = 'lp_events'
 
@@ -11,6 +13,8 @@ export default class LpEvent extends Model {
   @field('event') event
 
   @field('block_number') blockNumber
+
+  @json('return_values', sanitizeValues) returnValues
 
   @action async addEvent(data) {
     return await this.create(lpEvent => {

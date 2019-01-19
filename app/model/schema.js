@@ -6,10 +6,11 @@ export default appSchema({
     tableSchema({
       name: 'lp_events',
       columns: [
-        { name: 'event_id', type: 'string' },
+        { name: 'event_id', type: 'string', isIndexed: true },
         { name: 'address', type: 'string' },
-        { name: 'event', type: 'string' },
+        { name: 'event', type: 'string', isIndexed: true },
         { name: 'block_number', type: 'number', isIndexed: true },
+        { name : 'return_values', type: 'string', isOptional: true }
       ]
     }),
     tableSchema({
