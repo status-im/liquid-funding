@@ -6,6 +6,7 @@ export default class Profile extends LiquidModel {
   static table = 'profiles'
 
   @field('addr') addr
+  @field('event_id') eventId
   @field('canceled') canceled
   @field('commit_time') commitTime
   @field('type') type

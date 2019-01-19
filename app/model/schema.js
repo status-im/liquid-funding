@@ -6,15 +6,16 @@ export default appSchema({
     tableSchema({
       name: 'lp_events',
       columns: [
+        { name: 'event_id', type: 'string' },
         { name: 'address', type: 'string' },
         { name: 'event', type: 'string' },
-        { name: 'event_id', type: 'string' },
         { name: 'block_number', type: 'number', isIndexed: true },
       ]
     }),
     tableSchema({
       name: 'profiles',
       columns: [
+        { name: 'event_id', type: 'string' },
         { name: 'addr', type: 'string' },
         { name: 'canceled', type: 'boolean' },
         { name: 'commit_time', type: 'number' },
