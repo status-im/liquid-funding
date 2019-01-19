@@ -5,7 +5,8 @@ const profilesCollection = database.collections.get('profiles')
 export const addProfile = async data => {
   return await database.action(async () => {
     const res = await profilesCollection.create(profile => {
-      const { addr, canceled, commitTime, type, name, url, idProfile } = data
+      const { id, addr, canceled, commitTime, type, name, url, idProfile } = data
+      profile.eventId = id
       profile.addr = addr
       profile.canceled = canceled
       profile.commitTime = Number(commitTime)
@@ -21,7 +22,8 @@ export const addProfile = async data => {
 export const batchAddProfiles = async profiles => {
   const batch = profiles.map(data => {
     return profilesCollection.prepareCreate(profile => {
-      const { addr, canceled, commitTime, type, name, url, idProfile } = data
+      const { id, addr, canceled, commitTime, type, name, url, idProfile } = data
+      profile.eventId = id
       profile.addr = addr
       profile.canceled = canceled
       profile.commitTime = Number(commitTime)

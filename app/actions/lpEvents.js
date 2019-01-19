@@ -34,6 +34,13 @@ export const getLpEventById = async id => {
   const event = await lpCollection.query(
     Q.where('event_id', id)
   ).fetch()
-  console.log({event})
   return event
+}
+
+export const getLastBlockStored = async () => {
+  const col = await lpCollection.query().fetch()
+  const sorted = col.sort(
+    (a,b) => b.blockNumber - a.blockNumber
+  )
+  return sorted[0].blockNumber
 }
