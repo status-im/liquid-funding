@@ -1,6 +1,8 @@
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import LPVault from 'Embark/contracts/LPVault'
 import web3 from 'Embark/web3'
+import { getLastBlockStored } from '../actions/lpEvents'
+
 
 const AUTHORIZE_PAYMENT = 'AuthorizePayment'
 const GIVER_ADDED = 'GiverAdded'
@@ -63,12 +65,13 @@ export const formatFundProfileEvent = async event => {
   }
 }
 
-const getPastEvents = async (event, raw = false) => {
+const getPastEvents = async (event, raw = false, fromBlock = 0) => {
   const events = await LiquidPledging.getPastEvents(event, {
     addr: await web3.eth.getCoinbase(),
-    fromBlock: 0,
+    fromBlock,
     toBlock: 'latest'
   })
+  if (raw) console.log({events, fromBlock})
   if (raw) return events
   const formattedEvents = await Promise.all(
     events.map(formatFundProfileEvent)
@@ -87,7 +90,11 @@ export const lpEventsSubscription = async () => {
 export const getFunderProfiles = async () => await getPastEvents(GIVER_ADDED)
 export const getDelegateProfiles = async () => await getPastEvents(DELEGATE_ADDED)
 export const getProjectProfiles = async () => await getPastEvents(PROJECT_ADDED)
-export const getAllLPEvents = async () => await getPastEvents(ALL_EVENTS, true)
+export const getAllLPEvents = async () => await getPastEvents(
+  ALL_EVENTS,
+  true,
+  await getLastBlockStored() + 1
+)
 export const getAuthorizedPayments = async () => getPastVaultEvents(AUTHORIZE_PAYMENT)
 export const getAllVaultEvents = async () => getPastVaultEvents(ALL_EVENTS,true)
 export const getProfileEvents = async () => {

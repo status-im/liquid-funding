@@ -25,9 +25,10 @@ export const batchAddEvents = async events => {
       lpEvent.blockNumber = blockNumber
     })
   })
-  console.log({batch})
   return await database.action(async () => await database.batch(...batch))
 }
+
+//TODO getProfileEvents
 
 
 export const getLpEventById = async id => {
@@ -39,8 +40,8 @@ export const getLpEventById = async id => {
 
 export const getLastBlockStored = async () => {
   const col = await lpCollection.query().fetch()
-  const sorted = col.sort(
-    (a,b) => b.blockNumber - a.blockNumber
-  )
-  return sorted[0].blockNumber
+  const blockNumber = col.length
+        ? col.sort((a,b) => b.blockNumber - a.blockNumber)[0].blockNumber
+        : 0
+  return blockNumber
 }
