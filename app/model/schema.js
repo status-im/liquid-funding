@@ -23,9 +23,22 @@ export default appSchema({
         { name: 'type', type: 'string' },
         { name: 'name', type: 'string' },
         { name: 'url', type: 'string' },
-        { name: 'id_profile', type: 'number' }
+        { name: 'id_profile', type: 'number', isIndexed: true }
       ]
-
+    }),
+    tableSchema({
+      name: 'pledges',
+      columns: [
+        { name: 'pledge_id', type: 'number' },
+        { name: 'owner_id', type: 'number', isIndexed: true },
+        { name: 'amount', type: 'number' },
+        { name: 'token', type: 'string' },
+        { name: 'commit_time', type: 'number' },
+        { name: 'n_delegates', type: 'number' },
+        { name: 'intended_project', type: 'number' },
+        { name: 'pledge_state', type: 'number' },
+        { name: 'id_profile', type: 'number', isIndexed: true }
+      ]
     })
   ]
 })

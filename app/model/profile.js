@@ -1,9 +1,12 @@
-import { action, field } from '@nozbe/watermelondb/decorators'
+import { action, field, children } from '@nozbe/watermelondb/decorators'
 import { LiquidModel } from '../utils/models'
 
 
 export default class Profile extends LiquidModel {
   static table = 'profiles'
+  static associations = {
+    pledges: { type: 'has_many', foreignKey: 'id_profile' }
+  }
 
   @field('addr') addr
   @field('event_id') eventId
@@ -13,6 +16,7 @@ export default class Profile extends LiquidModel {
   @field('name') name
   @field('url') url
   @field('id_profile') idProfile
+  @children('pledges') pledges
 
   @action async markAsCanceled() {
     await this.update(profile => {
