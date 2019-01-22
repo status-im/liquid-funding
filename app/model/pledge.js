@@ -5,7 +5,7 @@ import { LiquidModel } from '../utils/models'
 export default class Pledge extends LiquidModel {
   static table = 'pledges'
   static associations = {
-    profiles: { type: 'belongs_to', key: 'id_profile' },
+    profiles: { type: 'belongs_to', key: 'profile_id' },
   }
 
   @field('pledge_id') pledgeId
@@ -16,6 +16,6 @@ export default class Pledge extends LiquidModel {
   @field('n_delegates') nDelegates
   @field('intended_project') intendedProject
   @field('pledge_state') pledgeState
-  @relation('profiles', 'id_profile') profile
+  @relation('profiles', 'profile_id') profile
 
 }

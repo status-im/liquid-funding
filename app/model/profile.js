@@ -5,7 +5,7 @@ import { LiquidModel } from '../utils/models'
 export default class Profile extends LiquidModel {
   static table = 'profiles'
   static associations = {
-    pledges: { type: 'has_many', foreignKey: 'id_profile' }
+    pledges: { type: 'has_many', foreignKey: 'profile_id' }
   }
 
   @field('addr') addr

@@ -37,7 +37,7 @@ export default appSchema({
         { name: 'n_delegates', type: 'number' },
         { name: 'intended_project', type: 'number' },
         { name: 'pledge_state', type: 'number' },
-        { name: 'id_profile', type: 'number', isIndexed: true }
+        { name: 'profile_id', type: 'string', isIndexed: true }
       ]
     })
   ]

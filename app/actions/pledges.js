@@ -1,11 +1,11 @@
-import { pick } from 'ramda'
 import { Q } from '@nozbe/watermelondb'
 import database from '../db'
-import { getLatestProfileEvents } from './lpEvents'
-import { formatFundProfileEvent } from '../utils/events'
+import { getAllPledges } from '../utils/pledges'
+import { getProfilesById } from './profiles'
 
-const createPledge = (pledge, data) => {
+const createPledge = (pledge, data, profiles) => {
   const { id, owner, amount, token, commitTime, nDelegates, pledgeState, intendedProject } = data
+  const profile = profiles.find(p => p.idProfile == owner)
   pledge.pledgeId = id
   pledge.owner = Number(owner)
   pledge.amount = Number(amount)
@@ -14,7 +14,7 @@ const createPledge = (pledge, data) => {
   pledge.nDelegates = Number(nDelegates)
   pledge.pledgeState = pledgeState
   pledge.intendedProject = Number(intendedProject)
-  pledge.profile.set(Number(id))
+  pledge.profile.id = profile.id
 }
 
 const pledgesCollection = database.collections.get('pledges')
@@ -25,25 +25,30 @@ export const addPledge = async data => {
   })
 }
 
-export const batchAddPledges = async profiles => {
-  const batch = profiles.map(data => {
-    return pledgesCollection.prepareCreate(pledge => createPledge(pledge, data))
+export const batchAddPledges = async (pledges, profiles = []) => {
+  const batch = pledges.map(data => {
+    return pledgesCollection.prepareCreate(pledge => createPledge(pledge, data, profiles))
   })
   console.log({batch})
   return await database.action(async () => await database.batch(...batch))
 }
 
-export const addFormattedProfiles = async () => {
-  const allProfiles = await getAllProfiles()
-  const allEventIds = allProfiles.map(p => p.eventId)
-  const events = await getLatestProfileEvents(allEventIds)
-  const formattedEvents = await Promise.all(
-    events.map(formatFundProfileEvent)
-  )
-  await batchAddPledges(formattedEvents)
+const getLastPledge = pledges => {
+  const pledgeId = pledges.length
+        ? pledges.sort((a,b) => b.pledgeId - a.pledgeId)[0].pledgeId
+        : 1
+  return pledgeId
+}
+export const getAndAddPledges = async () => {
+  const pledges = await getLocalPledges()
+  const pledgeId = getLastPledge(pledges)
+  const newPledges = await getAllPledges(pledgeId + 1)
+  const pledgeIds = newPledges.map(p => p.owner)
+  const profiles = await getProfilesById(pledgeIds)
+  batchAddPledges(newPledges, profiles)
 }
 
-export const getAllProfiles = async () => {
+export const getLocalPledges = async () => {
   const events = await pledgesCollection.query().fetch()
   return events
 }

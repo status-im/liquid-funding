@@ -60,3 +60,14 @@ export const getProfileById = async id => {
   ).fetch()
   return event
 }
+
+export const getProfilesById = async ids => {
+  const event = await profilesCollection.query(
+    Q.where(
+      'id_profile',
+      Q.oneOf(ids)
+    )
+  ).fetch()
+  return event
+}
+
