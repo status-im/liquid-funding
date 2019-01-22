@@ -6,7 +6,7 @@ import { getProfilesById } from './profiles'
 const createPledge = (pledge, data, profiles) => {
   const { id, owner, amount, token, commitTime, nDelegates, pledgeState, intendedProject } = data
   const profile = profiles.find(p => p.idProfile == owner)
-  pledge.pledgeId = id
+  pledge.pledgeId = Number(id)
   pledge.owner = Number(owner)
   pledge.amount = amount
   pledge.token = token
@@ -36,7 +36,7 @@ export const batchAddPledges = async (pledges, profiles = []) => {
 const getLastPledge = pledges => {
   const pledgeId = pledges.length
         ? pledges.sort((a,b) => b.pledgeId - a.pledgeId)[0].pledgeId
-        : 1
+        : 0
   return pledgeId
 }
 export const getAndAddPledges = async () => {

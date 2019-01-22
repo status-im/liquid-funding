@@ -29,7 +29,7 @@ export default appSchema({
     tableSchema({
       name: 'pledges',
       columns: [
-        { name: 'pledge_id', type: 'number' },
+        { name: 'pledge_id', type: 'number', isIndexed: true },
         { name: 'owner_id', type: 'number', isIndexed: true },
         { name: 'amount', type: 'string' },
         { name: 'token', type: 'string' },
