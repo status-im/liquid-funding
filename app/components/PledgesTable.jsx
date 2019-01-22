@@ -1,5 +1,7 @@
 import React, { Fragment, PureComponent } from 'react'
 import MaterialTable from 'material-table'
+import withObservables from '@nozbe/with-observables'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { toEther } from '../utils/conversions'
 import { getTokenLabel } from '../utils/currencies'
 import TransferDialog from './TransferDialog'
@@ -12,17 +14,17 @@ const pledgeStateMap = {
   1: 'Paying',
   2: 'Paid'
 }
-const convertToDatetime = (field, fundProfiles) => {
-  const { commitTime, owner } = field
-  const profile = fundProfiles[Number(owner) - 1]
+const convertToDatetime = field => {
+  const { commitTime } = field
+  const profile = field.profile
   if (!profile || Number(commitTime) === 0) return 0
   const time = Number(commitTime) + Number(profile.commitTime)
   const date = new Date(time * 1000)
   return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 }
-const formatField = (field, fundProfiles) => ({
-  ...field,
-  commitTime: convertToDatetime(field, fundProfiles),
+const formatField = field => ({
+  ...field.getFields(),
+  commitTime: convertToDatetime(field),
   amount: toEther(field.amount),
   token: getTokenLabel(field.token),
   intendedProject: projectText(field.intendedProject),
@@ -44,7 +46,7 @@ class PledgesTable extends PureComponent {
   clearRowData = () => this.setState({ rowData: null })
 
   render() {
-    const { data, transferPledgeAmounts, fundProfiles } = this.props
+    const { pledges, transferPledgeAmounts } = this.props
     const { row, rowData } = this.state
     return (
       <Fragment>
@@ -55,7 +57,7 @@ class PledgesTable extends PureComponent {
         />
         <MaterialTable
           columns={[
-            { title: 'Pledge Id', field: 'id', type: 'numeric' },
+            { title: 'Pledge Id', field: 'pledgeId', type: 'numeric' },
             { title: 'Owner', field: 'owner' },
             { title: 'Amount Funded', field: 'amount', type: 'numeric' },
             { title: 'Token', field: 'token' },
@@ -64,7 +66,7 @@ class PledgesTable extends PureComponent {
             { title: 'Intended Project', field: 'intendedProject' },
             { title: 'Pledge State', field: 'pledgeState' },
           ]}
-          data={data.map((f) => formatField(f, fundProfiles))}
+          data={pledges.map(formatField)}
           title="Pledges"
           options={{ showEmptyDataSourceMessage: true }}
           actions={[
@@ -91,4 +93,6 @@ class PledgesTable extends PureComponent {
   }
 }
 
-export default PledgesTable
+export default withDatabase(withObservables([], ({ database }) => ({
+  pledges: database.collections.get('pledges').query().observeWithColumns(['pledge_state']),
+}))(PledgesTable))

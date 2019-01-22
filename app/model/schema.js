@@ -31,7 +31,7 @@ export default appSchema({
       columns: [
         { name: 'pledge_id', type: 'number' },
         { name: 'owner_id', type: 'number', isIndexed: true },
-        { name: 'amount', type: 'number' },
+        { name: 'amount', type: 'string' },
         { name: 'token', type: 'string' },
         { name: 'commit_time', type: 'number' },
         { name: 'n_delegates', type: 'number' },

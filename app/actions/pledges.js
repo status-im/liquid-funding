@@ -8,7 +8,7 @@ const createPledge = (pledge, data, profiles) => {
   const profile = profiles.find(p => p.idProfile == owner)
   pledge.pledgeId = id
   pledge.owner = Number(owner)
-  pledge.amount = Number(amount)
+  pledge.amount = amount
   pledge.token = token
   pledge.commitTime = Number(commitTime)
   pledge.nDelegates = Number(nDelegates)
