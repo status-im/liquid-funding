@@ -12,9 +12,9 @@ const FundsManagement = ({ open }) => {
   const WebkitTransition = 'all 0.25s ease-out 0s'
   return (
     <FundingContext.Consumer>
-      {({ allPledges, appendPledges, appendFundProfile, transferPledgeAmounts, fundProfiles }) =>
+      {({ appendPledges, appendFundProfile }) =>
         <div style={{ maxWidth, WebkitTransition }}>
-          <PledgesTable data={allPledges} transferPledgeAmounts={transferPledgeAmounts} fundProfiles={fundProfiles} />
+          <PledgesTable />
           <FunderProfilesTable />
           <AddFunder appendFundProfile={appendFundProfile} />
           <Divider variant="middle" />

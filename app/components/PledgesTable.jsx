@@ -1,4 +1,4 @@
-import React, { Fragment, PureComponent } from 'react'
+import React, { Fragment, Component } from 'react'
 import MaterialTable from 'material-table'
 import withObservables from '@nozbe/with-observables'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
@@ -14,46 +14,66 @@ const pledgeStateMap = {
   1: 'Paying',
   2: 'Paid'
 }
-const convertToDatetime = field => {
+const convertToDatetime = async field => {
   const { commitTime } = field
-  const profile = field.profile
+  const profile = await field.profile.fetch()
   if (!profile || Number(commitTime) === 0) return 0
   const time = Number(commitTime) + Number(profile.commitTime)
   const date = new Date(time * 1000)
   return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 }
-const formatField = field => ({
+const formatField = async field => ({
   ...field.getFields(),
-  commitTime: convertToDatetime(field),
+  commitTime: await convertToDatetime(field),
   amount: toEther(field.amount),
   token: getTokenLabel(field.token),
   intendedProject: projectText(field.intendedProject),
-  pledgeState: pledgeStateMap[field.pledgeState]
+  pledgeState: pledgeStateMap[field.pledgeState],
+  transferTo: field.transferTo,
+  pledge: field
 })
-class PledgesTable extends PureComponent {
+class PledgesTable extends Component {
   state = {
+    data: [],
     row: false,
   }
 
+  componentDidMount() {
+    this.setData()
+  }
+
+  componentDidUpdate() {
+    const { pledges } = this.props
+    const { data } = this.state
+    pledges.some((pledge, idx) => {
+      const current = data[idx]
+      if (toEther(pledge.amount) != current.amount || pledgeStateMap[pledge.pledgeState] != current.pledgeState) this.setData()
+    })
+  }
+
+  setData = async () => {
+    const { pledges } = this.props
+    const data = await Promise.all(pledges.map(formatField))
+    this.setState({ data })
+  }
+
   handleClickOpen = row => {
-    this.setState({ row });
+    this.setState({ row })
   }
 
   handleClose = () => {
-    this.setState({ row: false });
+    this.setState({ row: false })
   }
 
   clearRowData = () => this.setState({ rowData: null })
 
   render() {
-    const { pledges, transferPledgeAmounts } = this.props
-    const { row, rowData } = this.state
+    const { data, row, rowData } = this.state
     return (
       <Fragment>
         <TransferDialog
           row={row}
           handleClose={this.handleClose}
-          transferPledgeAmounts={transferPledgeAmounts}
         />
         <MaterialTable
           columns={[
@@ -66,7 +86,7 @@ class PledgesTable extends PureComponent {
             { title: 'Intended Project', field: 'intendedProject' },
             { title: 'Pledge State', field: 'pledgeState' },
           ]}
-          data={pledges.map(formatField)}
+          data={data}
           title="Pledges"
           options={{ showEmptyDataSourceMessage: true }}
           actions={[
@@ -94,5 +114,5 @@ class PledgesTable extends PureComponent {
 }
 
 export default withDatabase(withObservables([], ({ database }) => ({
-  pledges: database.collections.get('pledges').query().observeWithColumns(['pledge_state']),
+  pledges: database.collections.get('pledges').query().observeWithColumns(['amount', 'pledge_state']),
 }))(PledgesTable))

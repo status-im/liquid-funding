@@ -1,4 +1,5 @@
 import { action, field, relation } from '@nozbe/watermelondb/decorators'
+import { Q } from '@nozbe/watermelondb'
 import { LiquidModel } from '../utils/models'
 
 
@@ -18,4 +19,18 @@ export default class Pledge extends LiquidModel {
   @field('pledge_state') pledgeState
   @relation('profiles', 'profile_id') profile
 
+  @action async transferTo(to, amount) {
+    const toPledgeQuery = await this.collections.get('pledges').query(
+      Q.where('pledge_id', to)
+    ).fetch()
+    const toPledge = toPledgeQuery[0]
+    await this.batch(
+      this.prepareUpdate(pledge => {
+        pledge.amount = (BigInt(pledge.amount) - BigInt(amount)).toString()
+      }),
+      toPledge.prepareUpdate(pledge => {
+        pledge.amount = (BigInt(pledge.amount) + BigInt(amount)).toString()
+      })
+    )
+  }
 }
