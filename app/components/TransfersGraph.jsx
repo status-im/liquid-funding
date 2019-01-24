@@ -82,7 +82,7 @@ const TransfersGraph = ({ transfers }) => {
         <Fragment>
           <CytoscapeComponent
             elements={createElements(transfers, vaultEvents)}
-            style={ { width: '800px', height: '100%', fontSize: '14px' } }
+            style={ { width: '100vw', height: '100%', fontSize: '14px' } }
             stylesheet={stylesheet}
             layout={layout}
           />
@@ -93,7 +93,7 @@ const TransfersGraph = ({ transfers }) => {
 }
 
 TransfersGraph.propTypes = {
-  transfers: PropTypes.object.isRequired
+  transfers: PropTypes.array.isRequired
 }
 
 export default withDatabase(withObservables([], ({ database }) => ({
