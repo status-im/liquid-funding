@@ -1,5 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import withObservables from '@nozbe/with-observables'
+import { Q } from '@nozbe/watermelondb'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -47,23 +50,23 @@ const styles = {
 const getNet = (deposits, withdraws) => Number(deposits) - Number(withdraws)
 const getValue = (deposits, withdraws) => (getNet(deposits, withdraws) / Number(deposits)) * 100
 function SimpleCard(props) {
-  const { classes, title } = props
+  const { classes, title, transfers, pledges } = props
 
   return (
     <FundingContext.Consumer>
-      {({ allPledges, allLpEvents, vaultEvents }) =>
+      {({ vaultEvents }) =>
         <Card className={classes.card}>
           <CardContent>
             <Typography variant="h5" className={classes.cardTitle}>
               {title}
             </Typography>
-            {!!allLpEvents &&
-             Object.entries(getDepositWithdrawTotals({ allLpEvents, allPledges, vaultEvents }))
+            {!!transfers &&
+             Object.entries(getDepositWithdrawTotals({ transfers, pledges, vaultEvents }))
                    .map(token => {
                      const [name, amounts] = token
                      const { deposits, withdraws } = amounts
                      const address = getTokenAddress(name)
-                     const pledgesForCommit = getPledgesWaitingCommit({ allPledges }).filter(p => p.token == address)
+                     const pledgesForCommit = getPledgesWaitingCommit({ pledges }).filter(p => p.token == address)
                      return (
                        <Card key={name}>
                          <Typography variant="h5" className={classes.titleText}>
@@ -91,7 +94,7 @@ function SimpleCard(props) {
                            <Typography variant="h3">
                              {pledgesForCommit.length}
                            </Typography>
-                           <Typography variant="h6" key={name + 'deposit'} className={classes.pos} color="textSecondary">
+                           <Typography variant="h6" key={name + 'veto/approve'} className={classes.pos} color="textSecondary">
                              Pledges that can be vetoed / approved
                            </Typography>
                          </CardContent>
@@ -120,4 +123,11 @@ SimpleCard.propTypes = {
   title: PropTypes.string
 }
 
-export default withStyles(styles)(SimpleCard)
+const styledCard =  withStyles(styles)(SimpleCard)
+export default withDatabase(withObservables([], ({ database }) => ({
+  transfers: database.collections.get('lp_events').query(
+    Q.where('event', 'Transfer')
+  ).observe(),
+  pledges: database.collections.get('pledges').query().observe()
+}))(styledCard))
+
