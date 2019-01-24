@@ -1,7 +1,11 @@
 import Cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
 import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 import CytoscapeComponent from 'react-cytoscapejs'
+import withObservables from '@nozbe/with-observables'
+import { Q } from '@nozbe/watermelondb'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { uniq, isNil } from 'ramda'
 import { toEther } from '../utils/conversions'
 import { getTokenLabel } from '../utils/currencies'
@@ -71,10 +75,10 @@ const createElements = (transfers, vaultEvents) => {
   ]
 }
 
-const TransfersGraph = () => {
+const TransfersGraph = ({ transfers }) => {
   return (
     <FundingContext.Consumer>
-      {({ transfers, vaultEvents }) =>
+      {({ vaultEvents }) =>
         <Fragment>
           <CytoscapeComponent
             elements={createElements(transfers, vaultEvents)}
@@ -88,4 +92,12 @@ const TransfersGraph = () => {
   )
 }
 
-export default TransfersGraph
+TransfersGraph.propTypes = {
+  transfers: PropTypes.object.isRequired
+}
+
+export default withDatabase(withObservables([], ({ database }) => ({
+  transfers: database.collections.get('lp_events').query(
+    Q.where('event', 'Transfer')
+  ).observe()
+}))(TransfersGraph))
