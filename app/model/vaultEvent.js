@@ -5,6 +5,7 @@ import { action, field, json } from '@nozbe/watermelondb/decorators'
 const sanitizeValues = json => json
 export default class VaultEvent extends Model {
   static table = 'vault_events'
+
   @field('address') address
 
   @field('event_id') eventId
@@ -25,4 +26,3 @@ export default class VaultEvent extends Model {
     })
   }
 }
-

@@ -12,7 +12,7 @@ const Dashboard = ({ pledges }) => (
   </div>
 )
 
-Dashboard.PropTypes = {
+Dashboard.propTypes = {
   pledges: PropTypes.array.isRequired
 }
 
