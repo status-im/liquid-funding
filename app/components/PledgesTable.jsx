@@ -45,10 +45,15 @@ class PledgesTable extends Component {
   componentDidUpdate() {
     const { pledges } = this.props
     const { data } = this.state
-    pledges.some((pledge, idx) => {
-      const current = data[idx]
-      if (toEther(pledge.amount) != current.amount || pledgeStateMap[pledge.pledgeState] != current.pledgeState) this.setData()
-    })
+    if (data.length) {
+      pledges.some((pledge, idx) => {
+        const current = data[idx]
+        if (current) {
+          if (toEther(pledge.amount) != current.amount || pledgeStateMap[pledge.pledgeState] != current.pledgeState) this.setData()
+        }
+      })
+    }
+    if (pledges.length && !data.length) this.setData()
   }
 
   setData = async () => {

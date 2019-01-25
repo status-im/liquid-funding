@@ -14,7 +14,6 @@ const createPledge = (pledge, data, profiles) => {
   pledge.nDelegates = Number(nDelegates)
   pledge.pledgeState = pledgeState
   pledge.intendedProject = Number(intendedProject)
-  //pledge.profile.id = profile.id
   pledge.profile.set(profile)
 }
 

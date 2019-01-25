@@ -14,6 +14,16 @@ export default appSchema({
       ]
     }),
     tableSchema({
+      name: 'vault_events',
+      columns: [
+        { name: 'event_id', type: 'string', isIndexed: true },
+        { name: 'address', type: 'string' },
+        { name: 'event', type: 'string', isIndexed: true },
+        { name: 'block_number', type: 'number', isIndexed: true },
+        { name : 'return_values', type: 'string', isOptional: true }
+      ]
+    }),
+    tableSchema({
       name: 'profiles',
       columns: [
         { name: 'event_id', type: 'string' },
