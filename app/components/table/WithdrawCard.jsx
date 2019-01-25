@@ -65,7 +65,7 @@ class Withdraw extends PureComponent {
         initialValues={{}}
         onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
           const { amount } = values
-          const paymentId = isPaying ? authorizedPayments.find(r => r.ref === rowData.id)['idPayment'] : rowData.id
+          const paymentId = isPaying ? authorizedPayments.find(r => r.ref === rowData.id)['idPayment'] : rowData.pledgeId
           const args = isPaying ? [paymentId] : [paymentId, toWei(amount)]
           const sendFn = isPaying ? confirmPayment : withdraw
           try {
@@ -102,7 +102,7 @@ class Withdraw extends PureComponent {
               <Card className={classes.card} elevation={0}>
                 <CardContent>
                   <Typography variant="h6" component="h2">
-                    {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData[6]) : ''} from Pledge ${rowData.id}`}
+                    {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData[6]) : ''} from Pledge ${rowData.pledgeId}`}
                   </Typography>
                   {!isPaying && <TextField
                     className={classes.amount}
