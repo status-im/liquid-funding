@@ -1,12 +1,22 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
+import withObservables from '@nozbe/with-observables'
 import PledgeAllocationsChart from './dashboard/PledgeAllocationsChart'
 import FundingSummary from './dashboard/FundingSummary'
 
-const Dashboard = () => (
+const Dashboard = ({ pledges }) => (
   <div>
-    <FundingSummary title="Funding Summary" />
-    <PledgeAllocationsChart title="Pledge Allocations" />
+    <FundingSummary title="Funding Summary" pledges={pledges} />
+    <PledgeAllocationsChart title="Pledge Allocations" pledges={pledges} />
   </div>
 )
 
-export default Dashboard
+Dashboard.PropTypes = {
+  pledges: PropTypes.array.isRequired
+}
+
+export default withDatabase(withObservables([], ({ database }) => ({
+  pledges: database.collections.get('pledges').query().observe()
+}))(Dashboard))
+

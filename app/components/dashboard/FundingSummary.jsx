@@ -120,7 +120,9 @@ function SimpleCard(props) {
 
 SimpleCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  title: PropTypes.string
+  title: PropTypes.string,
+  pledges: PropTypes.array.isRequired,
+  transfers: PropTypes.array.isRequired
 }
 
 const styledCard =  withStyles(styles)(SimpleCard)
@@ -128,6 +130,5 @@ export default withDatabase(withObservables([], ({ database }) => ({
   transfers: database.collections.get('lp_events').query(
     Q.where('event', 'Transfer')
   ).observe(),
-  pledges: database.collections.get('pledges').query().observe()
 }))(styledCard))
 
