@@ -1,17 +1,16 @@
 import React from 'react'
-import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom'
-import EmbarkJS from 'Embark/EmbarkJS';
-import LPVault from 'Embark/contracts/LPVault';
+import { HashRouter as Router } from 'react-router-dom'
+import EmbarkJS from 'Embark/EmbarkJS'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import web3 from 'Embark/web3'
 import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval, getLpAllowance } from './utils/initialize'
-import { getAllLPEvents, getAllVaultEvents, getProfileEvents, formatFundProfileEvent, getAuthorizedPayments } from './utils/events'
-import { getAllPledges, appendToExistingPledges, transferBetweenPledges } from './utils/pledges'
+import { getAuthorizedPayments } from './utils/events'
 import { FundingContext } from './context'
-import { cancelProfile } from './utils/fundProfiles'
 import MainCointainer from './components/MainCointainer'
-import { getTransfersMemo } from './selectors/pledging'
-import { getLpEventById, addEvent, batchAddEvents } from './actions/lpEvents'
+import { getAndAddLpEvents } from './actions/lpEvents'
+import { getAndAddVaultEvents } from './actions/vaultEvents'
+import { addFormattedProfiles } from './actions/profiles'
+import { getAndAddPledges } from './actions/pledges'
 
 const { getNetworkType } = web3.eth.net
 
@@ -19,12 +18,7 @@ class App extends React.Component {
   state = {
     loading: true,
     lpAllowance: 0,
-    fundProfiles: [],
-    allPledges: [],
     needsInit: true,
-    transfers: [],
-    allLpEvents: [],
-    vaultEvents: []
   };
 
   componentDidMount(){
@@ -33,75 +27,39 @@ class App extends React.Component {
         const { environment } = EmbarkJS
         const isInitialized = await vaultPledgingNeedsInit()
         if (!!isInitialized) {
-          const events = await getLpEventById(5)
-          console.log({events})
-
           if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
+
           const lpAllowance = await getLpAllowance()
-          const fundProfiles = await getProfileEvents()
-          const allPledges = await getAllPledges()
+          //TODO add block based sync
           const authorizedPayments = await getAuthorizedPayments()
           const account = await web3.eth.getCoinbase()
-          const allLpEvents = await getAllLPEvents()
-          const vaultEvents = await getAllVaultEvents()
-          const transfers = getTransfersMemo({ allLpEvents })
-
-          //TODO remove
-          const batching = await batchAddEvents(allLpEvents)
-          console.log({batching})
-
-          /* allLpEvents.forEach(async e => {
-           *   const event = await getLpEventById(e.id)
-           *   //const event = await addEvent(e)
-           *   console.log({e, event})
-           * }) */
+          this.syncWithRemote()
           this.setState({
             account,
             network,
             environment,
             lpAllowance,
-            fundProfiles,
-            allPledges,
             authorizedPayments,
-            allLpEvents,
-            vaultEvents,
-            transfers,
-            needsInit: false,
-            loading: false
+            needsInit: false
           })
         }
       })
     })
   }
 
-  appendFundProfile = async event => {
-    const formattedEvent = await formatFundProfileEvent(event)
-    this.setState((state) => {
-      const { fundProfiles } = state
-      return {
-        ...state,
-        fundProfiles: [ ...fundProfiles, formattedEvent ]
-      }
-    })
-  }
-
-  appendPledges = () => {
-    const { allPledges } = this.state
-    appendToExistingPledges(allPledges, this.setState)
-  }
-
-  transferPledgeAmounts = tx => {
-    transferBetweenPledges(this.setState.bind(this), tx)
-  }
-
-  cancelFundProfile = id => {
-    this.setState((state) => cancelProfile(state, id))
+  async syncWithRemote() {
+    // not running in parallel due to possible metamask / infura limitation
+    await getAndAddLpEvents()
+    await getAndAddVaultEvents()
+    await getAndAddPledges()
+    await addFormattedProfiles()
+    this.setState({ loading: false })
   }
 
   render() {
-    const { account, needsInit, lpAllowance, loading, fundProfiles, allPledges, allLpEvents, authorizedPayments, transfers, vaultEvents } = this.state
-    const { appendFundProfile, appendPledges, transferPledgeAmounts, cancelFundProfile } = this
-    const fundingContext = { allPledges, allLpEvents, appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, cancelFundProfile, fundProfiles, needsInit, initVaultAndLP, standardTokenApproval, transfers, vaultEvents }
+    const { account, needsInit, lpAllowance, loading, authorizedPayments } = this.state
+    const { appendFundProfile, appendPledges, transferPledgeAmounts } = this
+    const fundingContext = { appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, needsInit, initVaultAndLP, standardTokenApproval  }
     return (
       <FundingContext.Provider value={fundingContext}>
         <Router>

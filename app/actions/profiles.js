@@ -25,7 +25,7 @@ export const batchAddProfiles = async profiles => {
   const batch = profiles.map(data => {
     return profilesCollection.prepareCreate(profile => {
       const { id, addr, canceled, commitTime, type, name, url, idProfile } = data
-      profile.eventId = id //TODO Possible FK relationship to LpEvent
+      profile.eventId = id
       profile.addr = addr
       profile.canceled = canceled
       profile.commitTime = Number(commitTime)
@@ -35,7 +35,6 @@ export const batchAddProfiles = async profiles => {
       profile.idProfile = Number(idProfile)
     })
   })
-  console.log({batch})
   return await database.action(async () => await database.batch(...batch))
 }
 

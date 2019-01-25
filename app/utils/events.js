@@ -70,7 +70,6 @@ const getPastEvents = async (event, raw = false, fromBlock = 0) => {
     fromBlock,
     toBlock: 'latest'
   })
-  if (raw) console.log({events, fromBlock})
   if (raw) return events
   const formattedEvents = await Promise.all(
     events.map(formatFundProfileEvent)
