@@ -57,7 +57,7 @@ function SimpleCard(props) {
         <Typography variant="h5" className={classes.cardTitle}>
           {title}
         </Typography>
-        {!!transfers &&
+        {!!transfers && !!pledges.length &&
          Object.entries(getDepositWithdrawTotals({ transfers, pledges, vaultEvents }))
                .map(token => {
                  const [name, amounts] = token

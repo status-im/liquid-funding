@@ -42,13 +42,21 @@ export const getPledgesWaitingCommit = createSelector(
 
 const formatAndSumDepositWithdraws = (deposits, pledges, withdraws) => {
   const tokens = {}
+  let incomplete = false
   deposits.forEach(deposit => {
     const { amount, to } = deposit.returnValues
-    const { token } = pledges.find(p => Number(p.pledgeId) === Number(to))
+    const pledge = pledges.find(p => Number(p.pledgeId) === Number(to))
+    if (!pledge) {
+      incomplete = true
+      return
+    }
+    const { token } = pledge
     const tokenName = getTokenLabel(token)
     if (tokens[tokenName]) tokens[tokenName]['deposits'] = BigInt(tokens[tokenName]['deposits']) + BigInt(amount)
     else tokens[tokenName] = { 'deposits': BigInt(amount) }
   })
+
+  if (incomplete) return {}
 
   withdraws
     .filter(w => !isNaN(Number(w.returnValues.ref.slice(2))))
