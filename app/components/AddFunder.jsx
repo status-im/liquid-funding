@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { createRef } from 'react'
 import { Formik } from 'formik'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import Snackbar from '@material-ui/core/Snackbar'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import CloudUpload from '@material-ui/icons/CloudUpload'
 import web3 from 'Embark/web3'
 import { MySnackbarContentWrapper } from './base/SnackBars'
+import { captureFile } from '../utils/ipfs'
 
 const { addGiver, addDelegate, addProject } = LiquidPledging.methods
 const FUNDER = 'FUNDER'
@@ -52,6 +55,7 @@ const successMsg = {
   [PROJECT]: addProjectSucessMsg
 }
 
+let uploadInput = createRef()
 const AddFunder = ({ appendFundProfile }) => (
   <Formik
     initialValues={{ adminType: FUNDER, funderName: '', funderDescription: '', commitTime : '' }}
@@ -89,15 +93,15 @@ const AddFunder = ({ appendFundProfile }) => (
     }}
   >
     {({
-       values,
-       errors,
-       touched,
-       handleChange,
-       handleBlur,
-       handleSubmit,
-       setFieldValue,
-       setStatus,
-       status
+      values,
+      errors,
+      touched,
+      handleChange,
+      handleBlur,
+      handleSubmit,
+      setFieldValue,
+      setStatus,
+      status
     }) => (
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <TextField
@@ -129,10 +133,22 @@ const AddFunder = ({ appendFundProfile }) => (
           onBlur={handleBlur}
           value={values.funderName || ''}
         />
+        <input
+          ref={(input) => { uploadInput = input }}
+          type="file"
+          onChange={(e) => captureFile(e, hash => setFieldValue('funderDescription', hash))}
+          style={{ display: 'none' }} />
         <TextField
           id="funderDescription"
           name="funderDescription"
-          label="Description (URL or IPFS Hash)"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <CloudUpload style={{ cursor: 'pointer' }} onClick={() => uploadInput.click()} />
+              </InputAdornment>
+            ),
+          }}
+          label={<span>Description (URL or IPFS Hash)</span>}
           placeholder="Description (URL or IPFS Hash)"
           margin="normal"
           variant="outlined"

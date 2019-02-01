@@ -107,9 +107,12 @@ module.exports = {
   rinkeby: {
     networkType: "rinkeby",
     syncMode: "light",
-    account: {
-      password: "config/testnet/password"
-    }
+    accounts: [
+      {
+        nodeAccounts: true,
+        password: "config/testnet/password"
+      }
+    ]
   },
 
   // merges with the settings in default
