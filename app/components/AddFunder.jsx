@@ -9,7 +9,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import web3 from 'Embark/web3'
 import { MySnackbarContentWrapper } from './base/SnackBars'
-import { captureFile } from '../utils/ipfs'
+import { captureFile, isIpfs } from '../utils/ipfs'
 
 const { addGiver, addDelegate, addProject } = LiquidPledging.methods
 const FUNDER = 'FUNDER'
@@ -136,7 +136,13 @@ const AddFunder = ({ appendFundProfile }) => (
         <input
           ref={(input) => { uploadInput = input }}
           type="file"
-          onChange={(e) => captureFile(e, hash => setFieldValue('funderDescription', hash))}
+          onChange={
+          (e) => captureFile(
+            e,
+            hash => setFieldValue('funderDescription', hash),
+            profileImg => setStatus({ profileImg })
+          )
+          }
           style={{ display: 'none' }} />
         <TextField
           id="funderDescription"
@@ -156,6 +162,7 @@ const AddFunder = ({ appendFundProfile }) => (
           onBlur={handleBlur}
           value={values.funderDescription || ''}
         />
+        {status && status.profileImg && <img src={status.profileImg} alt='ipfs' style={{maxWidth: '90%'}} />}
         <TextField
           id="commitTime"
           name="commitTime"
@@ -171,7 +178,7 @@ const AddFunder = ({ appendFundProfile }) => (
         <Button variant="contained" color="primary" type="submit">
           {`ADD ${buttonLabel[values.adminType]} PROFILE`}
         </Button>
-        {status && <Snackbar
+        {status && status.snackbar && <Snackbar
                      anchorOrigin={{
                        vertical: 'bottom',
                        horizontal: 'left',
