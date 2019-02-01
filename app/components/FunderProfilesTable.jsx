@@ -1,6 +1,8 @@
-import React, { Fragment, memo } from 'react'
+import React, { Fragment } from 'react'
 import MaterialTable from 'material-table'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
+import withObservables from '@nozbe/with-observables'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { FundingContext } from '../context'
 
 const { cancelProject } = LiquidPledging.methods
@@ -8,11 +10,11 @@ const { cancelProject } = LiquidPledging.methods
 const convertToHours = seconds => seconds / 60 / 60
 const cancelText = canceled => canceled ? 'Yes' : 'No'
 const formatField = field => ({
-  ...field,
+  ...field.getFields(),
   commitTime: convertToHours(field.commitTime),
   canceled: cancelText(field.canceled)
 })
-const FunderProfilesTable = ({ data, cancelFundProfile }) => (
+const FunderProfilesTable = ({ profiles }) => (
   <FundingContext.Consumer>
     {({ account }) =>
       <Fragment>
@@ -26,20 +28,21 @@ const FunderProfilesTable = ({ data, cancelFundProfile }) => (
             { title: 'Type', field: 'type' },
             { title: 'Canceled', field: 'canceled' }
           ]}
-          data={data.map(formatField)}
+          data={profiles.map(formatField)}
           title="Funding Profiles"
           options={{ showEmptyDataSourceMessage: true }}
           actions={[
             rowData => ({
               icon: 'cancel',
-              disabled: rowData.addr.toLowerCase() != account.toLowerCase(),
+              disabled: !account || rowData.addr.toLowerCase() != account.toLowerCase(),
               tooltip: 'Cancel',
               onClick: (event, rowData) => {
                 cancelProject(rowData.idProject || rowData.idProfile)
                   .send()
-                  .then(res => {
+                  .then(async res => {
                     console.log({res})
-                    cancelFundProfile(rowData.idProfile)
+                    const profile = profiles.find(p => p.idProfile == rowData.idProfile)
+                    await profile.markAsCanceled()
                   })
               }
             })
@@ -50,4 +53,6 @@ const FunderProfilesTable = ({ data, cancelFundProfile }) => (
   </FundingContext.Consumer>
 )
 
-export default memo(FunderProfilesTable)
+export default withDatabase(withObservables([], ({ database }) => ({
+  profiles: database.collections.get('profiles').query().observeWithColumns(['canceled']),
+}))(FunderProfilesTable))

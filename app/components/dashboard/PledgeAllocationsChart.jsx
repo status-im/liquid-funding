@@ -5,7 +5,6 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import { Doughnut } from 'react-chartjs-2'
-import { FundingContext } from '../../context'
 import { toEther } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 import { getColor } from '../../utils/colorSchemes'
@@ -32,11 +31,11 @@ const pledgesChartData = pledges => {
   const labels = []
   const backgroundColor = []
   pledges.forEach((pledge, idx) => {
-    const { id, amount, token } = pledge
+    const { pledgeId, amount, token } = pledge
     const converted = toEther(amount)
     data.push(converted)
     labels.push(
-      `pledge ${id} - ${getTokenLabel(token)}`
+      `pledge ${pledgeId} - ${getTokenLabel(token)}`
     )
     backgroundColor.push(getColor('Dark2-8', idx))
   })
@@ -53,30 +52,27 @@ const pledgesChartData = pledges => {
 }
 
 function SimpleCard(props) {
-  const { classes, title } = props
+  const { classes, title, pledges } = props
 
   return (
-    <FundingContext.Consumer>
-      {({ allPledges }) =>
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography variant="h5" component="h2">
-              {title}
-            </Typography>
-            <Typography className={classes.pos} color="textSecondary">
-              How your funds are distributed among pledges
-            </Typography>
-            <Doughnut data={pledgesChartData(allPledges)} />
-          </CardContent>
-        </Card>
-      }
-    </FundingContext.Consumer>
+    <Card className={classes.card}>
+      <CardContent>
+        <Typography variant="h5" component="h2">
+          {title}
+        </Typography>
+        <Typography className={classes.pos} color="textSecondary">
+          How your funds are distributed among pledges
+        </Typography>
+        <Doughnut data={pledgesChartData(pledges)} />
+      </CardContent>
+    </Card>
   )
 }
 
 SimpleCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  title: PropTypes.string
+  title: PropTypes.string,
+  pledges: PropTypes.array.isRequired
 }
 
 export default withStyles(styles)(SimpleCard)

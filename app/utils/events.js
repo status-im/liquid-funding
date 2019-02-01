@@ -1,11 +1,13 @@
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import LPVault from 'Embark/contracts/LPVault'
 import web3 from 'Embark/web3'
+import { getLastBlockStored } from '../actions/lpEvents'
+
 
 const AUTHORIZE_PAYMENT = 'AuthorizePayment'
-const GIVER_ADDED = 'GiverAdded'
-const DELEGATE_ADDED = 'DelegateAdded'
-const PROJECT_ADDED = 'ProjectAdded'
+export const GIVER_ADDED = 'GiverAdded'
+export const DELEGATE_ADDED = 'DelegateAdded'
+export const PROJECT_ADDED = 'ProjectAdded'
 const ALL_EVENTS = 'allEvents'
 const lookups = {
   [GIVER_ADDED]: {
@@ -31,10 +33,10 @@ const formatVaultEvent = async event => {
   }
 }
 
-const getPastVaultEvents = async (event, raw = false) => {
+const getPastVaultEvents = async (event, raw = false, fromBlock = 0) => {
   const events = await LPVault.getPastEvents(event, {
     addr: await web3.eth.getCoinbase(),
-    fromBlock: 0,
+    fromBlock,
     toBlock: 'latest'
   })
   if (raw) return events
@@ -47,12 +49,12 @@ const getPastVaultEvents = async (event, raw = false) => {
 const { getPledgeAdmin } = LiquidPledging.methods
 export const formatFundProfileEvent = async event => {
   const lookup = lookups[event.event]
-  const { returnValues: { url, idProject } } = event
+  const { id, returnValues: { url } } = event
   const idProfile = event.returnValues[lookup.id]
   const { addr, commitTime, name, canceled } = await getPledgeAdmin(idProfile).call()
   return {
+    id,
     idProfile,
-    idProject,
     url,
     commitTime,
     name,
@@ -62,10 +64,10 @@ export const formatFundProfileEvent = async event => {
   }
 }
 
-const getPastEvents = async (event, raw = false) => {
+const getPastEvents = async (event, raw = false, fromBlock = 0) => {
   const events = await LiquidPledging.getPastEvents(event, {
     addr: await web3.eth.getCoinbase(),
-    fromBlock: 0,
+    fromBlock,
     toBlock: 'latest'
   })
   if (raw) return events
@@ -86,9 +88,13 @@ export const lpEventsSubscription = async () => {
 export const getFunderProfiles = async () => await getPastEvents(GIVER_ADDED)
 export const getDelegateProfiles = async () => await getPastEvents(DELEGATE_ADDED)
 export const getProjectProfiles = async () => await getPastEvents(PROJECT_ADDED)
-export const getAllLPEvents = async () => await getPastEvents(ALL_EVENTS, true)
+export const getAllLPEvents = async fromBlock => await getPastEvents(
+  ALL_EVENTS,
+  true,
+  fromBlock
+)
 export const getAuthorizedPayments = async () => getPastVaultEvents(AUTHORIZE_PAYMENT)
-export const getAllVaultEvents = async () => getPastVaultEvents(ALL_EVENTS,true)
+export const getAllVaultEvents = async (fromBlock = 0) => getPastVaultEvents(ALL_EVENTS,true, fromBlock)
 export const getProfileEvents = async () => {
   const [ funderProfiles, delegateProfiles, projectProfiles]
         = await Promise.all([getFunderProfiles(), getDelegateProfiles(), getProjectProfiles()])

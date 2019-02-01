@@ -1,11 +1,14 @@
 import Cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
 import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 import CytoscapeComponent from 'react-cytoscapejs'
+import withObservables from '@nozbe/with-observables'
+import { Q } from '@nozbe/watermelondb'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { uniq, isNil } from 'ramda'
 import { toEther } from '../utils/conversions'
 import { getTokenLabel } from '../utils/currencies'
-import { FundingContext } from '../context'
 import { getAuthorizations } from '../selectors/vault'
 
 
@@ -71,21 +74,27 @@ const createElements = (transfers, vaultEvents) => {
   ]
 }
 
-const TransfersGraph = () => {
+const TransfersGraph = ({ transfers, vaultEvents }) => {
   return (
-    <FundingContext.Consumer>
-      {({ transfers, vaultEvents }) =>
-        <Fragment>
-          <CytoscapeComponent
-            elements={createElements(transfers, vaultEvents)}
-            style={ { width: '800px', height: '100%', fontSize: '14px' } }
-            stylesheet={stylesheet}
-            layout={layout}
-          />
-        </Fragment>
-      }
-    </FundingContext.Consumer>
+    <Fragment>
+      <CytoscapeComponent
+        elements={createElements(transfers, vaultEvents)}
+        style={ { width: '100vw', height: '100%', fontSize: '14px' } }
+        stylesheet={stylesheet}
+        layout={layout}
+      />
+    </Fragment>
   )
 }
 
-export default TransfersGraph
+TransfersGraph.propTypes = {
+  transfers: PropTypes.array.isRequired,
+  vaultEvents: PropTypes.array.isRequired
+}
+
+export default withDatabase(withObservables([], ({ database }) => ({
+  transfers: database.collections.get('lp_events').query(
+    Q.where('event', 'Transfer')
+  ).observe(),
+  vaultEvents : database.collections.get('vault_events').query().observe()
+}))(TransfersGraph))

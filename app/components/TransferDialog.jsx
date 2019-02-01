@@ -10,34 +10,42 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { getTokenLabel } from '../utils/currencies'
 import { toWei } from '../utils/conversions'
-import { FundingContext } from '../context'
 
 const { transfer } = LiquidPledging.methods
 
-const TransferDialog = ({ row, handleClose, transferPledgeAmounts }) => (
+const TransferDialog = ({ row, handleClose }) => (
   <Formik
     initialValues={{}}
-  onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
-    const { id } = row
-    const { idSender, amount, idReceiver } = values
-    const args = [idSender, id, toWei(amount.toString()), idReceiver]
-    const toSend = transfer(...args);
-    const estimatedGas = await toSend.estimateGas();
+    onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
+      const { pledgeId, pledge } = row
+      const { idSender, amount, idReceiver } = values
+      const args = [idSender, pledgeId, toWei(amount.toString()), idReceiver]
+      const toSend = transfer(...args)
+      const estimatedGas = await toSend.estimateGas()
 
-    toSend.send({gas: estimatedGas + 1000})
-          .then(res => {
-            console.log({res})
-            const { events: { Transfer: { returnValues } } } = res
-            transferPledgeAmounts(returnValues)
-          })
-          .catch(e => {
-            console.log({e})
-          })
-          .finally(() => {
-            handleClose()
-            resetForm()
-          })
-  }}
+      toSend
+        .send({gas: estimatedGas + 1000})
+        .then(async res => {
+          console.log({res})
+          const { events: { Transfer } } = res
+          if (Array.isArray(Transfer)) {
+            Transfer.forEach(async t => {
+              const { to, amount } = t.returnValues
+              await pledge.transferTo(to, amount)
+            })
+          } else {
+            const { to, amount } = Transfer.returnValues
+            await pledge.transferTo(to, amount)
+          }
+        })
+        .catch(e => {
+          console.log({e})
+        })
+        .finally(() => {
+          handleClose()
+          resetForm()
+        })
+    }}
   >
     {({
        values,
@@ -60,7 +68,7 @@ const TransferDialog = ({ row, handleClose, transferPledgeAmounts }) => (
           <DialogTitle id="form-dialog-title">Transfer Funds</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {`Transfer ${values.amount || ''}  ${values.amount ? getTokenLabel(row[6]) : ''} from Pledge ${row.id} ${values.idReceiver ? 'to Giver/Delegate/Project' : ''} ${values.idReceiver || ''}`}
+              {`Transfer ${values.amount || ''}  ${values.amount ? getTokenLabel(row[6]) : ''} from Pledge ${row.pledgeId} ${values.idReceiver ? 'to Giver/Delegate/Project' : ''} ${values.idReceiver || ''}`}
             </DialogContentText>
             <TextField
               autoFocus

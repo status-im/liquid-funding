@@ -47,9 +47,6 @@ const styles = theme => ({
   appBarBg: {
     backgroundColor: '#111735'
   },
-  childrenShift: {
-    width: `calc(100% - ${drawerWidth}px)`
-  },
   menuButton: {
     marginLeft: 12,
     marginRight: 20,
@@ -195,9 +192,7 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <div className={classNames(classes.appBar, {
-            [classes.childrenShift]: open,
-          })}>
+          <div className={classNames(classes.appBar)}>
             <Switch>
               <Route path="/(|dashboard)" component={Dashboard} />
               <Route path="/admin" component={ContractAdmin} />

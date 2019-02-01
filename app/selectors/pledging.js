@@ -9,6 +9,7 @@ const getWithdraws = state => state.vaultEvents.filter(
   event => event.event === 'AuthorizePayment'
 )
 export const getPledges = state => state.allPledges
+const pluckPledges = state => state.pledges
 
 export const getTransfersMemo = createSelector(
   getTransfers,
@@ -20,7 +21,7 @@ export const getDeposits = transfers => transfers.filter(
 )
 
 const getDepositsSelector = createSelector(
-  getTransfersMemo,
+  ({ transfers }) => transfers,
   getDeposits
 )
 
@@ -35,19 +36,27 @@ const pledgesWaitingCommit = pledges => {
 }
 
 export const getPledgesWaitingCommit = createSelector(
-  getPledges,
+  pluckPledges,
   pledgesWaitingCommit
 )
 
 const formatAndSumDepositWithdraws = (deposits, pledges, withdraws) => {
   const tokens = {}
+  let incomplete = false
   deposits.forEach(deposit => {
     const { amount, to } = deposit.returnValues
-    const { token } = pledges.find(p => Number(p.id) === Number(to))
+    const pledge = pledges.find(p => Number(p.pledgeId) === Number(to))
+    if (!pledge) {
+      incomplete = true
+      return
+    }
+    const { token } = pledge
     const tokenName = getTokenLabel(token)
     if (tokens[tokenName]) tokens[tokenName]['deposits'] = BigInt(tokens[tokenName]['deposits']) + BigInt(amount)
     else tokens[tokenName] = { 'deposits': BigInt(amount) }
   })
+
+  if (incomplete) return {}
 
   withdraws
     .filter(w => !isNaN(Number(w.returnValues.ref.slice(2))))
@@ -70,7 +79,7 @@ const formatAndSumDepositWithdraws = (deposits, pledges, withdraws) => {
 }
 export const getDepositWithdrawTotals = createSelector(
   getDepositsSelector,
-  getPledges,
+  pluckPledges,
   getWithdraws,
   formatAndSumDepositWithdraws
 )
