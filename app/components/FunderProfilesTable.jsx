@@ -3,6 +3,7 @@ import MaterialTable from 'material-table'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import withObservables from '@nozbe/with-observables'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
+import ProfileUrlViewer from './image/ProfileUrlViewer'
 import { FundingContext } from '../context'
 
 const { cancelProject } = LiquidPledging.methods
@@ -47,6 +48,7 @@ const FunderProfilesTable = ({ profiles }) => (
               }
             })
           ]}
+          detailPanel={rowData => <ProfileUrlViewer url={rowData.url} />}
         />
       </Fragment>
     }

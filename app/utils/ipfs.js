@@ -3,7 +3,7 @@ import fileReaderPullStream from 'pull-file-reader'
 import { Matcher } from '@areknawo/rex'
 import { getImageType } from './images'
 
-const ipfsMatcher = new Matcher().begin().find('/ipfs/')
+const ipfsMatcher = new Matcher().begin().find('ipfs/')
 const ipfs = new IPFS()
 
 export const isIpfs = str => ipfsMatcher.test(str)
@@ -36,18 +36,24 @@ const saveToIpfs = (file, cb, imgCb) => {
 }
 
 export const getImageFromIpfs = async (hash, cb) => {
+  const res = await getFromIpfs(hash)
+  cb(res)
+};
+
+export const getFromIpfs = async hash => {
   const files = await getFile(hash)
   const file = files.slice(-1)[0]
   const { content } = file
   const arrayBufferView = new Uint8Array(content)
   const blob = new Blob([ arrayBufferView ], { type: getImageType(file) })
   const img = URL.createObjectURL(blob)
-  cb({ ...file, img })
-};
+  return { ...file, img }
+}
 
 export const getFile = CID => {
+  const clean = CID.split('/').slice(-1)[0]
   return new Promise(function(resolve, reject) {
-    ipfs.get(CID, function (err, files) {
+    ipfs.get(clean, function (err, files) {
       if (err) reject(err)
       else resolve(files)
     })
