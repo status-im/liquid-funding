@@ -10,14 +10,21 @@ export const captureFile = (event, cb, imgCb) => {
   event.stopPropagation()
   event.preventDefault()
   const file = event.target.files[0]
+  console.log({file})
   saveToIpfs(file, cb, imgCb)
 }
 
-
+const formatForIpfs = file => {
+  const { name, type } = file
+  const content = fileReaderPullStream(file)
+  return [{
+    path:  `/root/${name}`,
+    content
+  }]
+}
 const saveToIpfs = (file, cb, imgCb) => {
   let ipfsId
-  const fileStream = fileReaderPullStream(file)
-  ipfs.add(fileStream, { progress: (prog) => console.log(`received: ${prog}`) })
+  ipfs.add(formatForIpfs(file), { progress: (prog) => console.log(`received: ${prog}`) })
     .then((response) => {
       console.log(response)
       ipfsId = response[0].hash
@@ -30,12 +37,13 @@ const saveToIpfs = (file, cb, imgCb) => {
 }
 
 export const getImageFromIpfs = async (hash, cb) => {
-  const files = await getFile(hash);
-  const { content } = files[0];
-  const arrayBufferView = new Uint8Array(content);
-  const blob = new Blob([ arrayBufferView ], { type: "image/jpeg" });
-  const img = URL.createObjectURL(blob);
-  cb(img)
+  const files = await getFile(hash)
+  const file = files.slice(-1)[0]
+  const { content } = file
+  const arrayBufferView = new Uint8Array(content)
+  const blob = new Blob([ arrayBufferView ], { type: "image/jpeg" })
+  const img = URL.createObjectURL(blob)
+  cb({ ...file, img })
 };
 
 export const getFile = CID => {

@@ -162,7 +162,7 @@ const AddFunder = ({ appendFundProfile }) => (
           onBlur={handleBlur}
           value={values.funderDescription || ''}
         />
-        {status && status.profileImg && <img src={status.profileImg} alt='ipfs' style={{maxWidth: '90%'}} />}
+        {status && status.profileImg && <img src={status.profileImg.img} alt='ipfs' style={{maxWidth: '90%'}} />}
         <TextField
           id="commitTime"
           name="commitTime"
