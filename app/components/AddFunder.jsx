@@ -9,7 +9,8 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import web3 from 'Embark/web3'
 import { MySnackbarContentWrapper } from './base/SnackBars'
-import { captureFile, isIpfs } from '../utils/ipfs'
+import { captureFile } from '../utils/ipfs'
+import ImageViewer from './image/ImageViewer'
 
 const { addGiver, addDelegate, addProject } = LiquidPledging.methods
 const FUNDER = 'FUNDER'
@@ -162,7 +163,8 @@ const AddFunder = ({ appendFundProfile }) => (
           onBlur={handleBlur}
           value={values.funderDescription || ''}
         />
-        {status && status.profileImg && <img src={status.profileImg.img} alt='ipfs' style={{maxWidth: '90%'}} />}
+        {/* {status && status.profileImg && <img src={status.profileImg.img} alt='ipfs' style={{maxWidth: '90%'}} />} */}
+        {status && <ImageViewer status={status} />}
         <TextField
           id="commitTime"
           name="commitTime"
