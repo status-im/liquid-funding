@@ -17,6 +17,7 @@ export default class Pledge extends LiquidModel {
   @field('n_delegates') nDelegates
   @field('intended_project') intendedProject
   @field('pledge_state') pledgeState
+  @field('block_number') blockNumber
   @relation('profiles', 'profile_id') profile
 
   @action async transferTo(to, amount) {
@@ -32,5 +33,16 @@ export default class Pledge extends LiquidModel {
         pledge.amount = (BigInt(pledge.amount) + BigInt(amount)).toString()
       })
     )
+  }
+
+  @action async updateFields(newPledge) {
+    const { amount, nDelegates, pledgeState, blockNumber } = newPledge
+    this.prepareUpdate(pledge => {
+      pledge.amount = amount
+      pledge.nDelegates = Number(nDelegates)
+      pledge.pledgeState = pledgeState
+      pledge.blockNumber = blockNumber
+    })
+
   }
 }

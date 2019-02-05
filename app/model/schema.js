@@ -33,7 +33,8 @@ export default appSchema({
         { name: 'type', type: 'string' },
         { name: 'name', type: 'string' },
         { name: 'url', type: 'string' },
-        { name: 'id_profile', type: 'number', isIndexed: true }
+        { name: 'id_profile', type: 'number', isIndexed: true },
+        { name: 'block_number', type: 'number', isIndexed: true }
       ]
     }),
     tableSchema({
@@ -47,7 +48,8 @@ export default appSchema({
         { name: 'n_delegates', type: 'number' },
         { name: 'intended_project', type: 'number' },
         { name: 'pledge_state', type: 'number' },
-        { name: 'profile_id', type: 'string', isIndexed: true }
+        { name: 'profile_id', type: 'string', isIndexed: true },
+        { name: 'block_number', type: 'number', isIndexed: true }
       ]
     })
   ]

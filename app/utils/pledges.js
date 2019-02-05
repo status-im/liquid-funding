@@ -1,10 +1,13 @@
+import web3 from 'Embark/web3'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 
 const { getPledgeAdmin, numberOfPledges, getPledge } = LiquidPledging.methods
 export const formatPledge = async (pledgePromise, idx) => {
   const pledge = await pledgePromise
+  const blockNumber = await web3.eth.getBlockNumber()
   return {
     ...pledge,
+    blockNumber,
     id: idx + 1
   }
 }
@@ -16,6 +19,14 @@ export const getAllPledges = async (start = 1) => {
     pledges.push(getPledge(i).call())
   }
    return Promise.all(pledges.map(formatPledge))
+}
+
+export const getPledges = async (pledges = []) => {
+  const updated = []
+  pledges.forEach(p => {
+    updated[p.pledgeId] = getPledge(p.pledgeId - 1).call()
+  })
+  return Promise.all(updated.map(formatPledge))
 }
 
 export const appendToExistingPledges = async (pledges, setState) => {

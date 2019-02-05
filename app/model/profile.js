@@ -16,6 +16,7 @@ export default class Profile extends LiquidModel {
   @field('name') name
   @field('url') url
   @field('id_profile') idProfile
+  @field('block_number') blockNumber
   @children('pledges') pledges
 
   @action async markAsCanceled() {

@@ -10,7 +10,7 @@ import MainCointainer from './components/MainCointainer'
 import { getAndAddLpEvents } from './actions/lpEvents'
 import { getAndAddVaultEvents } from './actions/vaultEvents'
 import { addFormattedProfiles } from './actions/profiles'
-import { getAndAddPledges } from './actions/pledges'
+import { updateStalePledges, getAndAddPledges } from './actions/pledges'
 
 const { getNetworkType } = web3.eth.net
 
@@ -53,6 +53,7 @@ class App extends React.Component {
     await getAndAddVaultEvents()
     await getAndAddPledges()
     await addFormattedProfiles()
+    await updateStalePledges()
     this.setState({ loading: false })
   }
 
