@@ -8,7 +8,7 @@ import CreateFunding from './CreateFunding'
 
 const FundsManagement = ({ open }) => {
   const windowWidth = window.visualViewport.width
-  const maxWidth = open ? `${windowWidth * 0.80}px` : '100vw'
+  const maxWidth = open ? `${windowWidth * 0.80}px` : '90vw'
   const WebkitTransition = 'all 0.25s ease-out 0s'
   return (
     <FundingContext.Consumer>

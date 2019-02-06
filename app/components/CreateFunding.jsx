@@ -29,33 +29,33 @@ const CreateFunding = ({ refreshTable }) => (
       const toSend =  donate(...args);
 
       const estimateGas = await toSend.estimateGas();
-     
+      
       toSend.send({ from: account, gas: estimateGas + 2000 })
-        .then(res => {
-          console.log({res})
-          setStatus({
-            snackbar: { variant: 'success', message: 'funding provided!' }
-          })
-          refreshTable()
-        })
-        .catch(e => {
-          console.log({e})
-          setStatus({
-            snackbar: { variant: 'error', message: 'There was an error' }
-          })
-        })
+            .then(res => {
+              console.log({res})
+              setStatus({
+                snackbar: { variant: 'success', message: 'funding provided!' }
+              })
+              refreshTable()
+            })
+            .catch(e => {
+              console.log({e})
+              setStatus({
+                snackbar: { variant: 'error', message: 'There was an error' }
+              })
+            })
     }}
   >
     {({
-       values,
-       errors,
-       touched,
-       handleChange,
-       handleBlur,
-       handleSubmit,
-       setFieldValue,
-       setStatus,
-       status
+      values,
+      errors,
+      touched,
+      handleChange,
+      handleBlur,
+      handleSubmit,
+      setFieldValue,
+      setStatus,
+      status
     }) => (
       <form autoComplete="off" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <TextField
@@ -95,11 +95,13 @@ const CreateFunding = ({ refreshTable }) => (
         >
           {currencies.map(option => (
             <MenuItem style={{ display: 'flex', alignItems: 'center' }} key={option.value} value={option.value}>
-              {option.icon || <img
-                                src={option.img || `${TOKEN_ICON_API}/${option.value}.png`}
-                                style={{ width: '3%', marginRight: '3%' }}
-              />}
-              {option.label}
+              <div style={{ display: 'flex', alignItems: 'center' }} >
+                {option.icon || <img
+                                  src={option.img || `${TOKEN_ICON_API}/${option.value}.png`}
+                                  style={{ width: option.width, marginRight: '3%' }}
+                />}
+                {option.label}
+              </div>
             </MenuItem>
           ))}
         </TextField>
