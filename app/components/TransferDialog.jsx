@@ -68,7 +68,7 @@ const TransferDialog = ({ row, handleClose }) => (
           <DialogTitle id="form-dialog-title">Transfer Funds</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {`Transfer ${values.amount || ''}  ${values.amount ? getTokenLabel(row[6]) : ''} from Pledge ${row.pledgeId} ${values.idReceiver ? 'to Giver/Delegate/Project' : ''} ${values.idReceiver || ''}`}
+              {`Transfer ${values.amount || ''}  ${values.amount && row ? getTokenLabel(row.pledge.token) : ''} from Pledge ${row.pledgeId} ${values.idReceiver ? 'to Giver/Delegate/Project' : ''} ${values.idReceiver || ''}`}
             </DialogContentText>
             <TextField
               autoFocus
