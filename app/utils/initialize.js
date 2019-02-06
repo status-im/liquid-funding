@@ -25,19 +25,19 @@ export const vaultPledgingNeedsInit = async () => {
   return needsInit
 }
 
-export const standardTokenApproval = async () => {
-  const { approve } = SNT.methods
+export const standardTokenApproval = async (contract, amount = '10000000') => {
+  const { methods: { approve } } = contract || SNT
   const spender = LiquidPledging._address
   return await approve(
     spender,
-    web3.utils.toWei('10000000', 'tether')
+    web3.utils.toWei(amount, 'tether')
   ).send()
 }
 
-export const getLpAllowance = async () => {
-  const { allowance } = SNT.methods
+export const getLpAllowance = async contract => {
+  const { methods: { allowance } } = contract || SNT
   const account = await web3.eth.getCoinbase()
   const spender = LiquidPledging._address
-  const allowanceAmt = Number(await allowance(account, spender).call())
+  const allowanceAmt = await allowance(account, spender).call()
   return allowanceAmt
 }

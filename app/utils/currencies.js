@@ -1,4 +1,4 @@
-import StandardToken from 'Embark/contracts/StandardToken'
+import web3 from 'Embark/web3'
 import SNT from 'Embark/contracts/SNT'
 import sntIco from 'cryptocurrency-icons/svg/color/snt.svg'
 
@@ -15,7 +15,8 @@ export const currencies = [
   {
     value: SNT._address,
     label: 'Status (SNT)',
-    img: sntIco
+    img: sntIco,
+    contract: SNT
   },
   {
     value: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
