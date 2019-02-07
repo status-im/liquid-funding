@@ -112,7 +112,7 @@ class PledgesTable extends Component {
             }
           ]}
         />
-        {rowData && <WithdrawCard rowData={rowData} clearRowData={this.clearRowData} />}
+        {rowData ? <WithdrawCard rowData={rowData} clearRowData={this.clearRowData} /> : <div/>}
       </Fragment>
     )
   }

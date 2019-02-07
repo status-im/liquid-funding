@@ -9,11 +9,12 @@ import CreateFunding from './CreateFunding'
 const FundsManagement = ({ open }) => {
   const windowWidth = window.visualViewport.width
   const maxWidth = open ? `${windowWidth * 0.80}px` : '90vw'
+  const height = `${window.visualViewport.height * 2.2}px`
   const WebkitTransition = 'all 0.25s ease-out 0s'
   return (
     <FundingContext.Consumer>
       {({ appendPledges, appendFundProfile }) =>
-        <div style={{ maxWidth, WebkitTransition }}>
+        <div style={{ maxWidth, WebkitTransition, height, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <PledgesTable />
           <FunderProfilesTable />
           <AddFunder appendFundProfile={appendFundProfile} />
