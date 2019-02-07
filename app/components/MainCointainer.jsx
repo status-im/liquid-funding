@@ -1,5 +1,5 @@
-import React from 'react';
-import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import React, { Suspense, lazy } from 'react';
+import { HashRouter as Route, Link, Switch } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -19,10 +19,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import { ScaleLoader } from 'react-spinners'
-import FundsManagement from './FundsManagement'
-import ContractAdmin from './ContractAdmin'
-import TransferGraph from './TransfersGraph'
-import Dashboard from './Dashboard'
+
+const Dashboard = lazy(() => import('./Dashboard'))
+const TransferGraph = lazy(() => import('./TransfersGraph'))
+const FundsManagement = lazy(() => import('./FundsManagement'))
+const ContractAdmin = lazy(() => import('./ContractAdmin'))
 
 const drawerWidth = 240
 
@@ -123,14 +124,14 @@ class PersistentDrawerLeft extends React.Component {
               className={classNames(classes.menuButton, open && !loading && classes.hide)}
             >
               {loading
-               ? <ScaleLoader
-                   sizeUnit={"px"}
-                   height={20}
-                   width={2}
-                   margin="3px"
-                   color={'#FFFFFF'}
-               />
-               : <MenuIcon />}
+              ? <ScaleLoader
+                  sizeUnit={"px"}
+                  height={20}
+                  width={2}
+                  margin="3px"
+                  color={'#FFFFFF'}
+              />
+              : <MenuIcon />}
             </IconButton>
             <Typography variant="h6" color="inherit" noWrap>
               Liquid Funding
@@ -193,13 +194,15 @@ class PersistentDrawerLeft extends React.Component {
         >
           <div className={classes.drawerHeader} />
           <div className={classNames(classes.appBar)}>
-            <Switch>
-              <Route path="/(|dashboard)" component={Dashboard} />
-              <Route path="/admin" component={ContractAdmin} />
-              <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
-              <Route path="/insights" component={TransferGraph} />
-            </Switch>
-            {this.props.children}
+            <Suspense fallback={<div>Loading...</div>}>
+              <Switch>
+                <Route path="/(|dashboard)" component={Dashboard} />
+                <Route path="/admin" component={ContractAdmin} />
+                <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
+                <Route path="/insights" component={TransferGraph} />
+              </Switch>
+            </Suspense>
+              {this.props.children}
           </div>
         </main>
       </div>
