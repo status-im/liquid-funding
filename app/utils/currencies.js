@@ -7,10 +7,10 @@ export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tok
 export const TOKEN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/tokens'
 export const currencies = [
   {
-    value: 'ETH',
-    label: 'Ether',
+    value: 'WETH',
+    label: 'Wrapped Ether',
     img: `${TOKEN_COIN_API}/60.png`,
-    width: '10%'
+    width: '5%'
   },
   {
     value: SNT._address,
@@ -22,7 +22,7 @@ export const currencies = [
     value: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
     label: 'DAI',
     img: `${TOKEN_API}/0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359.png`,
-    width: '10%'
+    width: '5%'
   }
 ]
 
