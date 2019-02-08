@@ -61,7 +61,7 @@ const CreateFunding = ({ refreshTable }) => {
 
   useEffect(() => {
     if (account) updateBalancesAllowances()
-  }, account)
+  }, [account])
 
   return (
     <Formik
