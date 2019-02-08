@@ -20,6 +20,7 @@ export default appSchema({
         { name: 'address', type: 'string' },
         { name: 'event', type: 'string', isIndexed: true },
         { name: 'block_number', type: 'number', isIndexed: true },
+        { name: 'ref', type: 'number', isIndexed: true },
         { name : 'return_values', type: 'string', isOptional: true }
       ]
     }),

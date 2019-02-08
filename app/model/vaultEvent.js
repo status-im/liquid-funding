@@ -14,6 +14,8 @@ export default class VaultEvent extends Model {
 
   @field('block_number') blockNumber
 
+  @field('ref') ref
+
   @json('return_values', sanitizeValues) returnValues
 
   @action async addEvent(data) {

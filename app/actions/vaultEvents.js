@@ -1,6 +1,6 @@
 import { Q } from '@nozbe/watermelondb'
 import database from '../db'
-import { ALL_EVENTS, getAllVaultEvents } from '../utils/events'
+import { getAllVaultEvents } from '../utils/events'
 
 const vaultCollection = database.collections.get('vault_events')
 export const addEvent = async data => {
@@ -16,6 +16,7 @@ export const addEvent = async data => {
   })
 }
 
+const hexToDecimal = hex => Number(parseInt(hex, 16))
 export const batchAddEvents = async events => {
   const batch = events.map(e => {
     return vaultCollection.prepareCreate(lpEvent => {
@@ -24,6 +25,7 @@ export const batchAddEvents = async events => {
       lpEvent.address = address
       lpEvent.event = event
       lpEvent.blockNumber = blockNumber
+      lpEvent.ref = hexToDecimal(returnValues.ref)
       lpEvent.returnValues = returnValues
     })
   })
