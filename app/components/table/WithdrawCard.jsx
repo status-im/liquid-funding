@@ -11,36 +11,15 @@ import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
-import indigo from '@material-ui/core/colors/indigo'
-import blueGrey from '@material-ui/core/colors/blueGrey'
 import Collapse from '@material-ui/core/Collapse'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import LPVault from 'Embark/contracts/LPVault'
 import { getTokenLabel } from '../../utils/currencies'
 import { toWei } from '../../utils/conversions'
+import styles from './CardStyles'
 
 const { withdraw } = LiquidPledging.methods
 const { confirmPayment } = LPVault.methods
-
-const styles = {
-  card: {
-    borderRadius: '0px',
-    borderTopStyle: 'groove',
-    borderBottom: '1px solid lightgray',
-    backgroundColor: indigo[50]
-  },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-  },
-  title: {
-    fontSize: 14,
-  },
-  amount: {
-    backgroundColor: blueGrey[50]
-  }
-}
 
 function Withdraw({ clearRowData, classes, rowData, authorizedPayment }) {
   const [show, setShow] = useState(null)
