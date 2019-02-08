@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Formik } from 'formik'
 import { withStyles } from '@material-ui/core/styles'
@@ -40,101 +40,104 @@ const styles = {
   }
 }
 
-class Withdraw extends PureComponent {
-  state = { show: null }
+function Withdraw({ clearRowData, classes, rowData }) {
+  const [show, setShow] = useState(null)
+  const [rowId, setRowId] = useState(rowData.pledgeId)
 
-  componentDidMount() {
-    this.setState({ show: true })
+  useEffect(() => {
+    setShow(true)
+  }, [])
+
+  useEffect(() => {
+    const { pledgeId } = rowData
+    const samePledge = rowId === pledgeId
+    if (show && samePledge) close()
+    else setRowId(pledgeId)
+  }, [rowData.timeStamp])
+
+  const close = () => {
+    setShow(false)
+    setTimeout(() => { clearRowData() }, 500)
   }
 
-  close = () => {
-    this.setState(
-      { show: false },
-      () => setTimeout(() => { this.props.clearRowData() }, 500)
-    )
-  }
-
-  render() {
-    const { classes, rowData } = this.props
-    const { show } = this.state
-    const isPaying = rowData[7] === "1"
-    return (
-      <FundingContext.Consumer>
+  const isPaying = rowData[7] === "1"
+  return (
+    <FundingContext.Consumer>
       {({ authorizedPayments }) =>
-      <Formik
-        initialValues={{}}
-        onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
-          const { amount } = values
-          const paymentId = isPaying ? authorizedPayments.find(r => r.ref === rowData.id)['idPayment'] : rowData.pledgeId
-          const args = isPaying ? [paymentId] : [paymentId, toWei(amount)]
-          const sendFn = isPaying ? confirmPayment : withdraw
-          try {
-            const toSend = sendFn(...args);
-            const estimateGas = await toSend.estimateGas();
-            toSend.send({ gas: estimateGas + 1000 })
-                  .then(res => {
-                    console.log({res})
-                  })
-                  .catch(e => {
-                    console.log({e})
-                  })
-                  .finally(() => {
-                    this.close()
-                  })
-          } catch (error) {
-            console.log(error)
-          }
-        }}
-      >
-        {({
-           values,
-           errors,
-           touched,
-           handleChange,
-           handleBlur,
-           handleSubmit,
-           setFieldValue,
-           setStatus,
-           status
-        }) => (
-          <Collapse in={show}>
-            <form autoComplete="off" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', marginBottom: '0px' }}>
-              <Card className={classes.card} elevation={0}>
-                <CardContent>
-                  <Typography variant="h6" component="h2">
-                    {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData[6]) : ''} from Pledge ${rowData.pledgeId}`}
-                  </Typography>
-                  {!isPaying && <TextField
-                    className={classes.amount}
-                    id="amount"
-                    name="amount"
-                    label="Amount"
-                    placeholder="Amount"
-                    margin="normal"
-                    variant="outlined"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.amount || ''}
-                  />}
-                </CardContent>
-                <CardActions>
-                  <Button size="large" onClick={this.close}>Cancel</Button>
-                  <Button size="large" color="primary" type="submit">{isPaying ? 'Confirm' : 'Withdraw'}</Button>
-                </CardActions>
-              </Card>
-            </form>
-          </Collapse>
-        )}
-      </Formik>
+        <Formik
+          initialValues={{}}
+          onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
+            const { amount } = values
+            const paymentId = isPaying ? authorizedPayments.find(r => r.ref === rowData.id)['idPayment'] : rowData.pledgeId
+            const args = isPaying ? [paymentId] : [paymentId, toWei(amount)]
+            const sendFn = isPaying ? confirmPayment : withdraw
+            try {
+              const toSend = sendFn(...args);
+              const estimateGas = await toSend.estimateGas();
+              toSend.send({ gas: estimateGas + 1000 })
+                    .then(res => {
+                      console.log({res})
+                    })
+                    .catch(e => {
+                      console.log({e})
+                    })
+                    .finally(() => {
+                      close()
+                    })
+            } catch (error) {
+              console.log(error)
+            }
+          }}
+          >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            setFieldValue,
+            setStatus,
+            status
+          }) => (
+            <Collapse in={show}>
+              <form autoComplete="off" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', marginBottom: '0px' }}>
+                <Card className={classes.card} elevation={0}>
+                  <CardContent>
+                    <Typography variant="h6" component="h2">
+                      {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData[6]) : ''} from Pledge ${rowData.pledgeId}`}
+                    </Typography>
+                    {!isPaying && <TextField
+                                    className={classes.amount}
+                                    id="amount"
+                                    name="amount"
+                                    label="Amount"
+                                    placeholder="Amount"
+                                    margin="normal"
+                                    variant="outlined"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.amount || ''}
+                    />}
+                  </CardContent>
+                  <CardActions>
+                    <Button size="large" onClick={close}>Cancel</Button>
+                    <Button size="large" color="primary" type="submit">{isPaying ? 'Confirm' : 'Withdraw'}</Button>
+                  </CardActions>
+                </Card>
+              </form>
+            </Collapse>
+          )}
+        </Formik>
       }
-      </FundingContext.Consumer>
-    )
-  }
+    </FundingContext.Consumer>
+  )
 }
 
 Withdraw.propTypes = {
   classes: PropTypes.object.isRequired,
-  rowData: PropTypes.object.isRequired
+  rowData: PropTypes.object.isRequired,
+  clearRowData: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(Withdraw)

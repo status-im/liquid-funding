@@ -106,13 +106,17 @@ class PledgesTable extends Component {
               icon: 'attach_money',
               tooltip: 'Request Withdrawl',
               onClick: (event, rowData) => {
+                const { timeStamp } = event
                 console.log({rowData})
-                this.setState({ rowData })
+                this.setState({
+                  rowData: { ...rowData, timeStamp }
+                })
               }
             }
           ]}
         />
-        {rowData ? <WithdrawCard rowData={rowData} clearRowData={this.clearRowData} /> : <div/>}
+        {!rowData && <div/>}
+        {rowData && <WithdrawCard rowData={rowData} clearRowData={this.clearRowData} />}
       </Fragment>
     )
   }
