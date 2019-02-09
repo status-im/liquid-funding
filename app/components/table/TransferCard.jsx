@@ -38,27 +38,27 @@ function TransferCard({ row, handleClose, classes }) {
         const estimatedGas = await toSend.estimateGas()
 
         toSend
-                                         .send({gas: estimatedGas + 1000})
-                                         .then(async res => {
-                                           console.log({res})
-                                           const { events: { Transfer } } = res
-                                           if (Array.isArray(Transfer)) {
-                                             Transfer.forEach(async t => {
-                                               const { to, amount } = t.returnValues
-                                               await pledge.transferTo(to, amount)
-                                             })
-                                           } else {
-                                             const { to, amount } = Transfer.returnValues
-                                             await pledge.transferTo(to, amount)
-                                           }
-                                         })
-                                         .catch(e => {
-                                           console.log({e})
-                                         })
-                                         .finally(() => {
-                                           close()
-                                           resetForm()
-                                         })
+          .send({gas: estimatedGas + 1000})
+          .then(async res => {
+            console.log({res})
+            const { events: { Transfer } } = res
+            if (Array.isArray(Transfer)) {
+              Transfer.forEach(async t => {
+                const { to, amount } = t.returnValues
+                await pledge.transferTo(to, amount)
+              })
+            } else {
+              const { to, amount } = Transfer.returnValues
+              await pledge.transferTo(to, amount)
+            }
+          })
+          .catch(e => {
+            console.log({e})
+          })
+          .finally(() => {
+            close()
+            resetForm()
+          })
       }}
     >
       {({
@@ -73,7 +73,7 @@ function TransferCard({ row, handleClose, classes }) {
         setStatus,
         status
       }) => (
-        <Collapse in={show} classes={{ wrapper: classes.container }}>
+        <Collapse in={show} >
           <form onSubmit={handleSubmit} autoComplete="off">
             <Card className={classes.card} elevation={0}>
               <CardContent>

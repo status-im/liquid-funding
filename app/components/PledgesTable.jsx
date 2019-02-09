@@ -68,15 +68,13 @@ class PledgesTable extends Component {
   }
 
   handleClose = () => {
-    this.setState({ row: false })
+    this.setState({ rowData: null })
   }
 
-  clearRowData = () => this.setState({ rowData: null })
-
   render() {
-    const { data, row, rowData } = this.state
+    const { data, rowData } = this.state
     return (
-      <Fragment>
+      <div>
         <MaterialTable
           columns={[
             { title: 'Pledge Id', field: 'pledgeId', type: 'numeric' },
@@ -96,7 +94,10 @@ class PledgesTable extends Component {
               icon: 'compare_arrows',
               tooltip: 'Transfer funds',
               onClick: (event, rowData) => {
-                this.handleClickOpen(rowData)
+                const { timeStamp } = event
+                this.setState({
+                  rowData: { ...rowData, timeStamp, type: 'transfer' }
+                })
               }
             },
             {
@@ -106,16 +107,16 @@ class PledgesTable extends Component {
                 const { timeStamp } = event
                 console.log({rowData})
                 this.setState({
-                  rowData: { ...rowData, timeStamp }
+                  rowData: { ...rowData, timeStamp, type: 'withdraw' }
                 })
               }
             }
           ]}
         />
-      {!rowData && <div/>}
-      {rowData && <WithdrawCard rowData={rowData} clearRowData={this.clearRowData} />}
-      {row && <TransferCard row={row} handleClose={this.handleClose} />}
-      </Fragment>
+        {!rowData && <div/>}
+        {rowData && rowData.type === 'withdraw' && <WithdrawCard rowData={rowData} handleClose={this.handleClose} />}
+        {rowData && rowData.type === 'transfer' && <TransferCard row={rowData} handleClose={this.handleClose} />}
+      </div>
     )
   }
 }
