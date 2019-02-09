@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import { Formik } from 'formik'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
@@ -12,21 +13,12 @@ import Collapse from '@material-ui/core/Collapse'
 import { getTokenLabel } from '../../utils/currencies'
 import { toWei } from '../../utils/conversions'
 import styles from './CardStyles'
+import { useRowData } from './hooks'
 
 const { transfer } = LiquidPledging.methods
 
 function TransferCard({ row, handleClose, classes }) {
-  const [show, setShow] = useState(null)
-
-  useEffect(() => {
-    setShow(true)
-  }, [])
-
-  const close = () => {
-    setShow(false)
-    setTimeout(() => { handleClose() }, 500)
-  }
-
+  const { show, close } = useRowData(row, handleClose)
   return (
     <Formik
       initialValues={{}}
@@ -124,10 +116,10 @@ function TransferCard({ row, handleClose, classes }) {
                   value={values.idReceiver || ''}
                 />
                 <CardActions>
-                  <Button onClick={close} color="primary">
+                  <Button size="large" onClick={close}>
                     Cancel
                   </Button>
-                  <Button onClick={submitForm} color="primary" type="submit">
+                  <Button size="large" onClick={submitForm} color="primary" type="submit">
                     Transfer
                   </Button>
                 </CardActions>
@@ -138,6 +130,12 @@ function TransferCard({ row, handleClose, classes }) {
       )}
     </Formik>
   )
+}
+
+TransferCard.propTypes = {
+  classes: PropTypes.object.isRequired,
+  row: PropTypes.object.isRequired,
+  handleClose: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(TransferCard)
