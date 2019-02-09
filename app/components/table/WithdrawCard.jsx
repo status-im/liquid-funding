@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
@@ -17,30 +17,13 @@ import LPVault from 'Embark/contracts/LPVault'
 import { getTokenLabel } from '../../utils/currencies'
 import { toWei } from '../../utils/conversions'
 import styles from './CardStyles'
+import { useRowData } from './hooks'
 
 const { withdraw } = LiquidPledging.methods
 const { confirmPayment } = LPVault.methods
 
 function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
-  const [show, setShow] = useState(null)
-  const [rowId, setRowId] = useState(rowData.pledgeId)
-
-  useEffect(() => {
-    setShow(true)
-  }, [])
-
-  useEffect(() => {
-    const { pledgeId } = rowData
-    const samePledge = rowId === pledgeId
-    if (show && samePledge) close()
-    else setRowId(pledgeId)
-  }, [rowData.timeStamp])
-
-  const close = () => {
-    setShow(false)
-    setTimeout(() => { handleClose() }, 500)
-  }
-
+  const { show, close } = useRowData(rowData, handleClose)
   const isPaying = rowData.pledgeState === 'Paying'
   return (
     <Formik
