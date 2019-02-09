@@ -5,6 +5,7 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { toEther } from '../utils/conversions'
 import { getTokenLabel } from '../utils/currencies'
 import TransferDialog from './TransferDialog'
+import TransferCard from './table/TransferCard'
 import WithdrawCard from './table/WithdrawCard'
 
 const convertToHours = seconds => seconds / 60 / 60
@@ -76,10 +77,6 @@ class PledgesTable extends Component {
     const { data, row, rowData } = this.state
     return (
       <Fragment>
-        <TransferDialog
-          row={row}
-          handleClose={this.handleClose}
-        />
         <MaterialTable
           columns={[
             { title: 'Pledge Id', field: 'pledgeId', type: 'numeric' },
@@ -115,8 +112,9 @@ class PledgesTable extends Component {
             }
           ]}
         />
-        {!rowData && <div/>}
-        {rowData && <WithdrawCard rowData={rowData} clearRowData={this.clearRowData} />}
+      {!rowData && <div/>}
+      {rowData && <WithdrawCard rowData={rowData} clearRowData={this.clearRowData} />}
+      {row && <TransferCard row={row} handleClose={this.handleClose} />}
       </Fragment>
     )
   }
