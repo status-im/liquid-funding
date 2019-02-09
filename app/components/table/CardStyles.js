@@ -8,9 +8,6 @@ const styles = {
     borderBottom: '1px solid lightgray',
     backgroundColor: indigo[50]
   },
-  container: {
-    height: '35%'
-  },
   bullet: {
     display: 'inline-block',
     margin: '0 2px',

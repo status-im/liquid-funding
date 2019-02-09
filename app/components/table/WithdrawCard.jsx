@@ -21,7 +21,7 @@ import styles from './CardStyles'
 const { withdraw } = LiquidPledging.methods
 const { confirmPayment } = LPVault.methods
 
-function Withdraw({ clearRowData, classes, rowData, authorizedPayment }) {
+function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
   const [show, setShow] = useState(null)
   const [rowId, setRowId] = useState(rowData.pledgeId)
 
@@ -38,7 +38,7 @@ function Withdraw({ clearRowData, classes, rowData, authorizedPayment }) {
 
   const close = () => {
     setShow(false)
-    setTimeout(() => { clearRowData() }, 500)
+    setTimeout(() => { handleClose() }, 500)
   }
 
   const isPaying = rowData.pledgeState === 'Paying'
@@ -53,16 +53,17 @@ function Withdraw({ clearRowData, classes, rowData, authorizedPayment }) {
         try {
           const toSend = sendFn(...args)
           const estimateGas = await toSend.estimateGas()
-          toSend.send({ gas: estimateGas + 1000 })
-                                          .then(res => {
-                                            console.log({res})
-                                          })
-                                          .catch(e => {
-                                            console.log({e})
-                                          })
-                                          .finally(() => {
-                                            close()
-                                          })
+          toSend
+            .send({ gas: estimateGas + 1000 })
+            .then(res => {
+              console.log({res})
+            })
+            .catch(e => {
+              console.log({e})
+            })
+            .finally(() => {
+              close()
+            })
         } catch (error) {
           console.log(error)
         }
@@ -114,7 +115,7 @@ function Withdraw({ clearRowData, classes, rowData, authorizedPayment }) {
 Withdraw.propTypes = {
   classes: PropTypes.object.isRequired,
   rowData: PropTypes.object.isRequired,
-  clearRowData: PropTypes.func.isRequired,
+  handleClose: PropTypes.func.isRequired,
   authorizedPayment: PropTypes.array.isRequired
 }
 
