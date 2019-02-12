@@ -15,7 +15,7 @@ const styles = theme => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '1fr 5fr',
-    gridTemplateRows: '1fr 7fr',
+    gridTemplateRows: '1fr 4fr',
     gridColumnGap: '1em',
     gridRowGap: '36px',
     margin: '1.75rem 4.5rem'
@@ -87,27 +87,13 @@ function Project({ classes }) {
         </Typography>
       </div>
       <div className={classes.secondRow}>
-        <Card className={classes.card}>
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              alt="video"
-              className={classes.media}
-              height="140"
-              src="https://images.pexels.com/photos/1464143/pexels-photo-1464143.jpeg?cs=srgb&dl=background-camera-close-up-1464143.jpg&fm=jpg"
-              title="media-description"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="h2">
-                Lizard
-              </Typography>
-              <Typography component="p">
-                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                across all continents except Antarctica
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
+        <CardMedia
+          component="img"
+          alt="video"
+          className={classes.media}
+          src="https://images.pexels.com/photos/1464143/pexels-photo-1464143.jpeg?cs=srgb&dl=background-camera-close-up-1464143.jpg&fm=jpg"
+          title="media-description"
+        />
 
         <div className={classes.infoBox}>
           <div className={classes.infoBoxSection}>
