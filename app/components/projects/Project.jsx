@@ -7,6 +7,7 @@ import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import CardActionArea from '@material-ui/core/CardActionArea'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import Avatar from '@material-ui/core/Avatar'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
@@ -54,7 +55,7 @@ const styles = theme => ({
   },
   infoBox: {
     display: 'grid',
-    gridTemplateRows: '2.5rem 2.5rem 2.5rem 2.5rem',
+    gridTemplateRows: '0rem 2.5rem 2.5rem 2.5rem',
     gridRowGap: '2rem'
   },
   infoBoxSection: {
@@ -64,19 +65,28 @@ const styles = theme => ({
   infoText: {
     fontSize: '2rem'
   },
+  raisedAmount: {
+    fontSize: '2em',
+    color: theme.palette.primary.main
+  },
   subtext: {
     ...theme.typography.caption,
     fontSize: '1rem'
+  },
+  linearColorPrimary: {
+    backgroundColor: '#00000014',
+  },
+  linearBarColorPrimary: {
+    backgroundColor: theme.palette.primary.main
   }
 })
 
-function Project({ classes }) {
+function Project({ classes, match }) {
+  const projectId = match.params.id
   return (
     <div className={classes.root}>
       <div className={classes.creator}>
-        <Avatar>
-          R
-        </Avatar>
+        <Avatar src="https://material-ui.com/static/images/avatar/1.jpg" />
         <Typography className={classes.creatorName}>By Creator Name</Typography>
       </div>
       <div>
@@ -97,8 +107,16 @@ function Project({ classes }) {
         />
 
         <div className={classes.infoBox}>
+          <LinearProgress
+            classes={{
+              colorPrimary: classes.linearColorPrimary,
+              barColorPrimary: classes.linearBarColorPrimary,
+            }}
+            variant="determinate"
+            value={30}
+          />
           <div className={classes.infoBoxSection}>
-            <span className={classes.infoText}>
+            <span className={classes.raisedAmount}>
               $13,412
             </span>
             <span className={classes.subtext}>pledged of $48,894 goal</span>
@@ -120,6 +138,7 @@ function Project({ classes }) {
 
 Project.propTypes = {
   classes: PropTypes.object.isRequired,
+  match: PropTypes.object
 }
 
 export default withStyles(styles)(Project)
