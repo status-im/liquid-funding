@@ -1,12 +1,13 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardMedia from '@material-ui/core/CardMedia'
+import CardContent from '@material-ui/core/CardContent'
+import CardActions from '@material-ui/core/CardActions'
+import CardActionArea from '@material-ui/core/CardActionArea'
+import Avatar from '@material-ui/core/Avatar'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 
@@ -52,7 +53,12 @@ const styles = theme => ({
   },
   infoBox: {
     display: 'grid',
-    gridTemplateRows: '2.5rem'
+    gridTemplateRows: '2.5rem 2.5rem 2.5rem 2.5rem',
+    gridRowGap: '2rem'
+  },
+  infoBoxSection: {
+    display: 'flex',
+    flexDirection: 'column'
   },
   infoText: {
     fontSize: '2rem'
@@ -102,11 +108,23 @@ function Project({ classes }) {
             </CardContent>
           </CardActionArea>
         </Card>
+
         <div className={classes.infoBox}>
-          <span className={classes.infoText}>
-            $13,412
-          </span>
-          <span className={classes.subtext}>pledged of $48,894 goal</span>
+          <div className={classes.infoBoxSection}>
+            <span className={classes.infoText}>
+              $13,412
+            </span>
+            <span className={classes.subtext}>pledged of $48,894 goal</span>
+          </div>
+          <div className={classes.infoBoxSection}>
+            <span className={classes.infoText}>475</span>
+            <span className={classes.subtext}>backers</span>
+          </div>
+          <div className={classes.infoBoxSection}>
+            <span className={classes.infoText}>19</span>
+            <span className={classes.subtext}>days active</span>
+          </div>
+          <Button color="primary" variant="contained" style={{ height: '50px' }}>Back this project</Button>
         </div>
       </div>
     </div>
