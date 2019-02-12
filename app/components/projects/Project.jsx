@@ -13,10 +13,11 @@ import PropTypes from 'prop-types'
 const styles = theme => ({
   root: {
     display: 'grid',
-    gridTemplateColumns: '1fr 3fr',
+    gridTemplateColumns: '1fr 5fr',
     gridTemplateRows: '1fr 7fr',
     gridColumnGap: '1em',
-    gridRowGap: '36px'
+    gridRowGap: '36px',
+    margin: '1.75rem 4.5rem'
   },
   paper: {
     padding: theme.spacing.unit * 2,
@@ -34,7 +35,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-around',
-    alignItems: 'center'
+    alignItems: 'end'
   },
   creatorName: {
     fontSize: '1rem'
@@ -44,7 +45,21 @@ const styles = theme => ({
   },
   secondRow: {
     gridColumnStart: '1',
-    gridColumnEnd: '3'
+    gridColumnEnd: '3',
+    display: 'grid',
+    gridTemplateColumns: '2fr 1fr',
+    gridColumnGap: '3em'
+  },
+  infoBox: {
+    display: 'grid',
+    gridTemplateRows: '2.5rem'
+  },
+  infoText: {
+    fontSize: '2rem'
+  },
+  subtext: {
+    fontSize: '1rem',
+    opacity: '0.6'
   }
 })
 
@@ -66,27 +81,33 @@ function Project({ classes }) {
         </Typography>
       </div>
       <div className={classes.secondRow}>
-      <Card className={classes.card}>
-        <CardActionArea>
-          <CardMedia
-            component="img"
-            alt="video"
-            className={classes.media}
-            height="140"
-            src="https://images.pexels.com/photos/1464143/pexels-photo-1464143.jpeg?cs=srgb&dl=background-camera-close-up-1464143.jpg&fm=jpg"
-            title="media-description"
-          />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              Lizard
-            </Typography>
-            <Typography component="p">
-              Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-              across all continents except Antarctica
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
+        <Card className={classes.card}>
+          <CardActionArea>
+            <CardMedia
+              component="img"
+              alt="video"
+              className={classes.media}
+              height="140"
+              src="https://images.pexels.com/photos/1464143/pexels-photo-1464143.jpeg?cs=srgb&dl=background-camera-close-up-1464143.jpg&fm=jpg"
+              title="media-description"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="h2">
+                Lizard
+              </Typography>
+              <Typography component="p">
+                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
+                across all continents except Antarctica
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+        </Card>
+        <div className={classes.infoBox}>
+          <span className={classes.infoText}>
+            $13,412
+          </span>
+          <span className={classes.subtext}>pledged of $48,894 goal</span>
+        </div>
       </div>
     </div>
   )
