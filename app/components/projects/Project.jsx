@@ -18,7 +18,8 @@ const styles = theme => ({
     gridTemplateRows: '1fr 4fr',
     gridColumnGap: '1em',
     gridRowGap: '36px',
-    margin: '1.75rem 4.5rem'
+    margin: '1.75rem 4.5rem',
+    fontFamily: theme.typography.fontFamily
   },
   paper: {
     padding: theme.spacing.unit * 2,
@@ -64,8 +65,8 @@ const styles = theme => ({
     fontSize: '2rem'
   },
   subtext: {
-    fontSize: '1rem',
-    opacity: '0.6'
+    ...theme.typography.caption,
+    fontSize: '1rem'
   }
 })
 
