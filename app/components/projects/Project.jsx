@@ -1,6 +1,10 @@
-import React from 'react'
+import web3 from 'Embark/web3'
+import React, { useMemo, useState, useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import withObservables from '@nozbe/with-observables'
+import { Q } from '@nozbe/watermelondb'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardMedia from '@material-ui/core/CardMedia'
@@ -9,8 +13,12 @@ import CardActions from '@material-ui/core/CardActions'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import Avatar from '@material-ui/core/Avatar'
+import { uniqBy, length } from 'ramda'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
+import { toEther } from '../../utils/conversions'
+import { getTokenLabel } from '../../utils/currencies'
+import { timeSinceBlock } from '../../utils/dates'
 
 const styles = theme => ({
   root: {
@@ -81,8 +89,57 @@ const styles = theme => ({
   }
 })
 
-function Project({ classes, match }) {
+function getReceivedAmount(id, transfers){
+  return transfers
+    .filter(t => t.returnValues.to === id)
+    .reduce((pv, cv) => {
+      const amount = Number(toEther(cv.returnValues.amount))
+      return pv + amount
+    }, 0)
+}
+
+function getWithdrawnAmount(id, transfers){
+  return transfers
+    .filter(t => t.returnValues.from === id)
+    .reduce((pv, cv) => {
+      const amount = Number(toEther(cv.returnValues.amount))
+      return pv + amount
+    }, 0)
+}
+
+function getAmountsPledged(pledges){
+  const amounts = {}
+  pledges.forEach(pledge => {
+    const { token, amount } = pledge
+    if (amounts[token]) amounts[token] += Number(toEther(amount))
+    else amounts[token] = Number(toEther(amount))
+  })
+  return Object
+    .entries(amounts)
+    .map(entry => ([getTokenLabel(entry[0]), entry[1]]))
+}
+
+function getNumberOfBackers(pledges){
+  return length(uniqBy(p => p.owner, pledges))
+}
+
+async function getProjectAge(id, events, setState){
+  const event = events.find(e => e.returnValues.idProject === id)
+  const { timestamp } = await web3.eth.getBlock(event.blockNumber)
+  setState(timeSinceBlock(timestamp, 'days'))
+}
+
+function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
+  const [projectAge, setAge] = useState(null)
+
+  useEffect(() => {
+    getProjectAge(projectId, projectAddedEvents, setAge)
+  })
+  const received = useMemo(() => getReceivedAmount(projectId, transfers), [projectId, transfers])
+  const withdrawn = useMemo(() => getWithdrawnAmount(projectId, transfers), [projectId, transfers])
+  const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges])
+  const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges])
   return (
     <div className={classes.root}>
       <div className={classes.creator}>
@@ -117,16 +174,16 @@ function Project({ classes, match }) {
           />
           <div className={classes.infoBoxSection}>
             <span className={classes.raisedAmount}>
-              $13,412
+              {`${amountsPledged[0][1]} ${amountsPledged[0][0]}`}
             </span>
             <span className={classes.subtext}>pledged of $48,894 goal</span>
           </div>
           <div className={classes.infoBoxSection}>
-            <span className={classes.infoText}>475</span>
+            <span className={classes.infoText}>{numberOfBackers}</span>
             <span className={classes.subtext}>backers</span>
           </div>
           <div className={classes.infoBoxSection}>
-            <span className={classes.infoText}>19</span>
+            <span className={classes.infoText}>{projectAge}</span>
             <span className={classes.subtext}>days active</span>
           </div>
           <Button color="primary" variant="contained" style={{ height: '50px' }}>Back this project</Button>
@@ -138,7 +195,23 @@ function Project({ classes, match }) {
 
 Project.propTypes = {
   classes: PropTypes.object.isRequired,
-  match: PropTypes.object
+  match: PropTypes.object,
+  profile: PropTypes.array.isRequired,
 }
 
-export default withStyles(styles)(Project)
+const StyledProject = withStyles(styles)(Project)
+export default withDatabase(withObservables([], ({ database, match }) => ({
+  profile: database.collections.get('profiles').query(
+    Q.where('id_profile', match.params.id)
+  ).observe(),
+  transfers: database.collections.get('lp_events').query(
+    Q.where('event', 'Transfer')
+  ).observe(),
+  projectAddedEvents: database.collections.get('lp_events').query(
+    Q.where('event', 'ProjectAdded')
+  ).observe(),
+  pledges: database.collections.get('pledges').query(
+    Q.where('intended_project', match.params.id)
+  ).observe()
+}))(StyledProject))
+
