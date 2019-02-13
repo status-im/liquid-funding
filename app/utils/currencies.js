@@ -14,7 +14,7 @@ export const currencies = [
   },
   {
     value: SNT._address,
-    label: 'Status (SNT)',
+    label: 'SNT',
     img: sntIco,
     contract: SNT
   },
