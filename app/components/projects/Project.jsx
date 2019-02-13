@@ -13,6 +13,7 @@ import CardActions from '@material-ui/core/CardActions'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import Avatar from '@material-ui/core/Avatar'
+import ReactPlayer from 'react-player'
 import { uniqBy, length } from 'ramda'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
@@ -131,13 +132,41 @@ async function getProjectAge(id, events, setState){
 }
 
 async function getProjectAssets(hash, setState){
-  getFiles(hash)
+  console.log({hash})
+  const CID = hash.split('/').slice(-1)[0]
+  getFiles(CID)
     .then((files) => {
       setState(files)
       const manifest = files[2]
       console.log({files}, JSON.parse(manifest.content))
     })
     .catch(console.log)
+}
+
+const getProjectManifest = assets => assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
+
+const formatMedia = content => {
+  const blob = new Blob([content], {type : 'video/mp4'})
+  return URL.createObjectURL(blob)
+}
+
+const getMediaType = assets => {
+  if (!assets) return false
+  const { media } = getProjectManifest(assets)
+  if (media.type.toLowerCase().includes('video')) return true
+}
+
+const getMediaSrc = assets => {
+  if (!assets) return null
+  const { media } = getProjectManifest(assets)
+  if (media.type.includes('video')) {
+    if (media.url) return media.url
+    if (media.file) {
+      return formatMedia(
+        assets.find(a => a.name === media.file).content
+      )
+    }
+  }
 }
 
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
@@ -150,37 +179,46 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
   }, [projectAge])
 
   useEffect(() => {
-    getProjectAssets('QmZbFULchk4wKdYoHv13jkTs2Wf4NYYJ38aCFG97g97DNn', setAssets)
-  }, [])
+    getProjectAssets(profile[0].url, setAssets)
+  }, [profile])
 
   const received = useMemo(() => getReceivedAmount(projectId, transfers), [projectId, transfers])
   const withdrawn = useMemo(() => getWithdrawnAmount(projectId, transfers), [projectId, transfers])
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges])
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges])
-  console.log({profile, projectAssets})
+  const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets])
+  const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets])
+  const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets])
+  const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
+  const percentToGoal = manifest ? Math.min(
+    (Number(totalPledged) / Number(manifest.goal)) * 100,
+    100
+    ) : 0
+  console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged})
   return (
     <div className={classes.root}>
       <div className={classes.creator}>
-        <Avatar src="https://material-ui.com/static/images/avatar/1.jpg" />
-        <Typography className={classes.creatorName}>By Creator Name</Typography>
+        <Avatar src={manifest && manifest.avatar} />
+        <Typography className={classes.creatorName}>{manifest && `By ${manifest.creator}`}</Typography>
       </div>
       <div>
         <Typography className={classes.title} component="h2" gutterBottom>
-          Akira, The Linux Design Tool
+          {manifest && manifest.title}
         </Typography>
         <Typography className={classes.subTitle} component="h5" gutterBottom>
-          UX/UI Design application for Linux
+          {manifest && manifest.subtitle}
         </Typography>
       </div>
       <div className={classes.secondRow}>
-        <CardMedia
-          component="img"
-          alt="video"
-          className={classes.media}
-          src="https://images.pexels.com/photos/1464143/pexels-photo-1464143.jpeg?cs=srgb&dl=background-camera-close-up-1464143.jpg&fm=jpg"
-          title="media-description"
-        />
-
+        {mediaType
+        ? <ReactPlayer width="100%" height="100%" url={mediaUrl} playing={manifest.media.isPlaying} />
+        : <CardMedia
+            component="img"
+            alt="video"
+            className={classes.media}
+            src={mediaUrl}
+            title="media-description"
+        />}
         <div className={classes.infoBox}>
           <LinearProgress
             classes={{
@@ -188,13 +226,13 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
               barColorPrimary: classes.linearBarColorPrimary,
             }}
             variant="determinate"
-            value={30}
+            value={percentToGoal}
           />
           <div className={classes.infoBoxSection}>
             <span className={classes.raisedAmount}>
-              {`${amountsPledged[0][1]} ${amountsPledged[0][0]}`}
+              {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`}
             </span>
-            <span className={classes.subtext}>pledged of $48,894 goal</span>
+            <span className={classes.subtext}>{manifest && `pledged of ${Number(manifest.goal).toLocaleString()} goal`}</span>
           </div>
           <div className={classes.infoBoxSection}>
             <span className={classes.infoText}>{numberOfBackers}</span>

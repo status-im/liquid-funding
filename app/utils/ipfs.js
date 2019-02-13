@@ -49,7 +49,7 @@ const saveToIpfs = (files, cb, imgCb) => {
 export const getImageFromIpfs = async (hash, cb) => {
   const res = await getFromIpfs(hash)
   cb(res)
-};
+}
 
 export const getFromIpfs = async hash => {
   const files = await getFiles(hash)
