@@ -19,6 +19,7 @@ import PropTypes from 'prop-types'
 import { toEther } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 import { timeSinceBlock } from '../../utils/dates'
+import { getFiles } from '../../utils/ipfs'
 
 const styles = theme => ({
   root: {
@@ -129,17 +130,34 @@ async function getProjectAge(id, events, setState){
   setState(timeSinceBlock(timestamp, 'days'))
 }
 
+async function getProjectAssets(hash, setState){
+  getFiles(hash)
+    .then((files) => {
+      setState(files)
+      const manifest = files[2]
+      console.log({files}, JSON.parse(manifest.content))
+    })
+    .catch(console.log)
+}
+
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
   const [projectAge, setAge] = useState(null)
+  const [projectAssets, setAssets] = useState(null)
 
   useEffect(() => {
     getProjectAge(projectId, projectAddedEvents, setAge)
-  })
+  }, [projectAge])
+
+  useEffect(() => {
+    getProjectAssets('QmZbFULchk4wKdYoHv13jkTs2Wf4NYYJ38aCFG97g97DNn', setAssets)
+  }, [])
+
   const received = useMemo(() => getReceivedAmount(projectId, transfers), [projectId, transfers])
   const withdrawn = useMemo(() => getWithdrawnAmount(projectId, transfers), [projectId, transfers])
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges])
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges])
+  console.log({profile, projectAssets})
   return (
     <div className={classes.root}>
       <div className={classes.creator}>
