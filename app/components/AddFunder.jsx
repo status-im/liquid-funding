@@ -137,6 +137,7 @@ const AddFunder = ({ appendFundProfile }) => (
         <input
           ref={(input) => { uploadInput = input }}
           type="file"
+          multiple
           onChange={
           (e) => captureFile(
             e,
@@ -181,14 +182,14 @@ const AddFunder = ({ appendFundProfile }) => (
           {`ADD ${buttonLabel[values.adminType]} PROFILE`}
         </Button>
         {status && status.snackbar && <Snackbar
-                     anchorOrigin={{
-                       vertical: 'bottom',
-                       horizontal: 'left',
-                     }}
-                     open={!!status.snackbar}
-                     autoHideDuration={6000}
-                     onClose={() => setStatus(null)}
-                   >
+                                        anchorOrigin={{
+                                          vertical: 'bottom',
+                                          horizontal: 'left',
+                                        }}
+                                        open={!!status.snackbar}
+                                        autoHideDuration={6000}
+                                        onClose={() => setStatus(null)}
+                                      >
           <MySnackbarContentWrapper
             onClose={() => setStatus(null)}
             variant={status.snackbar.variant}

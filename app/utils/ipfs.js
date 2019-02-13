@@ -11,20 +11,31 @@ export const captureFile = (event, cb, imgCb) => {
   event.stopPropagation()
   event.preventDefault()
   const file = event.target.files[0]
-  saveToIpfs(file, cb, imgCb)
+  const files = event.target.files
+  const formattedFiles = formatFileList(files)
+  console.log({files, formattedFiles})
+  saveToIpfs(formattedFiles, cb, imgCb)
+}
+
+const formatFileList = files => {
+  const formattedList = []
+  for (let i=0; i<files.length; i++) {
+    formattedList.push(formatForIpfs(files[i]))
+  }
+  return formattedList
 }
 
 const formatForIpfs = file => {
   const { name, type } = file
   const content = fileReaderPullStream(file)
-  return [{
+  return {
     path:  `/root/${name}`,
     content
-  }]
+  }
 }
-const saveToIpfs = (file, cb, imgCb) => {
+const saveToIpfs = (files, cb, imgCb) => {
   let ipfsId
-  ipfs.add(formatForIpfs(file), { progress: (prog) => console.log(`received: ${prog}`) })
+  ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
     .then((response) => {
       console.log(response)
       ipfsId = response[0].hash
@@ -41,7 +52,7 @@ export const getImageFromIpfs = async (hash, cb) => {
 };
 
 export const getFromIpfs = async hash => {
-  const files = await getFile(hash)
+  const files = await getFiles(hash)
   const file = files.slice(-1)[0]
   const { content } = file
   const arrayBufferView = new Uint8Array(content)
@@ -50,7 +61,7 @@ export const getFromIpfs = async hash => {
   return { ...file, img }
 }
 
-export const getFile = CID => {
+export const getFiles = CID => {
   const clean = CID.split('/').slice(-1)[0]
   return new Promise(function(resolve, reject) {
     ipfs.get(clean, function (err, files) {
