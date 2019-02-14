@@ -51,8 +51,10 @@ class App extends React.Component {
     // not running in parallel due to possible metamask / infura limitation
     await getAndAddLpEvents()
     await getAndAddVaultEvents()
-    await getAndAddPledges()
+
+    // Profiles must be loaded before pledges to set profile on pledge model
     await addFormattedProfiles()
+    await getAndAddPledges()
     await updateStalePledges()
     this.setState({ loading: false })
   }
