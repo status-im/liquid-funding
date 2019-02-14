@@ -5,13 +5,9 @@ import Button from '@material-ui/core/Button'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
 import CardMedia from '@material-ui/core/CardMedia'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import CardActionArea from '@material-ui/core/CardActionArea'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import Loading from '../base/Loading'
 import Avatar from '@material-ui/core/Avatar'
 import ReactPlayer from 'react-player'
 import { uniqBy, length } from 'ramda'
@@ -135,12 +131,12 @@ async function getProjectAssets(hash, setState){
   console.log({hash})
   const CID = hash.split('/').slice(-1)[0]
   getFiles(CID)
-    .then((files) => {
-      setState(files)
-      const manifest = files[2]
-      console.log({files}, JSON.parse(manifest.content))
-    })
-    .catch(console.log)
+                  .then((files) => {
+                    setState(files)
+                    const manifest = files[2]
+                    console.log({files}, JSON.parse(manifest.content))
+                  })
+                  .catch(console.log)
 }
 
 const getProjectManifest = assets => assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
@@ -169,6 +165,7 @@ const getMediaSrc = assets => {
   }
 }
 
+
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
   const [projectAge, setAge] = useState(null)
@@ -179,11 +176,9 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
   }, [projectAge])
 
   useEffect(() => {
-    getProjectAssets(profile[0].url, setAssets)
+    if (profile[0]) getProjectAssets(profile[0].url, setAssets)
   }, [profile])
 
-  const received = useMemo(() => getReceivedAmount(projectId, transfers), [projectId, transfers])
-  const withdrawn = useMemo(() => getWithdrawnAmount(projectId, transfers), [projectId, transfers])
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges])
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges])
   const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets])
@@ -193,59 +188,62 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
   const percentToGoal = manifest ? Math.min(
     (Number(totalPledged) / Number(manifest.goal)) * 100,
     100
-    ) : 0
-  console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged})
+  ) : 0
+  console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged, pledges, transfers})
   return (
-    <div className={classes.root}>
-      <div className={classes.creator}>
-        <Avatar src={manifest && manifest.avatar} />
-        <Typography className={classes.creatorName}>{manifest && `By ${manifest.creator}`}</Typography>
-      </div>
-      <div>
-        <Typography className={classes.title} component="h2" gutterBottom>
-          {manifest && manifest.title}
-        </Typography>
-        <Typography className={classes.subTitle} component="h5" gutterBottom>
-          {manifest && manifest.subtitle}
-        </Typography>
-      </div>
-      <div className={classes.secondRow}>
-        {mediaType
-        ? <ReactPlayer width="100%" height="100%" url={mediaUrl} playing={manifest.media.isPlaying} />
-        : <CardMedia
-            component="img"
-            alt="video"
-            className={classes.media}
-            src={mediaUrl}
-            title="media-description"
-        />}
-        <div className={classes.infoBox}>
-          <LinearProgress
-            classes={{
-              colorPrimary: classes.linearColorPrimary,
-              barColorPrimary: classes.linearBarColorPrimary,
-            }}
-            variant="determinate"
-            value={percentToGoal}
-          />
-          <div className={classes.infoBoxSection}>
-            <span className={classes.raisedAmount}>
-              {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`}
-            </span>
-            <span className={classes.subtext}>{manifest && `pledged of ${Number(manifest.goal).toLocaleString()} goal`}</span>
+    !profile.length || !projectAssets
+    ? <Loading />
+    :
+      <div className={classes.root}>
+        <div className={classes.creator}>
+          <Avatar src={manifest && manifest.avatar} />
+          <Typography className={classes.creatorName}>{manifest && `By ${manifest.creator}`}</Typography>
+        </div>
+        <div>
+          <Typography className={classes.title} component="h2" gutterBottom>
+            {manifest && manifest.title}
+          </Typography>
+          <Typography className={classes.subTitle} component="h5" gutterBottom>
+            {manifest && manifest.subtitle}
+          </Typography>
+        </div>
+        <div className={classes.secondRow}>
+          {mediaType
+          ? <ReactPlayer width="100%" height="100%" url={mediaUrl} playing={manifest.media.isPlaying} />
+          : <CardMedia
+              component="img"
+              alt="video"
+              className={classes.media}
+              src={mediaUrl}
+              title="media-description"
+          />}
+          <div className={classes.infoBox}>
+            <LinearProgress
+              classes={{
+                colorPrimary: classes.linearColorPrimary,
+                barColorPrimary: classes.linearBarColorPrimary,
+              }}
+              variant="determinate"
+              value={percentToGoal}
+            />
+            <div className={classes.infoBoxSection}>
+              <span className={classes.raisedAmount}>
+                {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`}
+              </span>
+              <span className={classes.subtext}>{manifest && `pledged of ${Number(manifest.goal).toLocaleString()} goal`}</span>
+            </div>
+            <div className={classes.infoBoxSection}>
+              <span className={classes.infoText}>{numberOfBackers}</span>
+              <span className={classes.subtext}>backers</span>
+            </div>
+            <div className={classes.infoBoxSection}>
+              <span className={classes.infoText}>{projectAge}</span>
+              <span className={classes.subtext}>days active</span>
+            </div>
+            <Button color="primary" variant="contained" style={{ height: '50px' }}>Back this project</Button>
           </div>
-          <div className={classes.infoBoxSection}>
-            <span className={classes.infoText}>{numberOfBackers}</span>
-            <span className={classes.subtext}>backers</span>
-          </div>
-          <div className={classes.infoBoxSection}>
-            <span className={classes.infoText}>{projectAge}</span>
-            <span className={classes.subtext}>days active</span>
-          </div>
-          <Button color="primary" variant="contained" style={{ height: '50px' }}>Back this project</Button>
         </div>
       </div>
-    </div>
   )
 }
 

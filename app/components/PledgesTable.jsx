@@ -1,10 +1,9 @@
-import React, { Fragment, Component } from 'react'
+import React, { Component } from 'react'
 import MaterialTable from 'material-table'
 import withObservables from '@nozbe/with-observables'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { toEther } from '../utils/conversions'
 import { getTokenLabel } from '../utils/currencies'
-import TransferDialog from './TransferDialog'
 import TransferCard from './table/TransferCard'
 import WithdrawCard from './table/WithdrawCard'
 
