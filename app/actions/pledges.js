@@ -55,7 +55,7 @@ export const updateStalePledges = async () => {
   const stalePledges = await getStalePledges()
   const updatedPledges = await getPledges(stalePledges)
   const batch = stalePledges.map(p => {
-    const updated = updatedPledges[p.pledgeId]
+    const updated = updatedPledges[p.pledgeId - 1]
     return p.prepareUpdate(p => {
       const { amount, nDelegates, pledgeState, blockNumber } = updated
       p.amount = amount
