@@ -24,7 +24,7 @@ export const getAllPledges = async (start = 1) => {
 export const getPledges = async (pledges = []) => {
   const updated = []
   pledges.forEach(p => {
-    updated[p.pledgeId] = getPledge(p.pledgeId - 1).call()
+    updated[p.pledgeId - 1] = getPledge(p.pledgeId).call()
   })
   return Promise.all(updated.map(formatPledge))
 }
