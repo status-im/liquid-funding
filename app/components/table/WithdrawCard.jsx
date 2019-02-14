@@ -37,7 +37,7 @@ function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
           const toSend = sendFn(...args)
           const estimateGas = await toSend.estimateGas()
           toSend
-            .send({ gas: estimateGas + 1000 })
+            .send({ gas: estimateGas })
             .then(res => {
               console.log({res})
             })
@@ -68,7 +68,7 @@ function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
             <Card className={classes.card} elevation={0}>
               <CardContent>
                 <Typography variant="h6" component="h2">
-                  {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData[6]) : ''} from Pledge ${rowData.pledgeId}`}
+                  {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData.pledge.token) : ''} from Pledge ${rowData.pledgeId}`}
                 </Typography>
                 {!isPaying && <TextField
                                 className={classes.amount}

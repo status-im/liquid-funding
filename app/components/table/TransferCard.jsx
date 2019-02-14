@@ -119,7 +119,7 @@ function TransferCard({ row, handleClose, classes }) {
                   <Button size="large" onClick={close}>
                     Cancel
                   </Button>
-                  <Button size="large" onClick={submitForm} color="primary" type="submit">
+                  <Button size="large" color="primary" type="submit">
                     Transfer
                   </Button>
                 </CardActions>
