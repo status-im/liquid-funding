@@ -1,5 +1,6 @@
 import web3 from 'Embark/web3'
 import React, { useMemo, useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import withObservables from '@nozbe/with-observables'
@@ -84,6 +85,9 @@ const styles = theme => ({
   },
   linearBarColorPrimary: {
     backgroundColor: theme.palette.primary.main
+  },
+  link: {
+    textDecoration: 'none'
   }
 })
 
@@ -240,7 +244,9 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
               <span className={classes.infoText}>{projectAge}</span>
               <span className={classes.subtext}>days active</span>
             </div>
-            <Button color="primary" variant="contained" style={{ height: '50px' }}>Back this project</Button>
+            <Link to={`/back-project/${projectId}`} className={classes.link}>
+              <Button color="primary" variant="contained" style={{ height: '50px', width: '100%' }}>Back this project</Button>
+            </Link>
           </div>
         </div>
       </div>
