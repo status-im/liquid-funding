@@ -1,5 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react'
+import withObservables from '@nozbe/with-observables'
+import { Q } from '@nozbe/watermelondb'
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
+import { useProjectData } from './hooks'
 import Divider from '@material-ui/core/Divider'
 
 const styles = theme => ({
@@ -23,23 +27,30 @@ const styles = theme => ({
   }
 })
 
-const Title = ({ className }) => (
+const Title = ({ className, manifest }) => (
   <div className={className}>
-    <div style={{ alignSelf: 'center' }}>Back Project Page</div>
-    <div style={{ alignSelf: 'center', fontSize: '1.5rem', fontWeight: 200 }}>By Status Network</div>
+    <div style={{ alignSelf: 'center' }}>{manifest && manifest.title}</div>
+    <div style={{ alignSelf: 'center', fontSize: '1.2rem', fontWeight: 200 }}>{manifest && `By ${manifest.creator}`}</div>
     <Divider />
   </div>
 )
 
-function BackProject({classes, match}) {
+function BackProject({classes, match, profile, projectAddedEvents}) {
   const projectId = match.params.id
-  console.log({projectId})
+  const { projectAge, projectAssets, manifest } = useProjectData(projectId, profile, projectAddedEvents)
   return (
     <div className={classes.root}>
-      <Title className={classes.title} />
+      <Title className={classes.title} manifest={manifest} />
     </div>
   )
 }
 
 const StyledProject = withStyles(styles)(BackProject)
-export default StyledProject
+export default withDatabase(withObservables([], ({ database, match }) => ({
+  profile: database.collections.get('profiles').query(
+    Q.where('id_profile', match.params.id)
+  ).observe(),
+  projectAddedEvents: database.collections.get('lp_events').query(
+    Q.where('event', 'ProjectAdded')
+  ).observe()
+}))(StyledProject))
