@@ -64,7 +64,7 @@ export const getFromIpfs = async hash => {
 export const getFiles = CID => {
   const clean = CID.split('/').slice(-1)[0]
   return new Promise(function(resolve, reject) {
-    ipfs.get(clean, function (err, files) {
+    ipfs.get(clean, (err, files) => {
       if (err) reject(err)
       else resolve(files)
     })
