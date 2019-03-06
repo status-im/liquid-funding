@@ -177,7 +177,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
 
   useEffect(() => {
     getProjectAge(projectId, projectAddedEvents, setAge)
-  }, [projectAge])
+  }, [projectAddedEvents])
 
   useEffect(() => {
     if (profile[0]) getProjectAssets(profile[0].url, setAssets)
