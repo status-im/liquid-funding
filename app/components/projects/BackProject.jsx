@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import { withStyles } from '@material-ui/core/styles'
+import Divider from '@material-ui/core/Divider'
 
 const styles = theme => ({
   root: {
@@ -12,18 +13,30 @@ const styles = theme => ({
     fontFamily: theme.typography.fontFamily
   },
   title: {
+    display: 'grid',
     fontSize: '2.5rem',
-    gridColumnStart: '3',
-    gridColumnEnd: '10'
+    gridColumnStart: '1',
+    gridColumnEnd: '12',
+    gridRowStart: '1',
+    gridRowEnd: '6',
+    textAlign: 'center'
   }
 })
+
+const Title = ({ className }) => (
+  <div className={className}>
+    <div style={{ alignSelf: 'center' }}>Back Project Page</div>
+    <div style={{ alignSelf: 'center', fontSize: '1.5rem', fontWeight: 200 }}>By Status Network</div>
+    <Divider />
+  </div>
+)
 
 function BackProject({classes, match}) {
   const projectId = match.params.id
   console.log({projectId})
   return (
     <div className={classes.root}>
-      <div className={classes.title}>Back Project Page</div>
+      <Title className={classes.title} />
     </div>
   )
 }
