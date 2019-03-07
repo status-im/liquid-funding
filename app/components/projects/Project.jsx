@@ -1,5 +1,5 @@
 import web3 from 'Embark/web3'
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
@@ -18,6 +18,7 @@ import { toEther } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 import { timeSinceBlock } from '../../utils/dates'
 import { getFiles } from '../../utils/ipfs'
+import { useProjectData } from './hooks'
 
 const styles = theme => ({
   root: {
@@ -172,22 +173,12 @@ const getMediaSrc = assets => {
 
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
-  const [projectAge, setAge] = useState(null)
-  const [projectAssets, setAssets] = useState(null)
-
-  useEffect(() => {
-    getProjectAge(projectId, projectAddedEvents, setAge)
-  }, [projectAddedEvents])
-
-  useEffect(() => {
-    if (profile[0]) getProjectAssets(profile[0].url, setAssets)
-  }, [profile])
+  const { projectAge, projectAssets, manifest } = useProjectData(projectId, profile, projectAddedEvents)
 
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges])
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges])
   const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets])
-  const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets])
   const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   const percentToGoal = manifest ? Math.min(
     (Number(totalPledged) / Number(manifest.goal)) * 100,
@@ -195,9 +186,9 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
   ) : 0
   console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged, pledges, transfers})
   return (
-    !profile.length || !projectAssets
-    ? <Loading />
-    :
+    !projectAssets
+      ? <Loading />
+      :
       <div className={classes.root}>
         <div className={classes.creator}>
           <Avatar src={manifest && manifest.avatar} />
