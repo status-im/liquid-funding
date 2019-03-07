@@ -213,14 +213,14 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
               title="media-description"
           />}
           <div className={classes.infoBox}>
-            <LinearProgress
+            {amountsPledged[0] ? <LinearProgress
               classes={{
                 colorPrimary: classes.linearColorPrimary,
                 barColorPrimary: classes.linearBarColorPrimary,
               }}
               variant="determinate"
               value={percentToGoal}
-            />
+            /> : <LinearProgress />}
             <div className={classes.infoBoxSection}>
               <span className={classes.raisedAmount}>
                 {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`}
