@@ -4,7 +4,11 @@ import { Matcher } from '@areknawo/rex'
 import { getImageType } from './images'
 
 const ipfsMatcher = new Matcher().begin().find('ipfs/')
-const ipfs = new IPFS()
+export const ipfs = new IPFS()
+
+ipfs.on('ready', () => {
+  console.log('Node is ready to use!')
+})
 
 export const isIpfs = str => ipfsMatcher.test(str)
 export const captureFile = (event, cb, imgCb) => {
