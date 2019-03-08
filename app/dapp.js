@@ -29,10 +29,11 @@ class App extends React.Component {
         if (!!isInitialized) {
           if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
 
+          const account = await web3.eth.getCoinbase()
+          this.setState({ account })
           const lpAllowance = await getLpAllowance()
           //TODO add block based sync
           const authorizedPayments = await getAuthorizedPayments()
-          const account = await web3.eth.getCoinbase()
           this.syncWithRemote()
           this.setState({
             account,

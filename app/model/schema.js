@@ -28,7 +28,7 @@ export default appSchema({
       name: 'profiles',
       columns: [
         { name: 'event_id', type: 'string' },
-        { name: 'addr', type: 'string' },
+        { name: 'addr', type: 'string', isIndexed: true },
         { name: 'canceled', type: 'boolean' },
         { name: 'commit_time', type: 'number' },
         { name: 'type', type: 'string' },
