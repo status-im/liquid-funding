@@ -83,7 +83,8 @@ const SubmissionSection = ({ classes }) => (
 
 function BackProject({classes, match, profile, projectAddedEvents}) {
   const projectId = match.params.id
-  const { projectAge, projectAssets, manifest } = useProjectData(projectId, profile, projectAddedEvents)
+  const { projectAge, projectAssets, manifest, delegateProfiles } = useProjectData(projectId, profile, projectAddedEvents)
+  console.log({delegateProfiles})
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />

@@ -70,3 +70,9 @@ export const getProfilesById = async ids => {
   return event
 }
 
+export const getDelegateProfiles = async addr => {
+  const event = await profilesCollection.query(
+    Q.where('addr', addr)
+  ).fetch()
+  return event
+}
