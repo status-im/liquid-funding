@@ -17,8 +17,10 @@ const styles = theme => ({
     gridTemplateRows: 'repeat(5, [row] auto)',
     gridColumnGap: '1em',
     gridRowGap: '36px',
-    margin: '1.75rem 4.5rem',
-    fontFamily: theme.typography.fontFamily
+    fontFamily: theme.typography.fontFamily,
+    [theme.breakpoints.up('sm')]: {
+      margin: '1.75rem 4.5rem'
+    }
   },
   title: {
     display: 'grid',
@@ -46,7 +48,7 @@ const Title = ({ className, manifest }) => (
   </div>
 )
 
-const SubmissionSection = ({ classes }) => (
+const SubmissionSection = ({ classes, profiles }) => (
   <Formik
     initialValues={{ delegateProfile: ''}}
     onSubmit={console.log}
@@ -74,8 +76,14 @@ const SubmissionSection = ({ classes }) => (
           variant="outlined"
           onChange={handleChange}
           onBlur={handleBlur}
-          value={values.adminType || ''}
-        />
+          value={values.delegateProfile || ''}
+        >
+          {profiles && profiles.map(profile => (
+            <MenuItem style={{ display: 'flex', alignItems: 'center' }} key={profile.name} value={profile.name}>
+              {profile.name}
+            </MenuItem>
+          ))}
+        </TextField>
       </form>
     )}
   </Formik>
@@ -88,7 +96,7 @@ function BackProject({classes, match, profile, projectAddedEvents}) {
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
-      <SubmissionSection classes={classes}/>
+      <SubmissionSection classes={classes} profiles={delegateProfiles} />
     </div>
   )
 }
