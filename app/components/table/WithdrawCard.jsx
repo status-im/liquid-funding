@@ -30,7 +30,7 @@ function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
       initialValues={{}}
       onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
         const { amount } = values
-        const paymentId = isPaying ? authorizedPayment[0]['returnValues']['idPayment'] : rowData.pledgeId
+        const paymentId = isPaying ? authorizedPayment[0]['returnValues']['idPayment'] : rowData.idPledge
         const args = isPaying ? [paymentId] : [paymentId, toWei(amount)]
         const sendFn = isPaying ? confirmPayment : withdraw
         try {
@@ -68,7 +68,7 @@ function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
             <Card className={classes.card} elevation={0}>
               <CardContent>
                 <Typography variant="h6" component="h2">
-                  {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData.pledge.token) : ''} from Pledge ${rowData.pledgeId}`}
+                  {`${isPaying ? 'Confirm' : ''} Withdraw${isPaying ? 'al' : ''} ${values.amount || ''}  ${values.amount ? getTokenLabel(rowData.pledge.token) : ''} from Pledge ${rowData.idPledge}`}
                 </Typography>
                 {!isPaying && <TextField
                                 className={classes.amount}
@@ -105,6 +105,6 @@ Withdraw.propTypes = {
 const styledWithdraw = withStyles(styles)(Withdraw)
 export default withDatabase(withObservables(['rowData'], ({ database, rowData }) => ({
   authorizedPayment : database.collections.get('vault_events').query(
-    Q.where('ref', rowData.pledgeId)
+    Q.where('ref', rowData.idPledge)
   ).observe()
 }))(styledWithdraw))

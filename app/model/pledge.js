@@ -1,15 +1,15 @@
-import { action, field, relation } from '@nozbe/watermelondb/decorators'
+import { action, field, relation, json } from '@nozbe/watermelondb/decorators'
 import { Q } from '@nozbe/watermelondb'
 import { LiquidModel } from '../utils/models'
 
-
+const sanitizeValues = json => json
 export default class Pledge extends LiquidModel {
   static table = 'pledges'
   static associations = {
     profiles: { type: 'belongs_to', key: 'profile_id' },
   }
 
-  @field('pledge_id') pledgeId
+  @field('id_pledge') idPledge
   @field('owner_id') owner
   @field('amount') amount
   @field('token') token
@@ -19,6 +19,7 @@ export default class Pledge extends LiquidModel {
   @field('pledge_state') pledgeState
   @field('block_number') blockNumber
   @relation('profiles', 'profile_id') profile
+  @json('delegates', sanitizeValues) delegates
 
   @action async transferTo(to, amount) {
     const toPledgeQuery = await this.collections.get('pledges').query(

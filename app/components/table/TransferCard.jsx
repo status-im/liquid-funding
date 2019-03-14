@@ -23,9 +23,9 @@ function TransferCard({ row, handleClose, classes }) {
     <Formik
       initialValues={{}}
       onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
-        const { pledgeId, pledge } = row
+        const { idPledge, pledge } = row
         const { idSender, amount, idReceiver } = values
-        const args = [idSender, pledgeId, toWei(amount.toString()), idReceiver]
+        const args = [idSender, idPledge, toWei(amount.toString()), idReceiver]
         const toSend = transfer(...args)
         const estimatedGas = await toSend.estimateGas()
 
@@ -71,7 +71,7 @@ function TransferCard({ row, handleClose, classes }) {
               <CardContent>
                 <Typography variant="h6" component="h2">Transfer Funds</Typography>
                 <Typography variant="subheading">
-                  {`Transfer ${values.amount || ''}  ${values.amount && row ? getTokenLabel(row.pledge.token) : ''} from Pledge ${row.pledgeId} ${values.idReceiver ? 'to Giver/Delegate/Project' : ''} ${values.idReceiver || ''}`}
+                  {`Transfer ${values.amount || ''}  ${values.amount && row ? getTokenLabel(row.pledge.token) : ''} from Pledge ${row.idPledge} ${values.idReceiver ? 'to Giver/Delegate/Project' : ''} ${values.idReceiver || ''}`}
                 </Typography>
                 <TextField
                   autoFocus

@@ -6,6 +6,7 @@ import LpEvent from './model/lpEvents'
 import VaultEvent from './model/vaultEvent'
 import Profile from './model/profile'
 import Pledge from './model/pledge'
+import Delegate from './model/delegate'
 
 const dbName = 'LiquidFunding'
 const adapter = new LokiJSAdapter({
@@ -19,7 +20,8 @@ const database = new Database({
     LpEvent,
     VaultEvent,
     Profile,
-    Pledge
+    Pledge,
+    Delegate
   ],
   actionsEnabled: true,
 })

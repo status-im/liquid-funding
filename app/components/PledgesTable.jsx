@@ -76,7 +76,7 @@ class PledgesTable extends Component {
       <div>
         <MaterialTable
           columns={[
-            { title: 'Pledge Id', field: 'pledgeId', type: 'numeric' },
+            { title: 'Pledge Id', field: 'idPledge', type: 'numeric' },
             { title: 'Owner', field: 'owner' },
             { title: 'Amount Funded', field: 'amount', type: 'numeric' },
             { title: 'Token', field: 'token' },
