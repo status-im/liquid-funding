@@ -1,5 +1,4 @@
 import React from 'react'
-import web3 from 'Embark/web3'
 import { Formik } from 'formik'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
@@ -89,10 +88,10 @@ const SubmissionSection = ({ classes, profiles }) => (
   </Formik>
 )
 
-function BackProject({classes, match, profile, projectAddedEvents}) {
+function BackProject({classes, match, profile, projectAddedEvents, delegateAddedEvents}) {
   const projectId = match.params.id
   const { projectAge, projectAssets, manifest, delegateProfiles } = useProjectData(projectId, profile, projectAddedEvents)
-  console.log({delegateProfiles})
+  console.log({delegateAddedEvents})
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
@@ -108,5 +107,8 @@ export default withDatabase(withObservables([], ({ database, match }) => ({
   ).observe(),
   projectAddedEvents: database.collections.get('lp_events').query(
     Q.where('event', 'ProjectAdded')
+  ).observe(),
+  delegateAddedEvents: database.collections.get('lp_events').query(
+    Q.where('event', 'DelegateAdded')
   ).observe()
 }))(StyledProject))

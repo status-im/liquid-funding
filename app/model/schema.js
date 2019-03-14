@@ -41,16 +41,26 @@ export default appSchema({
     tableSchema({
       name: 'pledges',
       columns: [
-        { name: 'pledge_id', type: 'number', isIndexed: true },
+        { name: 'id_pledge', type: 'number', isIndexed: true },
         { name: 'owner_id', type: 'number', isIndexed: true },
         { name: 'amount', type: 'string' },
         { name: 'token', type: 'string' },
         { name: 'commit_time', type: 'number' },
-        { name: 'n_delegates', type: 'number' },
+        { name: 'n_delegates', type: 'number', isIndexed: true },
         { name: 'intended_project', type: 'number' },
         { name: 'pledge_state', type: 'number' },
         { name: 'profile_id', type: 'string', isIndexed: true },
-        { name: 'block_number', type: 'number', isIndexed: true }
+        { name: 'block_number', type: 'number', isIndexed: true },
+        { name : 'delegates', type: 'string', isOptional: true }
+      ]
+    }),
+    tableSchema({
+      name: 'delegates',
+      columns: [
+        { name: 'profile_id', type: 'string', isIndexed: true },
+        { name: 'pledge_id', type: 'string', isIndexed: true },
+        { name: 'id_pledge', type: 'number', isIndexed: true },
+        { name: 'delegate_index', type: 'number', isIndexed: true }
       ]
     })
   ]

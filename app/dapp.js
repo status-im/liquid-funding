@@ -11,6 +11,7 @@ import { getAndAddLpEvents } from './actions/lpEvents'
 import { getAndAddVaultEvents } from './actions/vaultEvents'
 import { addFormattedProfiles } from './actions/profiles'
 import { updateStalePledges, getAndAddPledges } from './actions/pledges'
+import { updateDelegates } from './actions/delegates'
 
 const { getNetworkType } = web3.eth.net
 
@@ -57,6 +58,7 @@ class App extends React.Component {
     await addFormattedProfiles()
     await getAndAddPledges()
     await updateStalePledges()
+    await updateDelegates()
     this.setState({ loading: false })
   }
 

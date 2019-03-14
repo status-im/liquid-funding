@@ -45,7 +45,7 @@ const formatAndSumDepositWithdraws = (deposits, pledges, withdraws) => {
   let incomplete = false
   deposits.forEach(deposit => {
     const { amount, to } = deposit.returnValues
-    const pledge = pledges.find(p => Number(p.pledgeId) === Number(to))
+    const pledge = pledges.find(p => Number(p.idPledge) === Number(to))
     if (!pledge) {
       incomplete = true
       return

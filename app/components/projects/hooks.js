@@ -8,6 +8,8 @@ import { databaseExists } from '../../utils/db'
 import { FundingContext } from '../../context'
 import { getDelegateProfiles } from '../../actions/profiles'
 
+console.log({LiquidPledging})
+
 async function getProjectAge(id, events, setState){
   const event = events.find(e => e.returnValues.idProject === id)
   const { timestamp } = await web3.eth.getBlock(event.blockNumber)
@@ -17,6 +19,8 @@ async function getProjectAge(id, events, setState){
 async function getProjectAssets(projectId, setState){
   EmbarkJS.onReady(async (err) => {
     const projectInfo = await LiquidPledging.methods.getPledgeAdmin(projectId).call()
+    const pledgeInfo = await LiquidPledging.methods.getPledgeDelegate(5).call()
+    console.log({pledgeInfo})
     const CID = projectInfo.url.split('/').slice(-1)[0]
     console.log({CID, projectInfo, ipfs})
     getFiles(CID)

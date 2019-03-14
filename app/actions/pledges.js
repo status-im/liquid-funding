@@ -5,9 +5,9 @@ import { getPledges, getAllPledges } from '../utils/pledges'
 import { getProfilesById } from './profiles'
 
 const createPledge = (pledge, data, profiles) => {
-  const { id, owner, amount, blockNumber, token, commitTime, nDelegates, pledgeState, intendedProject } = data
+  const { id, owner, amount, blockNumber, token, commitTime, nDelegates, pledgeState, intendedProject, delegates } = data
   const profile = profiles.find(p => p.idProfile == owner)
-  pledge.pledgeId = Number(id)
+  pledge.idPledge = Number(id)
   pledge.owner = Number(owner)
   pledge.amount = amount
   pledge.token = token
@@ -16,6 +16,7 @@ const createPledge = (pledge, data, profiles) => {
   pledge.pledgeState = Number(pledgeState)
   pledge.intendedProject = Number(intendedProject)
   pledge.blockNumber = Number(blockNumber)
+  pledge.delegates = delegates
   pledge.profile.set(profile)
 }
 
@@ -36,17 +37,17 @@ export const batchAddPledges = async (pledges, profiles = []) => {
 }
 
 const getLastPledge = pledges => {
-  const pledgeId = pledges.length
-        ? pledges.sort((a,b) => b.pledgeId - a.pledgeId)[0].pledgeId
+  const idPledge = pledges.length
+        ? pledges.sort((a,b) => b.idPledge - a.idPledge)[0].idPledge
         : 0
-  return pledgeId
+  return idPledge
 }
 export const getAndAddPledges = async () => {
   const pledges = await getLocalPledges()
-  const pledgeId = getLastPledge(pledges)
-  const newPledges = await getAllPledges(pledgeId + 1)
-  const pledgeIds = newPledges.map(p => p.owner)
-  const profiles = await getProfilesById(pledgeIds)
+  const idPledge = getLastPledge(pledges)
+  const newPledges = await getAllPledges(idPledge + 1)
+  const idPledges = newPledges.map(p => p.owner)
+  const profiles = await getProfilesById(idPledges)
   batchAddPledges(newPledges, profiles)
 }
 
@@ -55,7 +56,7 @@ export const updateStalePledges = async () => {
   const stalePledges = await getStalePledges()
   const updatedPledges = await getPledges(stalePledges)
   const batch = stalePledges.map(p => {
-    const updated = updatedPledges[p.pledgeId - 1]
+    const updated = updatedPledges[p.idPledge - 1]
     return p.prepareUpdate(p => {
       const { amount, nDelegates, pledgeState, blockNumber } = updated
       p.amount = amount
@@ -84,6 +85,13 @@ export const getStalePledges = async () => {
 export const getPledgeById = async id => {
   const event = await pledgesCollection.query(
     Q.where('id_profile', id)
+  ).fetch()
+  return event
+}
+
+export const getPledgesWithDelegates = async () => {
+  const event = await pledgesCollection.query(
+    Q.where('n_delegates', Q.gt(0))
   ).fetch()
   return event
 }

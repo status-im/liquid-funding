@@ -31,11 +31,11 @@ const pledgesChartData = pledges => {
   const labels = []
   const backgroundColor = []
   pledges.forEach((pledge, idx) => {
-    const { pledgeId, amount, token } = pledge
+    const { idPledge, amount, token } = pledge
     const converted = toEther(amount)
     data.push(converted)
     labels.push(
-      `pledge ${pledgeId} - ${getTokenLabel(token)}`
+      `pledge ${idPledge} - ${getTokenLabel(token)}`
     )
     backgroundColor.push(getColor('Dark2-8', idx))
   })
