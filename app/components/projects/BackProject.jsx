@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Formik } from 'formik'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
-import { useProjectData } from './hooks'
+import { useProjectData, useProfileData } from './hooks'
 import Divider from '@material-ui/core/Divider'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -46,64 +46,92 @@ const Title = ({ className, manifest }) => (
     <Divider />
   </div>
 )
+const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
+  return (
+    <Formik
+      initialValues={{ delegateProfile: '', delegatePledge: '' }}
+      onSubmit={console.log}
+    >
+      {({
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        setFieldValue,
+        setStatus,
+        status
+      }) => {
+        const filteredPledges = values.delegateProfile ? delegatePledges.filter(d => d.profile.id == values.delegateProfile.id) : null
+        return (
+          <form onSubmit={handleSubmit} className={classes.submissionRoot}>
+            <TextField
+              className={classes.textField}
+              id="delegateProfile"
+              name="delegateProfile"
+              select
+              label="Select Delegate Profile"
+              placeholder="Select Delegate Profile"
+              margin="normal"
+              variant="outlined"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.delegateProfile || ''}
+            >
+              {profiles && profiles.map(profile => (
+                <MenuItem style={{ display: 'flex', alignItems: 'center' }} key={profile.name} value={profile}>
+                  {profile.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            {filteredPledges && <TextField
+              className={classes.textField}
+              id="delegatePledge"
+              name="delegatePledge"
+              select
+              label="Select Pledge for Funding"
+              placeholder="Select Pledge for Funding"
+              margin="normal"
+              variant="outlined"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.delegatePledge || ''}
+            >
+              {filteredPledges.map(pledge => (
+                <MenuItem style={{ display: 'flex', alignItems: 'center' }} key={pledge.idPledge} value={pledge.idPledge}>
+                  {`Pledge no: ${pledge.idPledge}`}
+                </MenuItem>
+              ))}
+            </TextField>}
+          </form>
+        ) }
+      }
+    </Formik>
+  )}
 
-const SubmissionSection = ({ classes, profiles }) => (
-  <Formik
-    initialValues={{ delegateProfile: ''}}
-    onSubmit={console.log}
-  >
-    {({
-      values,
-      errors,
-      touched,
-      handleChange,
-      handleBlur,
-      handleSubmit,
-      setFieldValue,
-      setStatus,
-      status
-    }) => (
-      <form onSubmit={handleSubmit} className={classes.submissionRoot}>
-        <TextField
-          className={classes.textField}
-          id="delegateProfile"
-          name="delegateProfile"
-          select
-          label="Select Delegate Profile"
-          placeholder="Select Delegate Profile"
-          margin="normal"
-          variant="outlined"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.delegateProfile || ''}
-        >
-          {profiles && profiles.map(profile => (
-            <MenuItem style={{ display: 'flex', alignItems: 'center' }} key={profile.name} value={profile.name}>
-              {profile.name}
-            </MenuItem>
-          ))}
-        </TextField>
-      </form>
-    )}
-  </Formik>
-)
-
-function BackProject({classes, match, profile, projectAddedEvents, delegateAddedEvents}) {
+function BackProject({classes, match, profile, delegates, projectAddedEvents, delegateAddedEvents}) {
   const projectId = match.params.id
   const { projectAge, projectAssets, manifest, delegateProfiles } = useProjectData(projectId, profile, projectAddedEvents)
-  console.log({delegateAddedEvents})
+  const delegatePledges = useProfileData(delegateProfiles)
+  const delegateProfilesArr = delegates.map(d => d.profile.fetch())
+  console.log({delegateAddedEvents, profile, delegates, delegateProfilesArr, delegateProfiles}, profile[0].delegates.fetch())
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
-      <SubmissionSection classes={classes} profiles={delegateProfiles} />
+      <SubmissionSection classes={classes} profiles={delegateProfiles} delegatePledges={delegatePledges}/>
     </div>
   )
 }
 
+//TODO get all pledges for a delegate profile
 const StyledProject = withStyles(styles)(BackProject)
 export default withDatabase(withObservables([], ({ database, match }) => ({
   profile: database.collections.get('profiles').query(
     Q.where('id_profile', match.params.id)
+  ).observe(),
+  delegates: database.collections.get('delegates').query(
+    Q.on('profiles','id_profile', 3)
   ).observe(),
   projectAddedEvents: database.collections.get('lp_events').query(
     Q.where('event', 'ProjectAdded')

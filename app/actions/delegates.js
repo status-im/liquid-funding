@@ -1,8 +1,7 @@
 import database from '../db'
 import { Q } from '@nozbe/watermelondb'
-import { when } from 'ramda'
 import { getPledgesWithDelegates } from './pledges'
-import { getProfilesById } from './profiles'
+import { getProfilesById, getProfileById } from './profiles'
 
 const delegatesCollection = database.collections.get('delegates')
 export const getDelegateProfiles = async pledges => {
@@ -62,6 +61,13 @@ export const updateDelegates = async () => {
 
 export const getExistingDelegates = async () => {
   const delegates = await delegatesCollection.query().fetch()
+  return delegates
+}
+
+export const getDelegatePledgesByProfile = async profile => {
+  const delegates = await delegatesCollection.query(
+    Q.where('profile_id', profile.id)
+  ).fetch()
   return delegates
 }
 
