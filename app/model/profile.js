@@ -5,7 +5,8 @@ import { LiquidModel } from '../utils/models'
 export default class Profile extends LiquidModel {
   static table = 'profiles'
   static associations = {
-    pledges: { type: 'has_many', foreignKey: 'profile_id' }
+    pledges: { type: 'has_many', foreignKey: 'profile_id' },
+    delegates: { type: 'has_many', foreignKey: 'profile_id' }
   }
 
   @field('addr') addr
@@ -18,6 +19,7 @@ export default class Profile extends LiquidModel {
   @field('id_profile') idProfile
   @field('block_number') blockNumber
   @children('pledges') pledges
+  @children('delegates') delegates
 
   @action async markAsCanceled() {
     await this.update(profile => {

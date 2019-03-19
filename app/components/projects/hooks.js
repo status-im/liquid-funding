@@ -2,13 +2,13 @@ import EmbarkJS from 'Embark/EmbarkJS'
 import web3 from 'Embark/web3'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import { useState, useEffect, useMemo, useContext } from 'react'
+import { unnest } from 'ramda'
 import { timeSinceBlock } from '../../utils/dates'
 import { getFiles, ipfs } from '../../utils/ipfs'
 import { databaseExists } from '../../utils/db'
 import { FundingContext } from '../../context'
 import { getDelegateProfiles } from '../../actions/profiles'
-
-console.log({LiquidPledging})
+import { getDelegatePledgesByProfile } from '../../actions/delegates'
 
 async function getProjectAge(id, events, setState){
   const event = events.find(e => e.returnValues.idProject === id)
@@ -19,8 +19,6 @@ async function getProjectAge(id, events, setState){
 async function getProjectAssets(projectId, setState){
   EmbarkJS.onReady(async (err) => {
     const projectInfo = await LiquidPledging.methods.getPledgeAdmin(projectId).call()
-    const pledgeInfo = await LiquidPledging.methods.getPledgeDelegate(5).call()
-    console.log({pledgeInfo})
     const CID = projectInfo.url.split('/').slice(-1)[0]
     console.log({CID, projectInfo, ipfs})
     getFiles(CID)
@@ -50,6 +48,25 @@ async function getProjectAssets(projectId, setState){
 async function fetchAndAddDelegateProfiles(account, setState) {
   const profiles = await getDelegateProfiles(account)
   setState(profiles)
+}
+
+async function fetchAndAddDelegatePledges(profiles, setState) {
+  const dPledges = []
+  profiles.forEach(profile => {
+    const delegatePledges = getDelegatePledgesByProfile(profile)
+    dPledges.push(delegatePledges)
+  })
+  const resolved = await Promise.all(dPledges)
+  setState(unnest(resolved))
+}
+
+export function useProfileData(profiles) {
+  const [delegatePledges, setDelegatePledges] = useState(null)
+
+  useEffect(() => {
+    fetchAndAddDelegatePledges(profiles, setDelegatePledges)
+  }, [profiles])
+  return delegatePledges
 }
 
 const getProjectManifest = assets => assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
