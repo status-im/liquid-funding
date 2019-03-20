@@ -45,6 +45,12 @@ async function getProjectAssets(projectId, setState){
   })
 }
 
+async function getPledge(dPledge) {
+  const pledge = await dPledge.pledge.fetch()
+  dPledge.pledgeData = pledge
+  return dPledge
+}
+
 async function fetchAndAddDelegateProfiles(account, setState) {
   const profiles = await getDelegateProfiles(account)
   setState(profiles)
@@ -57,7 +63,9 @@ async function fetchAndAddDelegatePledges(profiles, setState) {
     dPledges.push(delegatePledges)
   })
   const resolved = await Promise.all(dPledges)
-  setState(unnest(resolved))
+  const unnested = unnest(resolved)
+  const expanded = await Promise.all(unnested.map(getPledge))
+  setState(expanded)
 }
 
 export function useProfileData(profiles) {

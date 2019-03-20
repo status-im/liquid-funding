@@ -8,6 +8,8 @@ import { useProjectData, useProfileData } from './hooks'
 import Divider from '@material-ui/core/Divider'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
+import { toEther } from '../../utils/conversions'
+import { getTokenLabel } from '../../utils/currencies'
 
 const styles = theme => ({
   root: {
@@ -100,7 +102,7 @@ const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
             >
               {filteredPledges.map(pledge => (
                 <MenuItem style={{ display: 'flex', alignItems: 'center' }} key={pledge.idPledge} value={pledge.idPledge}>
-                  {`Pledge no: ${pledge.idPledge}`}
+                  {`Pledge no: ${pledge.idPledge} - Amount: ${toEther(pledge.pledgeData.amount)} ${getTokenLabel(pledge.pledgeData.token)}`}
                 </MenuItem>
               ))}
             </TextField>}
