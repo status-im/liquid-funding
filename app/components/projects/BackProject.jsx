@@ -51,7 +51,7 @@ const Title = ({ className, manifest }) => (
 const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
   return (
     <Formik
-      initialValues={{ delegateProfile: '', delegatePledge: '' }}
+      initialValues={{ amount: '', delegateProfile: '', delegatePledge: '' }}
       onSubmit={console.log}
     >
       {({
@@ -106,6 +106,20 @@ const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
                 </MenuItem>
               ))}
             </TextField>}
+            <TextField
+              autoFocus
+              margin="normal"
+              id="amount"
+              name="amount"
+              label="Amount to transfer"
+              placeholder="Amount to transfer"
+              variant="outlined"
+              autoComplete="off"
+              fullWidth
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.amount || ''}
+            />
           </form>
         ) }
       }
