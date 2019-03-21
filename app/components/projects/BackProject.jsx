@@ -65,7 +65,7 @@ const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
         setStatus,
         status
       }) => {
-        const filteredPledges = values.delegateProfile ? delegatePledges.filter(d => d.profile.id == values.delegateProfile.id) : null
+        const filteredPledges = values.delegateProfile ? delegatePledges.filter(d => d.profile.id == values.delegateProfile.id && d.pledgeData.amount != '0') : null
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <TextField
