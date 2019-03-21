@@ -1,10 +1,11 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { Formik } from 'formik'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
 import { useProjectData, useProfileData } from './hooks'
+import Button from '@material-ui/core/Button'
 import Divider from '@material-ui/core/Divider'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -120,6 +121,7 @@ const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
               onBlur={handleBlur}
               value={values.amount || ''}
             />
+            <Button type="submit" color="primary" variant="contained" style={{ height: '50px', width: '100%' }}>Submit for Funding</Button>
           </form>
         ) }
       }
