@@ -107,7 +107,7 @@ const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
                 </MenuItem>
               ))}
             </TextField>}
-            <TextField
+            {values.delegatePledge && <TextField
               autoFocus
               margin="normal"
               id="amount"
@@ -120,8 +120,8 @@ const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.amount || ''}
-            />
-            <Button type="submit" color="primary" variant="contained" style={{ height: '50px', width: '100%' }}>Submit for Funding</Button>
+            />}
+            {values.amount && <Button type="submit" color="primary" variant="contained" style={{ height: '50px', width: '100%' }}>Submit for Funding</Button>}
           </form>
         ) }
       }
