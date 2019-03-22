@@ -61,7 +61,7 @@ export const updateStalePledges = async () => {
       const { amount, nDelegates, pledgeState, blockNumber } = updated
       p.amount = amount
       p.nDelegates = Number(nDelegates)
-      p.pledgeState = pledgeState
+      p.pledgeState = Number(pledgeState)
       p.blockNumber = blockNumber
     })
   })
