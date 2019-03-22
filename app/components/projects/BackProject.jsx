@@ -1,5 +1,6 @@
 import React from 'react'
 import { Formik } from 'formik'
+import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
@@ -9,8 +10,10 @@ import Button from '@material-ui/core/Button'
 import Divider from '@material-ui/core/Divider'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
-import { toEther } from '../../utils/conversions'
+import { toEther, toWei } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
+
+const { transfer } = LiquidPledging.methods
 
 const styles = theme => ({
   root: {
@@ -49,11 +52,39 @@ const Title = ({ className, manifest }) => (
     <Divider />
   </div>
 )
-const SubmissionSection = ({ classes, profiles, delegatePledges }) => {
+const SubmissionSection = ({ classes, profiles, delegatePledges, projectId }) => {
   return (
     <Formik
       initialValues={{ amount: '', delegateProfile: '', delegatePledge: '' }}
-      onSubmit={console.log}
+      onSubmit={async(values, { resetForm }) => {
+        const { amount, delegateProfile, delegatePledge } = values
+        const args = [delegateProfile.idProfile, delegatePledge, toWei(amount), projectId]
+        console.log({values, args})
+        const toSend = transfer(...args)
+        const estimatedGas = await toSend.estimateGas()
+
+        toSend
+          .send({gas: estimatedGas + 1000})
+          .then(async res => {
+            console.log({res})
+            const { events: { Transfer } } = res
+            if (Array.isArray(Transfer)) {
+              Transfer.forEach(async t => {
+                const { to, amount } = t.returnValues
+                //await pledge.transferTo(to, amount)
+              })
+            } else {
+              const { to, amount } = Transfer.returnValues
+              //await pledge.transferTo(to, amount)
+            }
+          })
+          .catch(e => {
+            console.log({e})
+          })
+          .finally(() => {
+            resetForm()
+          })
+    }}
     >
       {({
         values,
@@ -137,7 +168,7 @@ function BackProject({classes, match, profile, delegates, projectAddedEvents, de
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
-      <SubmissionSection classes={classes} profiles={delegateProfiles} delegatePledges={delegatePledges}/>
+      <SubmissionSection classes={classes} profiles={delegateProfiles} delegatePledges={delegatePledges} projectId={projectId} />
     </div>
   )
 }
