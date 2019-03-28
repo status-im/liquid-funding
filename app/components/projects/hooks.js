@@ -84,7 +84,7 @@ export function useProjectData(projectId, profile, projectAddedEvents) {
   const [projectAssets, setAssets] = useState(null)
   const [ipfsReady, setIpfsState] = useState(null)
   const [delegateProfiles, setDelegateProfiles] = useState(null)
-  const { account } = useContext(FundingContext)
+  const { account, openSnackBar } = useContext(FundingContext)
 
   useEffect(() => {
     ipfs.on('ready', () => { setIpfsState(true) })
@@ -104,5 +104,11 @@ export function useProjectData(projectId, profile, projectAddedEvents) {
 
   const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets])
 
-  return { projectAge, projectAssets, manifest, delegateProfiles }
+  return {
+    projectAge,
+    projectAssets,
+    manifest,
+    delegateProfiles,
+    openSnackBar
+  }
 }

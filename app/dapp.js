@@ -3,6 +3,7 @@ import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from 'Embark/EmbarkJS'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import web3 from 'Embark/web3'
+import Snackbar from '@material-ui/core/Snackbar'
 import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval, getLpAllowance } from './utils/initialize'
 import { getAuthorizedPayments } from './utils/events'
 import { FundingContext } from './context'
@@ -12,6 +13,7 @@ import { getAndAddVaultEvents } from './actions/vaultEvents'
 import { addFormattedProfiles } from './actions/profiles'
 import { updateStalePledges, getAndAddPledges } from './actions/pledges'
 import { updateDelegates } from './actions/delegates'
+import { MySnackbarContentWrapper } from './components/base/SnackBars'
 
 const { getNetworkType } = web3.eth.net
 
@@ -62,15 +64,37 @@ class App extends React.Component {
     this.setState({ loading: false })
   }
 
+  openSnackBar = (variant, message) => {
+    this.setState({ snackbar: { variant, message } })
+  }
+
+  closeSnackBar = () => {
+    this.setState({ snackbar: null })
+  }
+
   render() {
-    const { account, needsInit, lpAllowance, loading, authorizedPayments } = this.state
-    const { appendFundProfile, appendPledges, transferPledgeAmounts } = this
-    const fundingContext = { appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, needsInit, initVaultAndLP, standardTokenApproval  }
+    const { account, needsInit, lpAllowance, loading, authorizedPayments, snackbar } = this.state
+    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar } = this
+    const fundingContext = { appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, needsInit, initVaultAndLP, standardTokenApproval, openSnackBar, closeSnackBar  }
     return (
       <FundingContext.Provider value={fundingContext}>
         <Router>
           <MainCointainer loading={loading} />
         </Router>
+        {snackbar && <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          open={snackbar}
+          autoHideDuration={6000}
+          onClose={closeSnackBar}
+        >
+          <MySnackbarContentWrapper
+            variant={snackbar && snackbar.variant}
+            message={snackbar && snackbar.message}
+          />
+        </Snackbar>}
       </FundingContext.Provider>
     )
   }
