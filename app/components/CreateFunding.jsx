@@ -1,7 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Formik } from 'formik';
-import EmbarkJS from 'Embark/EmbarkJS';
-import LPVault from 'Embark/contracts/LPVault';
 import LiquidPledging from 'Embark/contracts/LiquidPledging';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';

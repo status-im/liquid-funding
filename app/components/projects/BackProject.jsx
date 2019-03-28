@@ -52,7 +52,7 @@ const Title = ({ className, manifest }) => (
     <Divider />
   </div>
 )
-const SubmissionSection = ({ classes, profiles, delegatePledges, projectId }) => {
+const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, openSnackBar }) => {
   return (
     <Formik
       initialValues={{ amount: '', delegateProfile: '', delegatePledge: '' }}
@@ -79,9 +79,11 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId }) =>
             }
           })
           .catch(e => {
+            openSnackBar('error', e)
             console.log({e})
           })
           .finally(() => {
+            openSnackBar('success', 'project backed!')
             resetForm()
           })
     }}
@@ -164,14 +166,20 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId }) =>
 
 function BackProject({classes, match, profile, delegates, projectAddedEvents, delegateAddedEvents}) {
   const projectId = match.params.id
-  const { projectAge, projectAssets, manifest, delegateProfiles } = useProjectData(projectId, profile, projectAddedEvents)
+  const { projectAge, projectAssets, manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, profile, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
   const delegateProfilesArr = delegates.map(d => d.profile.fetch())
   console.log({delegateAddedEvents, profile, delegates, delegateProfilesArr, delegateProfiles}, profile[0].delegates.fetch())
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
-      <SubmissionSection classes={classes} profiles={delegateProfiles} delegatePledges={delegatePledges} projectId={projectId} />
+      <SubmissionSection
+        classes={classes}
+        profiles={delegateProfiles}
+        delegatePledges={delegatePledges}
+        projectId={projectId}
+        openSnackBar={openSnackBar}
+      />
     </div>
   )
 }
