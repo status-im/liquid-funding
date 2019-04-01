@@ -185,7 +185,6 @@ function BackProject({classes, match, profile, delegates, projectAddedEvents, de
   )
 }
 
-//TODO get all pledges for a delegate profile
 const StyledProject = withStyles(styles)(BackProject)
 export default withDatabase(withObservables([], ({ database, match }) => ({
   profile: database.collections.get('profiles').query(

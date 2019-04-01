@@ -25,6 +25,7 @@ import TransferGraph from './TransfersGraph'
 import Dashboard from './Dashboard'
 import Project from './projects/Project'
 import BackProject from './projects/BackProject'
+import CreateProject from './projects/CreateProject'
 
 const drawerWidth = 240
 
@@ -201,6 +202,7 @@ class PersistentDrawerLeft extends React.Component {
               <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
               <Route path="/insights" component={TransferGraph} />
               <Route path="/project/:id" component={Project} />
+              <Route path="/create-project/" component={CreateProject} />
               <Route path="/back-project/:id" component={BackProject} />
             </Switch>
             {this.props.children}
