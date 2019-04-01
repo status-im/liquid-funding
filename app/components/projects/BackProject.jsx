@@ -169,10 +169,8 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
 
 function BackProject({classes, match, profile, delegates, projectAddedEvents, delegateAddedEvents}) {
   const projectId = match.params.id
-  const { projectAge, projectAssets, manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, profile, projectAddedEvents)
+  const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, profile, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
-  const delegateProfilesArr = delegates.map(d => d.profile.fetch())
-  console.log({delegateAddedEvents, profile, delegates, delegateProfilesArr, delegateProfiles}, profile[0].delegates.fetch())
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
@@ -192,9 +190,6 @@ const StyledProject = withStyles(styles)(BackProject)
 export default withDatabase(withObservables([], ({ database, match }) => ({
   profile: database.collections.get('profiles').query(
     Q.where('id_profile', match.params.id)
-  ).observe(),
-  delegates: database.collections.get('delegates').query(
-    Q.on('profiles','id_profile', 3)
   ).observe(),
   projectAddedEvents: database.collections.get('lp_events').query(
     Q.where('event', 'ProjectAdded')
