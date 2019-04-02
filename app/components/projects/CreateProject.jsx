@@ -54,6 +54,36 @@ const styles = theme => ({
   }
 })
 
+const createJSON = values => {
+  const {
+    title,
+    subtitle,
+    creator,
+    avatar,
+    goal,
+    goalToken,
+    video,
+    isPlaying,
+    description
+  } = values
+
+  const manifest = {
+    title,
+    subtitle,
+    creator,
+    avatar,
+    goal,
+    goalToken,
+    description,
+    media: {
+      isPlaying,
+      url: video,
+      type: 'video'
+    }
+  }
+  return JSON.stringify(manifest)
+}
+
 const Title = ({ className }) => (
   <div className={className}>
     <div style={{ alignSelf: 'center' }}>Create Project</div>
@@ -64,8 +94,22 @@ const Title = ({ className }) => (
 const SubmissionSection = ({ classes }) => {
   return (
     <Formik
-      initialValues={{ projectName: '' }}
-      onSubmit={console.log}
+      initialValues={{
+        title: '',
+        subtitle: '',
+        creator: '',
+        avatar: '',
+        goal: '',
+        goalToken: '',
+        video: '',
+        isPlaying: false,
+        description: ''
+      }}
+      onSubmit={async (values, { resetForm }) => {
+        const manifest = createJSON(values)
+        console.log({manifest})
+
+      }}
     >
       {({
         values,
@@ -87,15 +131,15 @@ const SubmissionSection = ({ classes }) => {
                   input: classes.textInput
                 }
               }}
-              id="projectName"
-              name="projectName"
+              id="title"
+              name="title"
               label="Enter Project Name"
               placeholder="Enter Project Name"
               margin="normal"
               variant="outlined"
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.projectName || ''}
+              value={values.title || ''}
             />
             <TextField
               className={classes.textField}
@@ -104,15 +148,15 @@ const SubmissionSection = ({ classes }) => {
                   input: classes.textInput
                 }
               }}
-              id="subTitle"
-              name="subTitle"
+              id="subtitle"
+              name="subtitle"
               label="Enter a sub heading description for your project"
               placeholder="Enter a sub heading description for your project"
               margin="normal"
               variant="outlined"
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.subTitle || ''}
+              value={values.subtitle || ''}
             />
             <TextField
               className={classes.textField}
@@ -203,10 +247,10 @@ const SubmissionSection = ({ classes }) => {
               className={classes.formControl}
               control={
                 <Switch
-                  id="autoPlay"
-                      checked={values.autoPlay}
-                      onChange={handleChange}
-                      value={values.autoPlay}
+                  id="isPlaying"
+                  checked={values.isPlaying}
+                  onChange={handleChange}
+                  value={values.isPlaying}
                 />
               }
               label="Autoplay video?"
@@ -224,7 +268,7 @@ const SubmissionSection = ({ classes }) => {
               onBlur={handleBlur}
               value={values.description || ''}
             />
-            <Button color="primary" variant="contained" className={classes.formButton}>Create Project</Button>
+            <Button type="submit" color="primary" variant="contained" className={classes.formButton}>Create Project</Button>
           </form>
         )
       }
