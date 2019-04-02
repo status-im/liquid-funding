@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { createRef } from 'react'
 import { Formik } from 'formik'
 import TextField from '@material-ui/core/TextField'
 import Divider from '@material-ui/core/Divider'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 import Button from '@material-ui/core/Button'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -91,6 +93,7 @@ const Title = ({ className }) => (
   </div>
 )
 
+let uploadInput = createRef()
 const SubmissionSection = ({ classes }) => {
   return (
     <Formik
@@ -124,6 +127,24 @@ const SubmissionSection = ({ classes }) => {
       }) => {
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
+            <input
+              ref={(input) => { uploadInput = input }}
+              type="file"
+              multiple
+              onChange={
+              (e) => {
+                const file = e.target.files
+                const { activeField } = status
+                setFieldValue(activeField, file[0]['name'])
+                setStatus({
+                  ...status,
+                  fields: { ...status.fields, [activeField]: file }
+                })
+                console.log({file, activeField, status})
+              }
+              }
+              style={{ display: 'none' }}
+            />
             <TextField
               className={classes.textField}
               InputProps={{
@@ -178,6 +199,19 @@ const SubmissionSection = ({ classes }) => {
             <TextField
               className={classes.textField}
               InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CloudUpload
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        const activeField = 'avatar'
+                        setStatus({ ...status, activeField })
+                        uploadInput.click()
+                      }
+                      }
+                    />
+                  </InputAdornment>
+                ),
                 classes: {
                   input: classes.textInput
                 }
@@ -248,9 +282,9 @@ const SubmissionSection = ({ classes }) => {
               control={
                 <Switch
                   id="isPlaying"
-                  checked={values.isPlaying}
-                  onChange={handleChange}
-                  value={values.isPlaying}
+                      checked={values.isPlaying}
+                      onChange={handleChange}
+                      value={values.isPlaying}
                 />
               }
               label="Autoplay video?"
