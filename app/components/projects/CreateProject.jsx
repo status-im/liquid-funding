@@ -1,4 +1,4 @@
-import React, { createRef } from 'react'
+import React, { createRef, useState } from 'react'
 import { Formik } from 'formik'
 import TextField from '@material-ui/core/TextField'
 import Divider from '@material-ui/core/Divider'
@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
+import { captureFile, formatForIpfs, uploadToIpfs } from '../../utils/ipfs'
 
 const styles = theme => ({
   root: {
@@ -56,6 +57,7 @@ const styles = theme => ({
   }
 })
 
+const isWeb = str => str.includes('http')
 const createJSON = values => {
   const {
     title,
@@ -83,7 +85,7 @@ const createJSON = values => {
       type: 'video'
     }
   }
-  return JSON.stringify(manifest)
+  return JSON.stringify(manifest, null, 2)
 }
 
 const Title = ({ className }) => (
@@ -95,6 +97,7 @@ const Title = ({ className }) => (
 
 let uploadInput = createRef()
 const SubmissionSection = ({ classes }) => {
+  const [uploads, setUploads] = useState({})
   return (
     <Formik
       initialValues={{
@@ -110,7 +113,16 @@ const SubmissionSection = ({ classes }) => {
       }}
       onSubmit={async (values, { resetForm }) => {
         const manifest = createJSON(values)
-        console.log({manifest})
+        let fileLists = []
+        Object.keys(uploads).forEach(k => {
+          fileLists = [ ...fileLists, formatForIpfs(uploads[k][0]) ]
+        })
+        fileLists.push({
+          path: '/root/manifest.json', content: Buffer.from(manifest)
+        })
+        const contentHash = await uploadToIpfs(fileLists)
+        //saveToIpfs(fileLists, console.log, console.log)
+        console.log({manifest, values, uploads, fileLists, contentHash})
 
       }}
     >
@@ -136,11 +148,12 @@ const SubmissionSection = ({ classes }) => {
                 const file = e.target.files
                 const { activeField } = status
                 setFieldValue(activeField, file[0]['name'])
+                setUploads({ ...uploads, [activeField]: file })
                 setStatus({
                   ...status,
-                  fields: { ...status.fields, [activeField]: file }
+                  activeField: null
                 })
-                console.log({file, activeField, status})
+                console.log({file, activeField, status}, e.target)
               }
               }
               style={{ display: 'none' }}
@@ -263,6 +276,19 @@ const SubmissionSection = ({ classes }) => {
             <TextField
               className={classes.textField}
               InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CloudUpload
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        const activeField = 'video'
+                        setStatus({ ...status, activeField })
+                        uploadInput.click()
+                      }
+                      }
+                    />
+                  </InputAdornment>
+                ),
                 classes: {
                   input: classes.textInput
                 }
