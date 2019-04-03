@@ -1,5 +1,6 @@
-import React, { createRef, useState } from 'react'
+import React, { createRef, useState, useContext } from 'react'
 import { Formik } from 'formik'
+import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import TextField from '@material-ui/core/TextField'
 import Divider from '@material-ui/core/Divider'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
@@ -8,7 +9,14 @@ import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
-import { captureFile, formatForIpfs, uploadToIpfs } from '../../utils/ipfs'
+import { formatForIpfs, uploadToIpfs } from '../../utils/ipfs'
+import { FundingContext } from '../../context'
+
+const { addProject } = LiquidPledging.methods
+
+
+const hoursToSeconds = hours => hours * 60 * 60
+const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 
 const styles = theme => ({
   root: {
@@ -58,6 +66,9 @@ const styles = theme => ({
 })
 
 const isWeb = str => str.includes('http')
+const formatMedia = str => {
+  return isWeb(str) ? str : `/root/${str}`
+}
 const createJSON = values => {
   const {
     title,
@@ -75,13 +86,13 @@ const createJSON = values => {
     title,
     subtitle,
     creator,
-    avatar,
+    avatar: formatMedia(avatar),
     goal,
     goalToken,
     description,
     media: {
       isPlaying,
-      url: video,
+      url: formatMedia(video),
       type: 'video'
     }
   }
@@ -96,8 +107,13 @@ const Title = ({ className }) => (
 )
 
 let uploadInput = createRef()
+const addProjectSucessMsg = response => {
+  const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
+  return `Project created with ID of ${idProject}`
+}
 const SubmissionSection = ({ classes }) => {
   const [uploads, setUploads] = useState({})
+  const { account, openSnackBar } = useContext(FundingContext)
   return (
     <Formik
       initialValues={{
@@ -109,9 +125,11 @@ const SubmissionSection = ({ classes }) => {
         goalToken: '',
         video: '',
         isPlaying: false,
-        description: ''
+        description: '',
+        commitTime: 24
       }}
       onSubmit={async (values, { resetForm }) => {
+        const { title, commitTime } = values
         const manifest = createJSON(values)
         let fileLists = []
         Object.keys(uploads).forEach(k => {
@@ -121,7 +139,19 @@ const SubmissionSection = ({ classes }) => {
           path: '/root/manifest.json', content: Buffer.from(manifest)
         })
         const contentHash = await uploadToIpfs(fileLists)
-        //saveToIpfs(fileLists, console.log, console.log)
+        const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), 0]
+        addProject(...args)
+          .estimateGas({ from: account })
+          .then(async gas => {
+            addProject(...args)
+              .send({ from: account, gas: gas + 100 })
+              .then(res => {
+                console.log({res})
+                openSnackBar('success', addProjectSucessMsg(res))
+                resetForm()
+              })
+              .catch(e => openSnackBar('error', e))
+          })
         console.log({manifest, values, uploads, fileLists, contentHash})
 
       }}
@@ -153,7 +183,6 @@ const SubmissionSection = ({ classes }) => {
                   ...status,
                   activeField: null
                 })
-                console.log({file, activeField, status}, e.target)
               }
               }
               style={{ display: 'none' }}
@@ -174,6 +203,24 @@ const SubmissionSection = ({ classes }) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.title || ''}
+            />
+            <TextField
+              id="commitTime"
+              name="commitTime"
+              className={classes.textField}
+              InputProps={{
+                classes: {
+                  input: classes.textInput
+                }
+              }}
+              label="Commit time in hours"
+              placeholder="Commit time in hours"
+              margin="normal"
+              variant="outlined"
+              helperText={helperText}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.commitTime || ''}
             />
             <TextField
               className={classes.textField}
