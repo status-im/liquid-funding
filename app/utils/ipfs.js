@@ -21,7 +21,7 @@ export const captureFile = (event, cb, imgCb) => {
   saveToIpfs(formattedFiles, cb, imgCb)
 }
 
-const formatFileList = files => {
+export const formatFileList = files => {
   const formattedList = []
   for (let i=0; i<files.length; i++) {
     formattedList.push(formatForIpfs(files[i]))
@@ -29,7 +29,7 @@ const formatFileList = files => {
   return formattedList
 }
 
-const formatForIpfs = file => {
+export const formatForIpfs = file => {
   const { name, type } = file
   const content = fileReaderPullStream(file)
   return {
@@ -37,7 +37,7 @@ const formatForIpfs = file => {
     content
   }
 }
-const saveToIpfs = (files, cb, imgCb) => {
+export const saveToIpfs = (files, cb, imgCb) => {
   let ipfsId
   ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
     .then((response) => {
@@ -48,6 +48,11 @@ const saveToIpfs = (files, cb, imgCb) => {
     }).catch((err) => {
       console.error(err)
     })
+}
+
+export const uploadToIpfs = async files => {
+  const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
+  return `ipfs/${res[0].hash}`
 }
 
 export const getImageFromIpfs = async (hash, cb) => {
