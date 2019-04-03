@@ -6,10 +6,7 @@ import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
 import { useProjectData, useProfileData } from './hooks'
-import Button from '@material-ui/core/Button'
-import Divider from '@material-ui/core/Divider'
-import TextField from '@material-ui/core/TextField'
-import MenuItem from '@material-ui/core/MenuItem'
+import {TextField, Button, MenuItem, Divider, Typography, Link} from '@material-ui/core'
 import { toEther, toWei } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 
@@ -100,11 +97,16 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
         status
       }) => {
         const filteredPledges = values.delegateProfile ? delegatePledges.filter(
-          d => d.profile.id == values.delegateProfile.id && d.pledgeData.amount != '0' && d.pledgeData.pledgeState == 0 && d.pledgeData.intendedProject == 0
+          d => d.profile.id === values.delegateProfile.id && d.pledgeData.amount !== '0' && d.pledgeData.pledgeState === 0 && d.pledgeData.intendedProject === 0
         ) : null
         console.log({filteredPledges})
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
+            {profiles && profiles.length === 0 &&
+            <Typography color="error">
+              Please create a Delegate profile before backing -
+              <Link href="/#/funds-management"> Delegate creation page</Link>
+            </Typography>}
             <TextField
               className={classes.textField}
               id="delegateProfile"
@@ -116,6 +118,7 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
               variant="outlined"
               onChange={handleChange}
               onBlur={handleBlur}
+              disabled={!profiles || profiles.length === 0}
               value={values.delegateProfile || ''}
             >
               {profiles && profiles.map(profile => (
