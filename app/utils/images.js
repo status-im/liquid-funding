@@ -6,7 +6,6 @@ const typeMap = {
 }
 
 export const getImageType = file => {
-  const { name } = file
-  const suffix = name.split('.').slice(-1)[0].toLowerCase()
+  const suffix = file.split('.').slice(-1)[0].toLowerCase()
   return typeMap[suffix] ? typeMap[suffix] : 'image/jpeg'
 }
