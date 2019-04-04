@@ -96,13 +96,13 @@ export function useProjectData(projectId, profile, projectAddedEvents) {
 
   useEffect(() => {
     getProjectAge(projectId, projectAddedEvents, setAge)
-  }, [projectAddedEvents])
+  }, [projectAddedEvents, projectId])
 
   useEffect(() => {
     getProjectAssets(projectId, setAssets)
   }, [projectId, ipfsReady])
 
-  const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets])
+  const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets, projectId])
 
   return {
     projectAge,

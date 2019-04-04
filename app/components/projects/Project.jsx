@@ -193,11 +193,11 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
   const projectId = match.params.id
   const { projectAge, projectAssets, manifest } = useProjectData(projectId, profile, projectAddedEvents)
 
-  const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges])
-  const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges])
-  const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets])
-  const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets])
-  const avatarUrl = useMemo(() => getAvatarSrc(projectAssets), [projectAssets])
+  const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
+  const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges, projectId])
+  const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
+  const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
+  const avatarUrl = useMemo(() => getAvatarSrc(projectAssets), [projectAssets, projectId])
   const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   const percentToGoal = manifest ? Math.min(
     (Number(totalPledged) / Number(manifest.goal)) * 100,
@@ -232,7 +232,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
               title="media-description"
           />}
           <div className={classes.infoBox}>
-            {amountsPledged[0] ? <LinearProgress
+            {mediaUrl ? <LinearProgress
               classes={{
                 colorPrimary: classes.linearColorPrimary,
                 barColorPrimary: classes.linearBarColorPrimary,
@@ -270,7 +270,7 @@ Project.propTypes = {
 }
 
 const StyledProject = withStyles(styles)(Project)
-export default withDatabase(withObservables([], ({ database, match }) => ({
+export default withDatabase(withObservables(['match'], ({ database, match }) => ({
   profile: database.collections.get('profiles').query(
     Q.where('id_profile', match.params.id)
   ).observe(),
