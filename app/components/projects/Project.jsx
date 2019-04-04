@@ -153,6 +153,13 @@ const formatMedia = content => {
   return src
 }
 
+const formatAvatar = content => {
+  const type = 'image/gif'
+  const blob = new Blob([content], {type})
+  const src = URL.createObjectURL(blob)
+  return src
+}
+
 const getMediaType = assets => {
   if (!assets) return false
   const { media } = getProjectManifest(assets)
@@ -173,6 +180,15 @@ const getMediaSrc = assets => {
   }
 }
 
+const getAvatarSrc = assets => {
+  if (!assets) return null
+  const { avatar } = getProjectManifest(assets)
+  if (avatar.includes('http')) return avatar
+  return formatAvatar(
+    assets.find(a => a.name === getFile(avatar)).content
+  )
+}
+
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
   const { projectAge, projectAssets, manifest } = useProjectData(projectId, profile, projectAddedEvents)
@@ -181,6 +197,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges])
   const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets])
+  const avatarUrl = useMemo(() => getAvatarSrc(projectAssets), [projectAssets])
   const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   const percentToGoal = manifest ? Math.min(
     (Number(totalPledged) / Number(manifest.goal)) * 100,
@@ -193,7 +210,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
       :
       <div className={classes.root}>
         <div className={classes.creator}>
-          <Avatar src={manifest && manifest.avatar} />
+          <Avatar src={manifest && avatarUrl} />
           <Typography className={classes.creatorName}>{manifest && `By ${manifest.creator}`}</Typography>
         </div>
         <div>
