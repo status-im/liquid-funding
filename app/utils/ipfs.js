@@ -79,3 +79,8 @@ export const getFiles = CID => {
     })
   })
 }
+
+export const isWeb = str => str.includes('http')
+export const formatMedia = str => {
+  return isWeb(str) ? str : `/root/${str}`
+}

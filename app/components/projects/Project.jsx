@@ -18,6 +18,7 @@ import { toEther } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 import { timeSinceBlock } from '../../utils/dates'
 import { getFiles } from '../../utils/ipfs'
+import { getImageType } from '../../utils/images'
 import { useProjectData } from './hooks'
 
 const styles = theme => ({
@@ -153,8 +154,7 @@ const formatMedia = content => {
   return src
 }
 
-const formatAvatar = content => {
-  const type = 'image/gif'
+const formatAvatar = (content, type) => {
   const blob = new Blob([content], {type})
   const src = URL.createObjectURL(blob)
   return src
@@ -184,8 +184,10 @@ const getAvatarSrc = assets => {
   if (!assets) return null
   const { avatar } = getProjectManifest(assets)
   if (avatar.includes('http')) return avatar
+  const type = getImageType(avatar)
   return formatAvatar(
-    assets.find(a => a.name === getFile(avatar)).content
+    assets.find(a => a.name === getFile(avatar)).content,
+    type
   )
 }
 

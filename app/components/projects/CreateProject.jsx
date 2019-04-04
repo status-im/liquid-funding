@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
-import { formatForIpfs, uploadToIpfs } from '../../utils/ipfs'
+import { formatForIpfs, uploadToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 
 const { addProject } = LiquidPledging.methods
@@ -65,10 +65,7 @@ const styles = theme => ({
   }
 })
 
-const isWeb = str => str.includes('http')
-const formatMedia = str => {
-  return isWeb(str) ? str : `/root/${str}`
-}
+
 const createJSON = values => {
   const {
     title,
@@ -385,7 +382,7 @@ const SubmissionSection = ({ classes, history }) => {
               onBlur={handleBlur}
               value={values.description || ''}
             />
-            <Button type="submit" color="primary" variant="contained" className={classes.formButton}>{isSubmitting ? 'Submission In Progress' : 'Create Project'}</Button>
+            <Button type="submit" color="primary" variant="contained" className={classes.formButton}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Project'}</Button>
           </form>
         )
       }
