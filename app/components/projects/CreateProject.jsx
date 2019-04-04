@@ -92,10 +92,12 @@ const createJSON = values => {
     description,
     media: {
       isPlaying,
-      url: formatMedia(video),
       type: 'video'
     }
   }
+
+  if (isWeb(video)) Object.assign(manifest.media, { url: formatMedia(video) })
+  else Object.assign(manifest.media, { file: formatMedia(video) })
   return JSON.stringify(manifest, null, 2)
 }
 
@@ -205,6 +207,23 @@ const SubmissionSection = ({ classes }) => {
               value={values.title || ''}
             />
             <TextField
+              className={classes.textField}
+              InputProps={{
+                classes: {
+                  input: classes.textInput
+                }
+              }}
+              id="subtitle"
+              name="subtitle"
+              label="Enter a sub heading description for your project"
+              placeholder="Enter a sub heading description for your project"
+              margin="normal"
+              variant="outlined"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.subtitle || ''}
+            />
+            <TextField
               id="commitTime"
               name="commitTime"
               className={classes.textField}
@@ -221,23 +240,6 @@ const SubmissionSection = ({ classes }) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.commitTime || ''}
-            />
-            <TextField
-              className={classes.textField}
-              InputProps={{
-                classes: {
-                  input: classes.textInput
-                }
-              }}
-              id="subtitle"
-              name="subtitle"
-              label="Enter a sub heading description for your project"
-              placeholder="Enter a sub heading description for your project"
-              margin="normal"
-              variant="outlined"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.subtitle || ''}
             />
             <TextField
               className={classes.textField}

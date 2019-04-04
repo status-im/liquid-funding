@@ -147,8 +147,10 @@ async function getProjectAssets(hash, setState){
 const getProjectManifest = assets => assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
 
 const formatMedia = content => {
-  const blob = new Blob([content], {type : 'video/mp4'})
-  return URL.createObjectURL(blob)
+  const type = 'video/mp4'
+  const blob = new Blob([content], {type})
+  const src = URL.createObjectURL(blob)
+  return src
 }
 
 const getMediaType = assets => {
@@ -157,6 +159,7 @@ const getMediaType = assets => {
   if (media.type.toLowerCase().includes('video')) return true
 }
 
+const getFile = filePath => filePath.split('/').slice(-1)[0]
 const getMediaSrc = assets => {
   if (!assets) return null
   const { media } = getProjectManifest(assets)
@@ -164,12 +167,11 @@ const getMediaSrc = assets => {
     if (media.url) return media.url
     if (media.file) {
       return formatMedia(
-        assets.find(a => a.name === media.file).content
+        assets.find(a => a.name === getFile(media.file)).content
       )
     }
   }
 }
-
 
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
@@ -204,7 +206,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
         </div>
         <div className={classes.secondRow}>
           {mediaType
-          ? <ReactPlayer width="100%" height="100%" url={mediaUrl} playing={manifest.media.isPlaying} />
+          ? <ReactPlayer width="100%" height="100%" url={mediaUrl} playing={manifest.media.isPlaying} controls />
           : <CardMedia
               component="img"
               alt="video"
