@@ -109,11 +109,15 @@ const Title = ({ className }) => (
 )
 
 let uploadInput = createRef()
+const getProjectId = response => {
+  const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
+  return idProject
+}
 const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
-  return `Project created with ID of ${idProject}`
+  return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes }) => {
+const SubmissionSection = ({ classes, history }) => {
   const [uploads, setUploads] = useState({})
   const { account, openSnackBar } = useContext(FundingContext)
   return (
@@ -126,7 +130,7 @@ const SubmissionSection = ({ classes }) => {
         goal: '',
         goalToken: '',
         video: '',
-        isPlaying: false,
+        isPlaying: true,
         description: '',
         commitTime: 24
       }}
@@ -150,7 +154,10 @@ const SubmissionSection = ({ classes }) => {
               .then(res => {
                 console.log({res})
                 openSnackBar('success', addProjectSucessMsg(res))
-                resetForm()
+                setTimeout(() => {
+                  history.push(`/project/${getProjectId(res)}`)
+                  resetForm()
+                }, 5000)
               })
               .catch(e => openSnackBar('error', e))
           })
@@ -167,7 +174,8 @@ const SubmissionSection = ({ classes }) => {
         handleSubmit,
         setFieldValue,
         setStatus,
-        status
+        status,
+        isSubmitting
       }) => {
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
@@ -377,7 +385,7 @@ const SubmissionSection = ({ classes }) => {
               onBlur={handleBlur}
               value={values.description || ''}
             />
-            <Button type="submit" color="primary" variant="contained" className={classes.formButton}>Create Project</Button>
+            <Button type="submit" color="primary" variant="contained" className={classes.formButton}>{isSubmitting ? 'Submission In Progress' : 'Create Project'}</Button>
           </form>
         )
       }
@@ -386,11 +394,11 @@ const SubmissionSection = ({ classes }) => {
   )
 }
 
-function CreateProject({ classes }) {
+function CreateProject({ classes, history }) {
   return (
     <div className={classes.root}>
       <Title className={classes.title} />
-      <SubmissionSection classes={classes} />
+      <SubmissionSection classes={classes} history={history} />
     </div>
   )
 }
