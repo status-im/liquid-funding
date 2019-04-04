@@ -254,9 +254,11 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
               <span className={classes.infoText}>{projectAge}</span>
               <span className={classes.subtext}>days active</span>
             </div>
-            <Link to={`/back-project/${projectId}`} className={classes.link}>
-              <Button color="primary" variant="contained" style={{ height: '50px', width: '100%' }}>Back this project</Button>
-            </Link>
+            <div>
+              <Link to={`/back-project/${projectId}`} className={classes.link}>
+                <Button color="primary" variant="contained" style={{ height: '50px', width: '100%' }}>Back this project</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
