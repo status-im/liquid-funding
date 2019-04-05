@@ -10,7 +10,7 @@
   "config": {
     "contracts": "config/contracts.js",
     "blockchain": "config/blockchain.js",
-    "storage": false,
+    "storage": "config/storage.js",
     "namesystem": false,
     "communication": false,
     "webserver": "config/webserver.js"
