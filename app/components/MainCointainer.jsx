@@ -183,7 +183,7 @@ class PersistentDrawerLeft extends React.Component {
             <Link to="/admin/" className={classes.link}>
               <ListItem button>
                 <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Contract Admin" />
+                <ListItemText primary="Admin" />
               </ListItem>
             </Link>
           </List>
