@@ -73,9 +73,9 @@ class App extends React.Component {
   }
 
   render() {
-    const { account, needsInit, lpAllowance, loading, authorizedPayments, snackbar } = this.state
+    const { account, needsInit, loading, authorizedPayments, snackbar, network, environment } = this.state
     const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar } = this
-    const fundingContext = { appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, needsInit, initVaultAndLP, standardTokenApproval, openSnackBar, closeSnackBar  }
+    const fundingContext = { appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, needsInit, initVaultAndLP, standardTokenApproval, openSnackBar, closeSnackBar, network, environment }
     return (
       <FundingContext.Provider value={fundingContext}>
         <Router>
