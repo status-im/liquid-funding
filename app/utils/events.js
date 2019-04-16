@@ -1,8 +1,6 @@
+/*global web3*/
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import LPVault from 'Embark/contracts/LPVault'
-import web3 from 'Embark/web3'
-import { getLastBlockStored } from '../actions/lpEvents'
-
 
 const AUTHORIZE_PAYMENT = 'AuthorizePayment'
 export const GIVER_ADDED = 'GiverAdded'

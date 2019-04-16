@@ -30,9 +30,9 @@ contract Pledges is AragonApp, LiquidPledgingStorage {
     // a constant for when a delegate is requested that is not in the system
     uint64 constant  NOTFOUND = 0xFFFFFFFFFFFFFFFF;
 
-/////////////////////////////
-// Public constant functions
-////////////////////////////
+    /////////////////////////////
+    // Public constant functions
+    ////////////////////////////
 
     /// @notice A constant getter that returns the total number of pledges
     /// @return The total number of Pledges in the system
@@ -45,7 +45,7 @@ contract Pledges is AragonApp, LiquidPledgingStorage {
     /// @return the amount, owner, the number of delegates (but not the actual
     ///  delegates, the intendedProject (if any), the current commit time and
     ///  the previous pledge this pledge was derived from
-    function getPledge(uint64 idPledge) external view returns(
+    function getPledge(uint64 idPledge) external view returns (
         uint amount,
         uint64 owner,
         uint64 nDelegates,
@@ -66,10 +66,9 @@ contract Pledges is AragonApp, LiquidPledgingStorage {
         pledgeState = p.pledgeState;
     }
 
-
-////////////////////
-// Internal methods
-////////////////////
+    ////////////////////
+    // Internal methods
+    ////////////////////
 
     /// @notice This creates a Pledge with an initial amount of 0 if one is not
     ///  created already; otherwise it finds the pledge with the specified
@@ -122,7 +121,7 @@ contract Pledges is AragonApp, LiquidPledgingStorage {
 
     /// @param idPledge the id of the pledge to load from storage
     /// @return The Pledge
-    function _findPledge(uint64 idPledge) internal view returns(Pledge storage) {
+    function _findPledge(uint64 idPledge) internal view returns (Pledge storage) {
         require(idPledge < pledges.length);
         return pledges[idPledge];
     }
@@ -135,7 +134,7 @@ contract Pledges is AragonApp, LiquidPledgingStorage {
     ///  `admins` array index `idDelegate` this returns that delegates
     ///  corresponding index in the delegationChain. Otherwise it returns
     ///  the NOTFOUND constant
-    function _getDelegateIdx(Pledge p, uint64 idDelegate) internal pure returns(uint64) {
+    function _getDelegateIdx(Pledge p, uint64 idDelegate) internal pure returns (uint64) {
         for (uint i = 0; i < p.delegationChain.length; i++) {
             if (p.delegationChain[i] == idDelegate) {
                 return uint64(i);
@@ -148,11 +147,12 @@ contract Pledges is AragonApp, LiquidPledgingStorage {
     ///  had using a self-referential loop
     /// @param p The Pledge being queried
     /// @return The number of old "parent" pledges a specific Pledge had
-    function _getPledgeLevel(Pledge p) internal view returns(uint) {
+    function _getPledgeLevel(Pledge p) internal view returns (uint) {
         if (p.oldPledge == 0) {
             return 0;
         }
         Pledge storage oldP = _findPledge(p.oldPledge);
-        return _getPledgeLevel(oldP) + 1; // a loop lookup
+        return _getPledgeLevel(oldP) + 1;
+        // a loop lookup
     }
 }

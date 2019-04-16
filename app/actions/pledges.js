@@ -1,4 +1,4 @@
-import web3 from 'Embark/web3'
+/*global web3*/
 import { Q } from '@nozbe/watermelondb'
 import database from '../db'
 import { getPledges, getAllPledges } from '../utils/pledges'

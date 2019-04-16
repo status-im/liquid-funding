@@ -1,5 +1,5 @@
+/*global web3*/
 import EmbarkJS from 'Embark/EmbarkJS'
-import web3 from 'Embark/web3'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import { useState, useEffect, useMemo, useContext } from 'react'
 import { unnest } from 'ramda'

@@ -1,4 +1,3 @@
-import web3 from 'Embark/web3'
 import SNT from 'Embark/contracts/SNT'
 import sntIco from 'cryptocurrency-icons/svg/color/snt.svg'
 

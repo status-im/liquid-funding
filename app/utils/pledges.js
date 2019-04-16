@@ -1,4 +1,4 @@
-import web3 from 'Embark/web3'
+/*global web3*/
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 
 const { getPledgeDelegate, numberOfPledges, getPledge } = LiquidPledging.methods

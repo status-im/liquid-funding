@@ -16,11 +16,12 @@
     "webserver": "config/webserver.js"
   },
   "versions": {
-    "web3": "1.0.0-beta.34",
+    "web3": "1.0.0-beta",
     "solc": "0.4.18",
     "ipfs-api": "17.2.4"
   },
   "plugins": {
+    "embarkjs-connector-web3": {}
   },
   "options": {
     "solc": {

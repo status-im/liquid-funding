@@ -1,8 +1,8 @@
+/*global web3*/
 import React from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from 'Embark/EmbarkJS'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
-import web3 from 'Embark/web3'
 import Snackbar from '@material-ui/core/Snackbar'
 import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval, getLpAllowance } from './utils/initialize'
 import { getAuthorizedPayments } from './utils/events'
