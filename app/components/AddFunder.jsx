@@ -1,9 +1,9 @@
+/*global web3*/
 import React, { createRef } from 'react'
 import { Formik } from 'formik'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import {TextField, Button, MenuItem, Snackbar, InputAdornment} from '@material-ui/core'
 import CloudUpload from '@material-ui/icons/CloudUpload'
-import web3 from 'Embark/web3'
 import { MySnackbarContentWrapper } from './base/SnackBars'
 import { captureFile } from '../utils/ipfs'
 import ImageViewer from './image/ImageViewer'

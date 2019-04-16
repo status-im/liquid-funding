@@ -1,7 +1,7 @@
+/*global web3*/
 import LPVault from 'Embark/contracts/LPVault'
 import LiquidPledging from 'Embark/contracts/LiquidPledging'
 import SNT from 'Embark/contracts/SNT'
-import web3 from 'Embark/web3'
 
 export const initVaultAndLP = async () => {
   let estimateGas;

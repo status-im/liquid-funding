@@ -1,3 +1,4 @@
+/*global web3*/
 import React, { useContext, useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import LiquidPledging from 'Embark/contracts/LiquidPledging';
@@ -7,7 +8,6 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
-import web3 from 'Embark/web3'
 import { MySnackbarContentWrapper } from './base/SnackBars'
 import { currencies, TOKEN_ICON_API, getTokenLabel } from '../utils/currencies'
 import { toEther } from '../utils/conversions'

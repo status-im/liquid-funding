@@ -1,4 +1,4 @@
-import web3 from 'Embark/web3'
+/*global web3*/
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
