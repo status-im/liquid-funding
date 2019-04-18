@@ -22,18 +22,24 @@ export default class Pledge extends LiquidModel {
   @json('delegates', sanitizeValues) delegates
 
   @action async transferTo(to, amount) {
+    //TODO check if exists then update or create.
     const toPledgeQuery = await this.collections.get('pledges').query(
       Q.where('pledge_id', to)
     ).fetch()
     const toPledge = toPledgeQuery[0]
-    await this.batch(
+    const args = [
       this.prepareUpdate(pledge => {
         pledge.amount = (BigInt(pledge.amount) - BigInt(amount)).toString()
-      }),
-      toPledge.prepareUpdate(pledge => {
-        pledge.amount = (BigInt(pledge.amount) + BigInt(amount)).toString()
       })
-    )
+    ]
+    if (toPledge) {
+      args.push(
+        toPledge.prepareUpdate(pledge => {
+          pledge.amount = (BigInt(pledge.amount) + BigInt(amount)).toString()
+        })
+      )
+    }
+    await this.batch(...args)
   }
 
   @action async updateFields(newPledge) {
