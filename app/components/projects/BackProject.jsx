@@ -55,8 +55,10 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
       initialValues={{ amount: '', delegateProfile: '', delegatePledge: '' }}
       onSubmit={async(values, { resetForm }) => {
         const { amount, delegateProfile, delegatePledge } = values
+        const dPledge = delegatePledges.find(d => d.idPledge === delegatePledge)
+        const pledge = await dPledge.pledge.fetch()
         const args = [delegateProfile.idProfile, delegatePledge, toWei(amount), projectId]
-        console.log({values, args})
+        console.log({values, args, pledge, delegatePledge})
         const toSend = transfer(...args)
         const estimatedGas = await toSend.estimateGas()
 
@@ -68,22 +70,22 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
             if (Array.isArray(Transfer)) {
               Transfer.forEach(async t => {
                 const { to, amount } = t.returnValues
-                //await pledge.transferTo(to, amount)
+                await pledge.transferTo(to, amount)
               })
             } else {
               const { to, amount } = Transfer.returnValues
-              //await pledge.transferTo(to, amount)
+              await pledge.transferTo(to, amount)
             }
           })
           .catch(e => {
-            openSnackBar('error', e)
+            openSnackBar('error', 'An error has occured with the transaction')
             console.log({e})
           })
           .finally(() => {
             openSnackBar('success', 'project backed!')
             resetForm()
           })
-    }}
+      }}
     >
       {({
         values,
@@ -103,10 +105,10 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {profiles && profiles.length === 0 &&
-            <Typography color="error">
-              Please create a Delegate profile before backing -
-              <Link href="/#/funds-management"> Delegate creation page</Link>
-            </Typography>}
+             <Typography color="error">
+               Please create a Delegate profile before backing -
+               <Link href="/#/funds-management"> Delegate creation page</Link>
+             </Typography>}
             <TextField
               className={classes.textField}
               id="delegateProfile"
@@ -128,18 +130,18 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
               ))}
             </TextField>
             {filteredPledges && <TextField
-              className={classes.textField}
-              id="delegatePledge"
-              name="delegatePledge"
-              select
-              label="Select Pledge for Funding"
-              placeholder="Select Pledge for Funding"
-              margin="normal"
-              variant="outlined"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.delegatePledge || ''}
-            >
+                                  className={classes.textField}
+                                  id="delegatePledge"
+                                  name="delegatePledge"
+                                  select
+                                  label="Select Pledge for Funding"
+                                  placeholder="Select Pledge for Funding"
+                                  margin="normal"
+                                  variant="outlined"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  value={values.delegatePledge || ''}
+                                >
               {filteredPledges.map(pledge => (
                 <MenuItem style={{ display: 'flex', alignItems: 'center' }} key={pledge.idPledge} value={pledge.idPledge}>
                   {`Pledge no: ${pledge.idPledge} - Amount: ${toEther(pledge.pledgeData.amount)} ${getTokenLabel(pledge.pledgeData.token)}`}
@@ -147,18 +149,18 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
               ))}
             </TextField>}
             {values.delegatePledge && <TextField
-              autoFocus
-              margin="normal"
-              id="amount"
-              name="amount"
-              label="Amount to transfer"
-              placeholder="Amount to transfer"
-              variant="outlined"
-              autoComplete="off"
-              fullWidth
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.amount || ''}
+                                        autoFocus
+                                        margin="normal"
+                                        id="amount"
+                                        name="amount"
+                                        label="Amount to transfer"
+                                        placeholder="Amount to transfer"
+                                        variant="outlined"
+                                        autoComplete="off"
+                                        fullWidth
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        value={values.amount || ''}
             />}
             {values.amount && <Button type="submit" color="primary" variant="contained" style={{ height: '50px', width: '100%' }}>Submit for Funding</Button>}
           </form>
