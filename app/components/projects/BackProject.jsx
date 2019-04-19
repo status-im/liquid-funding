@@ -70,11 +70,11 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
             if (Array.isArray(Transfer)) {
               Transfer.forEach(async t => {
                 const { to, amount } = t.returnValues
-                await pledge.transferTo(to, amount)
+                await pledge.transferTo(to, amount, projectId)
               })
             } else {
               const { to, amount } = Transfer.returnValues
-              await pledge.transferTo(to, amount)
+              await pledge.transferTo(to, amount, projectId)
             }
           })
           .catch(e => {
