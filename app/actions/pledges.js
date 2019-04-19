@@ -4,20 +4,6 @@ import database from '../db'
 import { getPledges, getAllPledges } from '../utils/pledges'
 import { getProfilesById } from './profiles'
 
-export const createPledgeFromFunding = (pledge, newId, amount, oldPledge, project = 0) => {
-  const { owner, token, commitTime, nDelegates, pledgeState, delegates, profile } = oldPledge
-  pledge.idPledge = Number(newId)
-  pledge.owner = Number(owner)
-  pledge.amount = amount
-  pledge.token = token
-  pledge.commitTime = Number(commitTime)
-  pledge.nDelegates = Number(nDelegates)
-  pledge.pledgeState = Number(pledgeState)
-  pledge.intendedProject = Number(project)
-  pledge.delegates = delegates
-  pledge.profile.set(profile)
-}
-
 const createPledge = (pledge, data, profiles) => {
   const { id, owner, amount, blockNumber, token, commitTime, nDelegates, pledgeState, intendedProject, delegates } = data
   const profile = profiles.find(p => p.idProfile == owner)
