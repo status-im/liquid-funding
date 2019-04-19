@@ -1,7 +1,20 @@
 import { action, field, relation, json } from '@nozbe/watermelondb/decorators'
 import { Q } from '@nozbe/watermelondb'
 import { LiquidModel } from '../utils/models'
-import { createPledgeFromFunding } from '../actions/pledges'
+
+const createPledgeFromFunding = (pledge, newId, amount, oldPledge, project = 0) => {
+  const { owner, token, commitTime, nDelegates, pledgeState, delegates, profile } = oldPledge
+  pledge.idPledge = Number(newId)
+  pledge.owner = Number(owner)
+  pledge.amount = amount
+  pledge.token = token
+  pledge.commitTime = Number(commitTime)
+  pledge.nDelegates = Number(nDelegates)
+  pledge.pledgeState = Number(pledgeState)
+  pledge.intendedProject = Number(project)
+  pledge.delegates = delegates
+  pledge.profile.set(profile)
+}
 
 const sanitizeValues = json => json
 export default class Pledge extends LiquidModel {
@@ -26,6 +39,7 @@ export default class Pledge extends LiquidModel {
     const toPledgeQuery = await this.collections.get('pledges').query(
       Q.where('pledge_id', to)
     ).fetch()
+    const pledgesCollection = await this.collections.get('pledges')
     const toPledge = toPledgeQuery[0]
     const args = [
       this.prepareUpdate(pledge => {
@@ -40,7 +54,7 @@ export default class Pledge extends LiquidModel {
       )
     } else {
       args.push(
-        this.prepareCreate(pledge => {
+        pledgesCollection.prepareCreate(pledge => {
           createPledgeFromFunding(pledge, to, amount, this, projectId)
         })
       )
