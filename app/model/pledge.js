@@ -1,6 +1,7 @@
 import { action, field, relation, json } from '@nozbe/watermelondb/decorators'
 import { Q } from '@nozbe/watermelondb'
 import { LiquidModel } from '../utils/models'
+import { createPledgeFromFunding } from '../actions/pledges'
 
 const sanitizeValues = json => json
 export default class Pledge extends LiquidModel {
@@ -21,8 +22,7 @@ export default class Pledge extends LiquidModel {
   @relation('profiles', 'profile_id') profile
   @json('delegates', sanitizeValues) delegates
 
-  @action async transferTo(to, amount) {
-    //TODO check if exists then update or create.
+  @action async transferTo(to, amount, projectId) {
     const toPledgeQuery = await this.collections.get('pledges').query(
       Q.where('pledge_id', to)
     ).fetch()
@@ -36,6 +36,12 @@ export default class Pledge extends LiquidModel {
       args.push(
         toPledge.prepareUpdate(pledge => {
           pledge.amount = (BigInt(pledge.amount) + BigInt(amount)).toString()
+        })
+      )
+    } else {
+      args.push(
+        this.prepareCreate(pledge => {
+          createPledgeFromFunding(pledge, to, amount, this, projectId)
         })
       )
     }
