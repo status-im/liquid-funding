@@ -1,19 +1,13 @@
 {
   "contracts": ["contracts/**"],
-  "app": {
-    "js/dapp.js": ["app/dapp.js"],
-    "js/index.js": ["app/index.js"],
-    "index.html": "app/index.html",
-    "images/": ["app/images/**"]
-  },
   "buildDir": "dist/",
   "config": {
-    "contracts": "config/contracts.js",
-    "blockchain": "config/blockchain.js",
-    "storage": "config/storage.js",
+    "contracts": "embarkConfig/contracts.js",
+    "blockchain": "embarkConfig/blockchain.js",
+    "storage": "embarkConfig/storage.js",
     "namesystem": false,
     "communication": false,
-    "webserver": "config/webserver.js"
+    "webserver": false
   },
   "versions": {
     "web3": "1.0.0-beta",
@@ -28,5 +22,6 @@
       "optimize": true,
       "optimize-runs": 200
     }
-  }
+  },
+  "generationDir": "src/embarkArtifacts"
 }

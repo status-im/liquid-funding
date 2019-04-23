@@ -69,7 +69,7 @@ module.exports = {
             "property"
         ],
         "dot-notation": "off",
-        "eol-last": "error",
+        "eol-last": 1,
         "eqeqeq": "error",
         "for-direction": "error",
         "func-call-spacing": "error",
@@ -93,10 +93,7 @@ module.exports = {
         "jsx-quotes": "error",
         "key-spacing": "off",
         "keyword-spacing": "off",
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
+        "linebreak-style": 0,
         "line-comment-position": "off",
         "lines-around-comment": "error",
         "lines-around-directive": "error",
@@ -186,7 +183,7 @@ module.exports = {
         "no-restricted-properties": "error",
         "no-restricted-syntax": "error",
         "no-return-assign": "error",
-        "no-return-await": "error",
+        "no-return-await": 1,
         "no-script-url": "error",
         "no-self-compare": "error",
         "no-sequences": "error",
@@ -244,19 +241,12 @@ module.exports = {
         "prefer-rest-params": "off",
         "prefer-spread": "off",
         "prefer-template": "off",
-        "quotes": [
-            "error",
-            "single"
-        ],
+        "quotes": 0,
         "quote-props": "off",
         "radix": "error",
         "require-await": "off",
         "require-jsdoc": "off",
         "rest-spread-spacing": "error",
-        "semi": [
-            "error",
-            "never"
-        ],
         "semi-spacing": [
             "error",
             {
@@ -310,6 +300,7 @@ module.exports = {
         "react/jsx-uses-vars": 1,
         "react/react-in-jsx-scope": 1,
         "react/prefer-es6-class": 1,
-        "react/jsx-no-bind": 1
+        "react/jsx-no-bind": 1,
+        "react/prop-types": 1,
     }
 };
