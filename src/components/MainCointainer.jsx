@@ -18,11 +18,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import ProjectIcon from '@material-ui/icons/Work';
 import { ScaleLoader } from 'react-spinners'
 import FundsManagement from './FundsManagement'
 import ContractAdmin from './ContractAdmin'
 import TransferGraph from './TransfersGraph'
 import Dashboard from './Dashboard'
+import Projects from './projects/Projects'
 import Project from './projects/Project'
 import BackProject from './projects/BackProject'
 import CreateProject from './projects/CreateProject'
@@ -165,6 +167,7 @@ class PersistentDrawerLeft extends React.Component {
           <Divider/>
           <List>
             <MenuItem name="Dashboard" to="/dashboard" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="Projects" to="/projects" className={classes.link} icon={<ProjectIcon/>}/>
             <MenuItem name="Funds Management" to="/funds-management" className={classes.link} icon={<InboxIcon/>}/>
             <MenuItem name="Insights" to="/insights/" className={classes.link} icon={<InboxIcon/>}/>
             <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
@@ -183,6 +186,7 @@ class PersistentDrawerLeft extends React.Component {
               <Route path="/admin" component={ContractAdmin} />
               <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
               <Route path="/insights" component={TransferGraph} />
+              <Route path="/projects" component={Projects} />
               <Route path="/project/:id" component={Project} />
               <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
               <Route path="/back-project/:id" component={BackProject} />
