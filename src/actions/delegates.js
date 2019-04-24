@@ -23,7 +23,7 @@ const createDelegate = (newDelegate, delegateInfo, pledge, profile, idx) => {
 const delegateRecordExists = (profile, pledge, idx, existing) => {
   const record = existing.find(delegate => {
     const { delegateIndex } = delegate
-    if (
+    if (profile &&
       profile.id === delegate.profile.id &&
         pledge.idPledge === delegate.idPledge &&
         idx === delegateIndex
