@@ -92,6 +92,15 @@ const styles = theme => ({
   }
 })
 
+const MenuItem = ({to, name, className, icon}) => (
+  <Link to={to} className={className}>
+    <ListItem button>
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText primary={name}/>
+    </ListItem>
+  </Link>
+)
+
 class PersistentDrawerLeft extends React.Component {
   state = {
     open: false,
@@ -153,40 +162,14 @@ class PersistentDrawerLeft extends React.Component {
               {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
-          <Divider />
+          <Divider/>
           <List>
-            <Link to="/dashboard" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Dashboard" />
-              </ListItem>
-            </Link>
+            <MenuItem name="Dashboard" to="/dashboard" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="Funds Management" to="/funds-management" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="Insights" to="/insights/" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
           </List>
-          <List>
-            <Link to="/funds-management/" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Funds Management" />
-              </ListItem>
-            </Link>
-          </List>
-          <List>
-            <Link to="/insights/" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Insights" />
-              </ListItem>
-            </Link>
-          </List>
-          <List>
-            <Link to="/admin/" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Admin" />
-              </ListItem>
-            </Link>
-          </List>
-          <Divider />
+          <Divider/>
         </Drawer>
         <main
           className={classNames(classes.content, {
