@@ -18,11 +18,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import ProjectIcon from '@material-ui/icons/Work';
 import { ScaleLoader } from 'react-spinners'
 import FundsManagement from './FundsManagement'
 import ContractAdmin from './ContractAdmin'
 import TransferGraph from './TransfersGraph'
 import Dashboard from './Dashboard'
+import Projects from './projects/Projects'
 import Project from './projects/Project'
 import BackProject from './projects/BackProject'
 import CreateProject from './projects/CreateProject'
@@ -92,6 +94,15 @@ const styles = theme => ({
   }
 })
 
+const MenuItem = ({to, name, className, icon}) => (
+  <Link to={to} className={className}>
+    <ListItem button>
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText primary={name}/>
+    </ListItem>
+  </Link>
+)
+
 class PersistentDrawerLeft extends React.Component {
   state = {
     open: false,
@@ -153,40 +164,15 @@ class PersistentDrawerLeft extends React.Component {
               {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
-          <Divider />
+          <Divider/>
           <List>
-            <Link to="/dashboard" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Dashboard" />
-              </ListItem>
-            </Link>
+            <MenuItem name="Dashboard" to="/dashboard" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="Projects" to="/projects" className={classes.link} icon={<ProjectIcon/>}/>
+            <MenuItem name="Funds Management" to="/funds-management" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="Insights" to="/insights/" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
           </List>
-          <List>
-            <Link to="/funds-management/" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Funds Management" />
-              </ListItem>
-            </Link>
-          </List>
-          <List>
-            <Link to="/insights/" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Insights" />
-              </ListItem>
-            </Link>
-          </List>
-          <List>
-            <Link to="/admin/" className={classes.link}>
-              <ListItem button>
-                <ListItemIcon><InboxIcon /></ListItemIcon>
-                <ListItemText primary="Admin" />
-              </ListItem>
-            </Link>
-          </List>
-          <Divider />
+          <Divider/>
         </Drawer>
         <main
           className={classNames(classes.content, {
@@ -200,6 +186,7 @@ class PersistentDrawerLeft extends React.Component {
               <Route path="/admin" component={ContractAdmin} />
               <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
               <Route path="/insights" component={TransferGraph} />
+              <Route path="/projects" component={Projects} />
               <Route path="/project/:id" component={Project} />
               <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
               <Route path="/back-project/:id" component={BackProject} />
