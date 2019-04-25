@@ -7,11 +7,7 @@ import PropTypes from 'prop-types'
 import {useProjectData} from "./hooks";
 import Loading from "../base/Loading";
 import Grid from '@material-ui/core/Grid';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import Typography from "@material-ui/core/Typography";
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -20,6 +16,11 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import SearchIcon from '@material-ui/icons/Search';
+import ListIcon from '@material-ui/icons/Reorder';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import defaultProjectImage from '../../images/default-project-img.png';
 import newProjectImage from '../../images/new-project.png';
@@ -33,6 +34,12 @@ const styles = theme => ({
   root: {
     margin: '1.75rem 4.5rem',
     ...theme.typography.body1
+  },
+  filters: {
+    float: 'right'
+  },
+  search: {
+    height: 36
   },
   title: {
     fontSize: '20px',
@@ -116,7 +123,7 @@ function ProjectCard({classes, project}) {
 }
 
 function Projects({projectAddedEvents, classes}) {
-  const [sortType, setSortType] = useState(SORT_TYPES.date);
+  const [sortType, _setSortType] = useState(SORT_TYPES.date);
 
   const projects = projectAddedEvents.map(event => {
     return Object.assign({projectId: event.returnValues.idProject}, useProjectData(event.returnValues.idProject, '', projectAddedEvents));
@@ -125,25 +132,25 @@ function Projects({projectAddedEvents, classes}) {
   let sortFunction = (sortType === SORT_TYPES.name) ? sortByTitle : sortByDate;
   projects.sort(sortFunction);
 
-  console.log(projects);
   return (<div className={classes.root}>
     <Typography className={classes.title} component="h2" gutterBottom>All projects</Typography>
     {projects.length === 0 && <Loading/>}
     {projects.length > 0 &&
     <Fragment>
-      <FormControl component="fieldset" className={classes.formControl}>
-        <FormLabel component="legend">Sort by</FormLabel>
-        <RadioGroup
-          aria-label="Sort"
-          name="sort"
-          className={classes.group}
-          value={sortType}
-          onChange={(e, value) => setSortType(value)}
-        >
-          <FormControlLabel value={SORT_TYPES.date} control={<Radio color="default"/>} label="Date"/>
-          <FormControlLabel value={SORT_TYPES.name} control={<Radio color="default"/>} label="Name"/>
-        </RadioGroup>
-      </FormControl>
+      <div className={classes.filters}>
+        <FormControl>
+          <TextField
+            variant="outlined"
+            placeholder="Filter by tags"
+            InputProps={{
+              className: classes.search,
+              startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>,
+            }}
+          />
+        </FormControl>
+        <DashboardIcon color="disabled" fontSize="large"/>
+        <ListIcon color="disabled" fontSize="large"/>
+      </div>
       <Grid container spacing={40}>
         {projects.map((project, index) => {
           if (!project.manifest) {
