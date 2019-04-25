@@ -22,6 +22,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 import defaultProjectImage from '../../images/default-project-img.png';
+import newProjectImage from '../../images/new-project.png';
 
 const SORT_TYPES = {
   date: 'date',
@@ -58,6 +59,12 @@ const styles = theme => ({
   },
   progress: {
     height: 10
+  },
+  'new-project-img': {
+    textAlign: 'center',
+    margin: 0,
+    paddingTop: 115,
+    paddingBottom: 43
   }
 })
 
@@ -91,7 +98,7 @@ function ProjectCard({classes, project}) {
         <Typography gutterBottom variant="h5" component="h2" className={classes['card-title']} noWrap>
           {project.manifest.title}
         </Typography>
-        <Typography component="p" className={classes['card-content']} noWrap>
+        <Typography component="p" className={classes['card-content']} noWrap gutterBottom>
           {project.manifest.description}&nbsp;
         </Typography>
         <Typography component="p" className={classes['card-content']} color="textSecondary">
@@ -142,10 +149,18 @@ function Projects({projectAddedEvents, classes}) {
           if (!project.manifest) {
             return ''
           }
-          return (<Grid key={'project-' + index} item xs={12} sm={6} md={4} lg={3} className="project-list-item">
+          return (<Grid key={'project-' + index} item xs={12} sm={6} md={4} lg={3} className={classes.card}>
             <ProjectCard project={project} classes={classes}/>
           </Grid>);
         })}
+        <Grid item xs={12} sm={6} md={4} lg={3} className="project-list-item">
+          <Card className={classes.card}>
+            <CardActionArea href="/#/create-project/" style={{height: 460}}>
+              <p className={classes['new-project-img']}><img alt="new project" src={newProjectImage}/></p>
+              <Typography align="center" className={classes['card-content']}>Add your own project</Typography>
+            </CardActionArea>
+          </Card>
+        </Grid>
       </Grid>
     </Fragment>
     }
