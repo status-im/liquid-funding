@@ -9,7 +9,7 @@ import './css/fonts/Inter/inter.css'
 
 const theme = createMuiTheme({
   typography: {
-    // Use the system font instead of the default Roboto font.
+    useNextVariants: true,
     fontFamily: ['Inter', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", 'Arial', "Noto Sans", 'sans-serif', "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"].join(','),
   },
 });
