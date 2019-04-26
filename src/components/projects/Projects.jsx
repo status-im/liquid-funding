@@ -36,6 +36,8 @@ const SORT_TYPES = {
   name: 'name'
 }
 
+const cardAbsolutesDistance = 26;
+
 const styles = theme => {
   return ({
     root: {
@@ -65,8 +67,8 @@ const styles = theme => {
     },
     avatarGrid: {
       position: 'absolute',
-      top: 26,
-      left: 26
+      top: cardAbsolutesDistance,
+      left: cardAbsolutesDistance
     },
     'card-title': {
       fontSize: '20px'
@@ -98,6 +100,24 @@ const styles = theme => {
       '& td': {
         paddingTop: 35
       }
+    },
+    favorite: {
+      display: 'inline-block',
+      backgroundImage: 'url("/images/favorite-sprite.png")',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'bottom',
+      width: 30,
+      height: 27,
+      cursor: 'pointer',
+      '&:hover, &.isFavorite': {
+        backgroundPosition: 'top'
+      }
+    },
+    cardFavorite: {
+      position: 'absolute',
+      top: cardAbsolutesDistance,
+      right: cardAbsolutesDistance,
+      zIndex: 9000
     }
   })
 }
@@ -117,9 +137,14 @@ function sortByDate(a, b) {
   return 1;
 }
 
-function ProjectCard({classes, project}) {
+function Favorite({classes, setFavorites, favorites, projectId, className}) {
+  return (<span className={classnames(className, classes.favorite, {isFavorite: favorites[projectId]})}
+    onClick={() => setFavorites({...favorites, [projectId]: !favorites[projectId]})}/>);
+}
+
+function ProjectCard({classes, project, favorites, setFavorites}) {
   return (<Card className={classes.card}>
-    <CardActionArea href={`/#/project/${project.projectId}`}>
+    <CardActionArea href={`/#/project/${project.projectId}`} onClick={e => { if (e.target.className.indexOf(classes.favorite) > -1) { e.preventDefault() } }}>
       <CardMedia
         className={classes.media}
         image={defaultProjectImage}
@@ -139,6 +164,7 @@ function ProjectCard({classes, project}) {
           Delegate: {project.manifest.creator} {/*TODO check if that really is the delegate*/}
         </Typography>
         {project.manifest.avatar && <img className={classes.avatarGrid} alt="avatar" src={project.manifest.avatar} width={40} height={40}/>}
+        <Favorite className={classes.cardFavorite} classes={classes} favorites={favorites} projectId={project.projectId} setFavorites={setFavorites}/>
       </CardContent>
     </CardActionArea>
     <CardActions className={classes['card-actions']}>
@@ -149,14 +175,14 @@ function ProjectCard({classes, project}) {
   </Card>)
 }
 
-function GridView({classes, projects}) {
+function GridView({classes, projects, favorites, setFavorites}) {
   return (<Grid container spacing={40}>
     {projects.map((project, index) => {
       if (!project.manifest) {
         return ''
       }
       return (<Grid key={'project-' + index} item xs={12} sm={6} md={4} lg={3} className={classes.card}>
-        <ProjectCard project={project} classes={classes}/>
+        <ProjectCard project={project} classes={classes} favorites={favorites} setFavorites={setFavorites}/>
       </Grid>);
     })}
     <Grid item xs={12} sm={6} md={4} lg={3} className="project-list-item">
@@ -183,7 +209,7 @@ const CustomTableCell = withStyles(theme => ({
   }
 }))(TableCell);
 
-function ListView({classes, projects, history}) {
+function ListView({classes, projects, history, favorites, setFavorites}) {
   let rowCounter = -1;
   return (<Table className={classes.table}>
     <TableHead>
@@ -213,7 +239,9 @@ function ListView({classes, projects, history}) {
             <CustomTableCell>{project.manifest.description}</CustomTableCell>
             <CustomTableCell>76% of 2.055 ETH<br/>3 funders</CustomTableCell>
             <CustomTableCell>{project.manifest.creator}</CustomTableCell>
-            <CustomTableCell>&lt;3</CustomTableCell>
+            <CustomTableCell>
+              <Favorite classes={classes} favorites={favorites} projectId={project.projectId} setFavorites={setFavorites}/>
+            </CustomTableCell>
             <CustomTableCell>
               <Button size="small" color="primary" href={`/#/project/${project.projectId}`}>Read more</Button>
             </CustomTableCell>
@@ -236,6 +264,7 @@ function ListView({classes, projects, history}) {
 }
 
 function Projects({projectAddedEvents, classes, history}) {
+  const [favorites, setFavorites] = useState({});
   const [sortType, _setSortType] = useState(SORT_TYPES.date);
   const [isGridView, setIsGridView] = useState(true);
 
@@ -269,8 +298,8 @@ function Projects({projectAddedEvents, classes, history}) {
         <ListIcon className={classnames(classes.formatBtn, {'active': !isGridView})} color="disabled" fontSize="large" onClick={() => setIsGridView(false)}/>
       </div>
 
-      {!isGridView && ListView({classes, projects, history})}
-      {isGridView && GridView({classes, projects})}
+      {!isGridView && ListView({classes, projects, history, favorites, setFavorites})}
+      {isGridView && GridView({classes, projects, favorites, setFavorites})}
     </Fragment>
     }
   </div>)
