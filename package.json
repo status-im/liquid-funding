@@ -76,6 +76,7 @@
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "chai": "^4.1.0",
     "chart.js": "^2.7.3",
+    "classnames": "^2.2.6",
     "cryptocurrency-icons": "^0.9.3",
     "css-loader": "1.0.0",
     "cytoscape": "^3.3.0",
@@ -190,8 +191,18 @@
       "react-app"
     ],
     "plugins": [
-      ["@babel/plugin-proposal-decorators", { "legacy": true }],
-      ["@babel/plugin-proposal-class-properties", { "loose": true }],
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ],
       [
         "@babel/plugin-transform-runtime",
         {
