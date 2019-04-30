@@ -174,7 +174,7 @@ const getMediaSrc = assets => {
   const { media } = getProjectManifest(assets)
   if (media.type.includes('video')) {
     if (media.url) return media.url
-    if (media.file) {
+    if (media.file && media.file !== '/root/') {
       return formatMedia(
         assets.find(a => a.name === getFile(media.file)).content
       )
