@@ -16,6 +16,7 @@ import { FundingContext } from '../../context'
 const { addProject } = LiquidPledging.methods
 
 
+const zeroAddress = '0x0000000000000000000000000000000000000000'
 const hoursToSeconds = hours => hours * 60 * 60
 const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 
@@ -143,7 +144,7 @@ const SubmissionSection = ({ classes, history }) => {
           path: '/root/manifest.json', content: Buffer.from(manifest)
         })
         const contentHash = await uploadToIpfs(fileLists)
-        const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), 0]
+        const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), zeroAddress]
         addProject(...args)
           .estimateGas({ from: account })
           .then(async gas => {
