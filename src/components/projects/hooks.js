@@ -12,8 +12,12 @@ import { getDelegatePledgesByProfile } from '../../actions/delegates'
 
 async function getProjectAge(id, events, setState){
   const event = events.find(e => e.returnValues.idProject === id)
-  const { timestamp } = await web3.eth.getBlock(event.blockNumber)
-  setState(timeSinceBlock(timestamp, 'days'))
+  if (event) {
+    const { timestamp } = await web3.eth.getBlock(event.blockNumber)
+    setState(timeSinceBlock(timestamp, 'days'))
+  } else {
+    setState(timeSinceBlock(false, 'days'))
+  }
 }
 
 async function getProjectAssets(projectId, setState){

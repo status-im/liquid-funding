@@ -1,6 +1,6 @@
-export function timeSinceBlock(date, interval) {
+export function timeSinceBlock(date=false, interval) {
   var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
-  let date1 = new Date(date*1000);
+  let date1 = date ? new Date(date*1000) : new Date();
   let date2 = new Date();
   var timediff = date2 - date1;
   if (isNaN(timediff)) return NaN;
