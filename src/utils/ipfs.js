@@ -54,6 +54,12 @@ export const uploadToIpfs = async files => {
   return `ipfs/${res[0].hash}`
 }
 
+export const pinToIpfs = async hash => {
+  const cid = hash.split('/').slice(-1)[0]
+  const res = await ipfs.pin.add(cid, { recursive: false })
+  console.log({res})
+}
+
 export const getImageFromIpfs = async (hash, cb) => {
   const res = await getFromIpfs(hash)
   cb(res)

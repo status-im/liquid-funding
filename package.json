@@ -55,7 +55,7 @@
     "webpack": "4.28.3",
     "worker-loader": "^2.0.0"
   },
-  "homepage": "https://github.com/Giveth/liquidpledging#readme",
+  "homepage": ".",
   "dependencies": {
     "@aragon/os": "3.1.9",
     "@areknawo/rex": "^2.0.0",
