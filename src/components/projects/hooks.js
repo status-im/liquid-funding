@@ -82,7 +82,20 @@ export function useProfileData(profiles) {
 }
 
 const getProjectManifest = assets => {
-  return assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
+  if (!assets) {
+    return null;
+  }
+  const manifest = assets.find(a => a.name.toLowerCase() === 'manifest.json');
+  if (!manifest) {
+    return null;
+  }
+  try {
+    return JSON.parse(manifest.content)
+  } catch (e) {
+    console.error('Wtf', manifest);
+    return null;
+  }
+
 }
 
 export function useProjectData(projectId, profile, projectAddedEvents) {
