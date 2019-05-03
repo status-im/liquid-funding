@@ -75,6 +75,11 @@ class App extends React.Component {
     this.setState({ snackbar: null })
   }
 
+  appendPledges = () => {
+    // TODO check if this is correct
+    getAndAddPledges()
+  }
+
   render() {
     const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar } = this.state
     const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar } = this

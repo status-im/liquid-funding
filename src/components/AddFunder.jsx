@@ -7,6 +7,7 @@ import CloudUpload from '@material-ui/icons/CloudUpload'
 import { MySnackbarContentWrapper } from './base/SnackBars'
 import { captureFile } from '../utils/ipfs'
 import ImageViewer from './image/ImageViewer'
+import {ZERO_ADDRESS} from '../utils/address'
 
 const { addGiver, addDelegate, addProject } = LiquidPledging.methods
 const FUNDER = 'FUNDER'
@@ -60,7 +61,7 @@ const AddFunder = ({ appendFundProfile }) => (
       const { adminType, funderName, funderDescription, commitTime } = values
       const account = await web3.eth.getCoinbase()
       //TODO add field for parent project
-      const args = adminType === PROJECT ? [funderName, funderDescription, account, 0, hoursToSeconds(commitTime), 0] : [funderName, funderDescription, hoursToSeconds(commitTime), 0]
+      const args = adminType === PROJECT ? [funderName, funderDescription, account, 0, hoursToSeconds(commitTime), 0] : [funderName, funderDescription, hoursToSeconds(commitTime), ZERO_ADDRESS]
       const isFunder = adminType === FUNDER
       const sendFn = sendFns[adminType]
       sendFn(...args)

@@ -62,6 +62,9 @@ async function fetchAndAddDelegateProfiles(account, setState) {
 
 async function fetchAndAddDelegatePledges(profiles, setState) {
   const dPledges = []
+  if (!profiles || !profiles.length) {
+    return setState(dPledges)
+  }
   profiles.forEach(profile => {
     const delegatePledges = getDelegatePledgesByProfile(profile)
     dPledges.push(delegatePledges)
@@ -92,10 +95,8 @@ const getProjectManifest = assets => {
   try {
     return JSON.parse(manifest.content)
   } catch (e) {
-    console.error('Wtf', manifest);
     return null;
   }
-
 }
 
 export function useProjectData(projectId, profile, projectAddedEvents) {
