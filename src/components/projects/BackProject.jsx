@@ -123,8 +123,8 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
               disabled={!profiles || profiles.length === 0}
               value={values.delegateProfile || ''}
             >
-              {profiles && profiles.map(profile => (
-                <MenuItem style={{display: 'flex', alignItems: 'center'}} key={profile.name} value={profile}>
+              {profiles && profiles.map((profile, index) => (
+                <MenuItem style={{display: 'flex', alignItems: 'center'}} key={`profile-${index}`} value={profile}>
                   {profile.name}
                 </MenuItem>
               ))}

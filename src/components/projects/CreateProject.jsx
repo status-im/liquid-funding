@@ -12,11 +12,11 @@ import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
 import { formatForIpfs, uploadToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
+import {ZERO_ADDRESS} from '../../utils/address'
 
 const { addProject } = LiquidPledging.methods
 
 
-const zeroAddress = '0x0000000000000000000000000000000000000000'
 const hoursToSeconds = hours => hours * 60 * 60
 const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 
@@ -144,7 +144,7 @@ const SubmissionSection = ({ classes, history }) => {
           path: '/root/manifest.json', content: Buffer.from(manifest)
         })
         const contentHash = await uploadToIpfs(fileLists)
-        const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), zeroAddress]
+        const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
         addProject(...args)
           .estimateGas({ from: account })
           .then(async gas => {

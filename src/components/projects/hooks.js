@@ -62,6 +62,9 @@ async function fetchAndAddDelegateProfiles(account, setState) {
 
 async function fetchAndAddDelegatePledges(profiles, setState) {
   const dPledges = []
+  if (!profiles || !profiles.length) {
+    return setState(dPledges)
+  }
   profiles.forEach(profile => {
     const delegatePledges = getDelegatePledgesByProfile(profile)
     dPledges.push(delegatePledges)
@@ -82,7 +85,18 @@ export function useProfileData(profiles) {
 }
 
 const getProjectManifest = assets => {
-  return assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
+  if (!assets) {
+    return null;
+  }
+  const manifest = assets.find(a => a.name.toLowerCase() === 'manifest.json');
+  if (!manifest) {
+    return null;
+  }
+  try {
+    return JSON.parse(manifest.content)
+  } catch (e) {
+    return null;
+  }
 }
 
 export function useProjectData(projectId, profile, projectAddedEvents) {
