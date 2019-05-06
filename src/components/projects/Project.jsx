@@ -15,8 +15,8 @@ import { uniqBy, length } from 'ramda'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import { toEther } from '../../utils/conversions'
-import { getTokenLabel } from '../../utils/currencies'
 import { timeSinceBlock } from '../../utils/dates'
+import { getAmountsPledged } from '../../utils/pledges'
 import { getFiles } from '../../utils/ipfs'
 import { getImageType } from '../../utils/images'
 import { useProjectData } from './hooks'
@@ -111,18 +111,6 @@ function _getWithdrawnAmount(id, transfers){
     }, 0)
 }
 
-function getAmountsPledged(pledges){
-  const amounts = {}
-  pledges.forEach(pledge => {
-    const { token, amount } = pledge
-    if (amounts[token]) amounts[token] += Number(toEther(amount))
-    else amounts[token] = Number(toEther(amount))
-  })
-  return Object
-    .entries(amounts)
-    .map(entry => ([getTokenLabel(entry[0]), entry[1]]))
-}
-
 function getNumberOfBackers(pledges){
   return length(uniqBy(p => p.owner, pledges))
 }
@@ -195,7 +183,7 @@ const getAvatarSrc = assets => {
 
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
-  const { projectAge, projectAssets, manifest } = useProjectData(projectId, profile, projectAddedEvents)
+  const { projectAge, projectAssets, manifest } = useProjectData(projectId, projectAddedEvents)
 
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges, projectId])

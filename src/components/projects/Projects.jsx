@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useState, useMemo} from 'react'
 import {withStyles} from '@material-ui/core/styles'
 import {withDatabase} from "@nozbe/watermelondb/DatabaseProvider";
 import withObservables from "@nozbe/with-observables";
@@ -28,6 +28,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import classnames from 'classnames';
 
+import { getAmountsPledged } from '../../utils/pledges'
 import defaultProjectImage from '../../images/default-project-img.png';
 import newProjectImage from '../../images/new-project.png';
 
@@ -138,42 +139,60 @@ function sortByDate(a, b) {
 }
 
 function Favorite({classes, setFavorites, favorites, projectId, className}) {
-  return (<span className={classnames(className, classes.favorite, {isFavorite: favorites[projectId]})}
-    onClick={() => setFavorites({...favorites, [projectId]: !favorites[projectId]})}/>);
+  return (
+    <span
+      className={classnames(className, classes.favorite, {isFavorite: favorites[projectId]})}
+      onClick={() => setFavorites({...favorites, [projectId]: !favorites[projectId]})} />
+  );
 }
 
-function ProjectCard({classes, project, favorites, setFavorites}) {
-  return (<Card className={classes.card}>
-    <CardActionArea href={`/#/project/${project.projectId}`} onClick={e => { if (e.target.className.indexOf(classes.favorite) > -1) { e.preventDefault() } }}>
-      <CardMedia
-        className={classes.media}
-        image={defaultProjectImage}
-        title="Project image"
-      />
-      <LinearProgress className={classes.progress} variant="determinate" value={75} /> {/*TODO get actual percentage*/}
-      <CardContent>
-        <Typography align="right" className={classes['card-content']}>75% of 2.055 ETH</Typography> {/*TODO get actual percentage*/}
-        <Typography align="right" className={classes['card-content']}>3 funders</Typography> {/*TODO get actual funders*/}
-        <Typography gutterBottom variant="h5" component="h2" className={classes['card-title']} noWrap>
-          {project.manifest.title}
-        </Typography>
-        <Typography component="p" className={classes['card-content']} noWrap gutterBottom>
-          {project.manifest.description}&nbsp;
-        </Typography>
-        <Typography component="p" className={classes['card-content']} color="textSecondary">
-          Delegate: {project.manifest.creator} {/*TODO check if that really is the delegate*/}
-        </Typography>
-        {project.manifest.avatar && <img className={classes.avatarGrid} alt="avatar" src={project.manifest.avatar} width={40} height={40}/>}
-        <Favorite className={classes.cardFavorite} classes={classes} favorites={favorites} projectId={project.projectId} setFavorites={setFavorites}/>
-      </CardContent>
-    </CardActionArea>
-    <CardActions className={classes['card-actions']}>
-      <Button size="small" color="primary" href={`/#/project/${project.projectId}`}>
-        Read more
-      </Button>
-    </CardActions>
-  </Card>)
+function RawProjectCard({classes, project, pledges, favorites, setFavorites}) {
+  const { manifest } = project
+  const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges])
+  const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
+  const pledgeCurrency = amountsPledged[0] ? amountsPledged[0][0] : 'ETH'
+  const percentToGoal = manifest ? Math.min(
+    (Number(totalPledged) / Number(manifest.goal)) * 100,
+    100
+  ) : 0
+  return (
+    <Card className={classes.card}>
+      <CardActionArea href={`/#/project/${project.projectId}`} onClick={e => { if (e.target.className.indexOf(classes.favorite) > -1) { e.preventDefault() } }}>
+        <CardMedia
+          className={classes.media}
+          image={defaultProjectImage}
+          title="Project image"
+        />
+        <LinearProgress className={classes.progress} variant="determinate" value={percentToGoal} />
+        <CardContent>
+          <Typography align="right" className={classes['card-content']}>{Math.round(totalPledged)} pledged of {manifest.goal} {pledgeCurrency}</Typography>
+          <Typography align="right" className={classes['card-content']}>3 funders</Typography> {/*TODO get actual funders*/}
+          <Typography gutterBottom variant="h5" component="h2" className={classes['card-title']} noWrap>
+            {project.manifest.title}
+          </Typography>
+          <Typography component="p" className={classes['card-content']} noWrap gutterBottom>
+            {project.manifest.description}&nbsp;
+          </Typography>
+          <Typography component="p" className={classes['card-content']} color="textSecondary">
+            Delegate: {project.manifest.creator} {/*TODO check if that really is the delegate*/}
+          </Typography>
+          {project.manifest.avatar && <img className={classes.avatarGrid} alt="avatar" src={project.manifest.avatar} width={40} height={40}/>}
+          <Favorite className={classes.cardFavorite} classes={classes} favorites={favorites} projectId={project.projectId} setFavorites={setFavorites}/>
+        </CardContent>
+      </CardActionArea>
+      <CardActions className={classes['card-actions']}>
+        <Button size="small" color="primary" href={`/#/project/${project.projectId}`}>
+          Read more
+        </Button>
+      </CardActions>
+    </Card>)
 }
+
+const ProjectCard = withDatabase(withObservables(['project'], ({ database, project }) => ({
+  pledges: database.collections.get('pledges').query(
+    Q.where('intended_project', project.projectId)
+  ).observe()
+}))(RawProjectCard))
 
 function GridView({classes, projects, favorites, setFavorites}) {
   return (<Grid container spacing={40}>
@@ -233,7 +252,7 @@ function ListView({classes, projects, history, favorites, setFavorites}) {
           <TableRow className={classnames(classes.row, {[classes.darkRow]: rowCounter%2})} key={'project-' + index}>
             <CustomTableCell>
               {project.manifest.avatar &&
-              <img className={classes.avatar} alt="avatar" src={project.manifest.avatar} width={40} height={40}/>}
+               <img className={classes.avatar} alt="avatar" src={project.manifest.avatar} width={40} height={40}/>}
             </CustomTableCell>
             <CustomTableCell className={classes.nameCell}>{project.manifest.title}</CustomTableCell>
             <CustomTableCell>{project.manifest.description}</CustomTableCell>
@@ -269,7 +288,7 @@ function Projects({projectAddedEvents, classes, history}) {
   const [isGridView, setIsGridView] = useState(true);
 
   const projects = projectAddedEvents.map(event => {
-    return Object.assign({projectId: event.returnValues.idProject}, useProjectData(event.returnValues.idProject, '', projectAddedEvents));
+    return Object.assign({projectId: event.returnValues.idProject}, useProjectData(event.returnValues.idProject, projectAddedEvents));
   })
 
   let sortFunction = (sortType === SORT_TYPES.name) ? sortByTitle : sortByDate;
@@ -281,26 +300,26 @@ function Projects({projectAddedEvents, classes, history}) {
     {projects.length === 0 && <Loading/>}
 
     {projects.length > 0 &&
-    <Fragment>
-      <div className={classes.filters}>
-        <FormControl>
-          <TextField
-            variant="outlined"
-            placeholder="Filter by tags"
-            InputProps={{
-              className: classes.search,
-              startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>,
-            }}
-          />
-        </FormControl>
+     <Fragment>
+       <div className={classes.filters}>
+         <FormControl>
+           <TextField
+             variant="outlined"
+             placeholder="Filter by tags"
+             InputProps={{
+               className: classes.search,
+               startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>,
+             }}
+           />
+         </FormControl>
 
-        <DashboardIcon className={classnames(classes.formatBtn, {'active': isGridView})} color="disabled" fontSize="large" onClick={() => setIsGridView(true)}/>
-        <ListIcon className={classnames(classes.formatBtn, {'active': !isGridView})} color="disabled" fontSize="large" onClick={() => setIsGridView(false)}/>
-      </div>
+         <DashboardIcon className={classnames(classes.formatBtn, {'active': isGridView})} color="disabled" fontSize="large" onClick={() => setIsGridView(true)}/>
+         <ListIcon className={classnames(classes.formatBtn, {'active': !isGridView})} color="disabled" fontSize="large" onClick={() => setIsGridView(false)}/>
+       </div>
 
-      {!isGridView && ListView({classes, projects, history, favorites, setFavorites})}
-      {isGridView && GridView({classes, projects, favorites, setFavorites})}
-    </Fragment>
+       {!isGridView && ListView({classes, projects, history, favorites, setFavorites})}
+       {isGridView && GridView({classes, projects, favorites, setFavorites})}
+     </Fragment>
     }
   </div>)
 }

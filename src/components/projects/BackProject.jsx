@@ -173,9 +173,9 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
   )
 }
 
-function BackProject({classes, match, profile, delegates: _delegates, projectAddedEvents, delegateAddedEvents: _delegateAddedEvents}) {
+function BackProject({classes, match, delegates: _delegates, projectAddedEvents, delegateAddedEvents: _delegateAddedEvents}) {
   const projectId = match.params.id
-  const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, profile, projectAddedEvents)
+  const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
   return (
     <div className={classes.root}>

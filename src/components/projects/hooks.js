@@ -20,16 +20,16 @@ async function getProjectAge(id, events, setState){
   }
 }
 
-async function getProjectAssets(projectId, setState){
+async function getProjectAssets(projectId, setState, debug=false){
   EmbarkJS.onReady(async (_err) => {
     const projectInfo = await LiquidPledging.methods.getPledgeAdmin(projectId).call()
     const CID = projectInfo.url.split('/').slice(-1)[0]
-    console.log({CID, projectInfo, ipfs})
+    if (debug) console.log({CID, projectInfo, ipfs})
     getFiles(CID)
       .then((files) => {
         setState(files)
         const manifest = files[2]
-        console.log({files}, JSON.parse(manifest.content))
+        if (debug) console.log({files}, JSON.parse(manifest.content))
       })
       .catch(async (err) => {
         console.log('IPFS getFiles error: ', err)
@@ -40,7 +40,7 @@ async function getProjectAssets(projectId, setState){
           .then((files) => {
             setState(files)
             const manifest = files[2]
-            console.log({files}, JSON.parse(manifest.content))
+            if (debug) console.log({files}, JSON.parse(manifest.content))
           })
           .catch((err) => {
             console.log('IPFS FAILED ON READY', err)
@@ -99,7 +99,7 @@ const getProjectManifest = assets => {
   }
 }
 
-export function useProjectData(projectId, profile, projectAddedEvents) {
+export function useProjectData(projectId, projectAddedEvents) {
   const [projectAge, setAge] = useState(null)
   const [projectAssets, setAssets] = useState(null)
   const [ipfsReady, setIpfsState] = useState(null)
