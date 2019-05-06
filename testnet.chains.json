@@ -1,0 +1,38 @@
+{
+  "0x6341fd3daf94b748c72ced5a5b26028f2474f5f00d824504e4fa37a75767e177": {
+    "contracts": {
+      "0x337d95c008d3141f2f5e95c8fb3bad19740c79e7764cace727e7c8dbd48c5e7d": {
+        "name": "RecoveryVault",
+        "address": "0x835c1ab7CB9f0545164D7fE9827C5e43E3476809"
+      },
+      "0x7a0ab6d93a816579b7dd3d4891d20948d89376edb70b4e9e35984081e97dc23d": {
+        "name": "StandardToken",
+        "address": "0x6732c6Cd8DA14C7E065b51689410058815657427"
+      },
+      "0x106543bd4016aaa1c014e64ec41526991b2419349aca5672ce23308937475494": {
+        "name": "LPVault",
+        "address": "0xa25AB823c5A79941a8a9d0ab525D888cA1513419"
+      },
+      "0xa9bac214a330fe3f2048f91b805d227afa147021ef497936a65911400cc3bdd5": {
+        "name": "SNT",
+        "address": "0x43d5adC3B49130A575ae6e4b00dFa4BC55C71621"
+      },
+      "0xa605098a7f3f555ac77465159ade581ab416b5cd511f7385a77140c677bfc005": {
+        "name": "Kernel",
+        "address": "0x6Fc67b94c1431EC423D6598b092F2a8bCcD4e698"
+      },
+      "0xb8119021b52618e8e3395164320ffcdb253dcbdb7e47dfb5e4b92e01cef00bc1": {
+        "name": "ACL",
+        "address": "0xEb14c564dfA6ac88d28087138Dde59c8888bF928"
+      },
+      "0x0d46f0491387471c715abfda03087d386047c88e523e55d9fd64ede4fd9401e4": {
+        "name": "LiquidPledging",
+        "address": "0x07E92635AF5e524C20B20F2770aE0E0Ef597eD07"
+      },
+      "0xd42f3405d01b0371fa87477111523fa9cd442b42055a5ce08991d20203cf909c": {
+        "name": "LPFactory",
+        "address": "0x968F0a788F29b5B33296C61cEB34F1c40C55e52c"
+      }
+    }
+  }
+}
