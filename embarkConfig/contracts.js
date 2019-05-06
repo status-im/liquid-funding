@@ -1,3 +1,10 @@
+let secret = {};
+try {
+  secret = require('../.secret.json');
+} catch(err) {
+  console.dir("warning: .secret.json file not found; this is only needed to deploy to testnet or livenet etc..");
+}
+
 module.exports = {
   // default applies to all environments
   default: {
@@ -110,24 +117,32 @@ module.exports = {
 
   rinkeby: {
     enabled: true,
+    deployment: {
+      accounts: [
+        {
+          mnemonic: secret.mnemonic,
+          hdpath: "m/44'/1'/0'/0/",
+          numAddresses: "10"
+        }
+      ],
+      host: `rinkeby.infura.io/${secret.infuraKey}`,
+      port: false,
+      protocol: 'https',
+      type: "rpc"
+    },
     dappConnection: [
-      '$WEB3', // uses pre existing web3 object if available (e.g in Mist)
-      'ws://localhost:8546',
-      'http://localhost:8545',
+      '$WEB3'
     ],
     strategy: 'explicit',
+    tracking: './testnet.chains.json',
     contracts: {
       LPVault: {
-        address: "0xa25AB823c5A79941a8a9d0ab525D888cA1513419"
       },
       LiquidPledging: {
-        address: "0x07E92635AF5e524C20B20F2770aE0E0Ef597eD07"
       },
       RecoveryVault: {
-        address: "0x835c1ab7CB9f0545164D7fE9827C5e43E3476809"
       },
       LPFactory: {
-        address: "0x968F0a788F29b5B33296C61cEB34F1c40C55e52c",
         args: {
           _vaultBase: '$LPVault',
           _lpBase: '$LiquidPledging',
@@ -135,18 +150,14 @@ module.exports = {
       },
       // contracts for testing
       StandardToken: {
-        address: "0x6732c6Cd8DA14C7E065b51689410058815657427"
       },
       SNT: {
         // minting address: 0xEdEB948dE35C6ac414359f97329fc0b4be70d3f1
-        address: "0x43d5adC3B49130A575ae6e4b00dFa4BC55C71621"
       },
       Kernel: {
-        address: "0x6Fc67b94c1431EC423D6598b092F2a8bCcD4e698",
         file: "@aragon/os/contracts/kernel/Kernel.sol"
       },
       ACL: {
-        address: "0xEb14c564dfA6ac88d28087138Dde59c8888bF928",
         file: "@aragon/os/contracts/acl/ACL.sol"
       }
     }
