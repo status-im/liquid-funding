@@ -1,5 +1,7 @@
 /*global web3, BigInt*/
 import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
+import { getTokenLabel } from './currencies'
+import { toEther } from './conversions'
 
 const { getPledgeDelegate, numberOfPledges, getPledge } = LiquidPledging.methods
 const getPledgeDelegates = (idPledge, numDelegates) => {
@@ -77,4 +79,16 @@ export const transferBetweenPledges = (setState, tx) => {
       allPledges: [...updatedPledges]
     }
   })
+}
+
+export function getAmountsPledged(pledges){
+  const amounts = {}
+  pledges.forEach(pledge => {
+    const { token, amount } = pledge
+    if (amounts[token]) amounts[token] += Number(toEther(amount))
+    else amounts[token] = Number(toEther(amount))
+  })
+  return Object
+    .entries(amounts)
+    .map(entry => ([getTokenLabel(entry[0]), entry[1]]))
 }
