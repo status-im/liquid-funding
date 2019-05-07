@@ -101,7 +101,6 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
         const filteredPledges = values.delegateProfile ? delegatePledges.filter(
           d => d.profile.id === values.delegateProfile.id && d.pledgeData.amount !== '0' && d.pledgeData.pledgeState === 0 && d.pledgeData.intendedProject === 0
         ) : null
-        console.log({filteredPledges})
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {profiles && profiles.length === 0 &&
@@ -163,8 +162,8 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
               value={values.amount || ''}
             />}
             {values.amount &&
-            <Button type="submit" color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Submit for
-              Funding</Button>}
+             <Button type="submit" color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Submit for
+               Funding</Button>}
           </form>
         )
       }
