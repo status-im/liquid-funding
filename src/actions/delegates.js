@@ -38,7 +38,7 @@ const batchAddDelegates = async (pledges, profiles, existing) => {
   pledges.forEach(pledge => {
     const { delegates } = pledge
     delegates.forEach((delegateInfo, idx) => {
-      const profile = profiles.find(p => p.idProfile === delegateInfo.idDelegate)
+      const profile = profiles.find(p => p.idProfile === Number(delegateInfo.idDelegate))
       const exists = delegateRecordExists(profile, pledge, idx+1, existing)
       if (!exists) {
         batch.push(
