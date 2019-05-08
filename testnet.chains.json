@@ -32,6 +32,14 @@
       "0xd42f3405d01b0371fa87477111523fa9cd442b42055a5ce08991d20203cf909c": {
         "name": "LPFactory",
         "address": "0x968F0a788F29b5B33296C61cEB34F1c40C55e52c"
+      },
+      "0xeced62cc0592a267ecd3b5e79d6e952082577769c26b199299b58c98e9a2bdb8": {
+        "name": "Kernel",
+        "address": "0x49798b01e64295497624645B77004614CC5160c3"
+      },
+      "0xe16a4aaebb3197a14aa5dd3995949f3e44d274fe049caeae225d8fa6068b3ed6": {
+        "name": "LPFactory",
+        "address": "0xBEf1f7D339277Ec3F0ae3BA0b9B04334BA8C2E26"
       }
     }
   }

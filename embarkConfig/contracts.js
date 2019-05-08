@@ -5,6 +5,41 @@ try {
   console.dir("warning: .secret.json file not found; this is only needed to deploy to testnet or livenet etc..");
 }
 
+const rinkebyBase = {
+  enabled: true,
+  dappConnection: [
+    '$WEB3'
+  ],
+  strategy: 'explicit',
+  tracking: './testnet.chains.json',
+  contracts: {
+    LPVault: {
+    },
+    LiquidPledging: {
+    },
+    RecoveryVault: {
+    },
+    LPFactory: {
+      args: {
+        _vaultBase: '$LPVault',
+        _lpBase: '$LiquidPledging',
+      }
+    },
+    // contracts for testing
+    StandardToken: {
+    },
+    SNT: {
+      // minting address: 0xEdEB948dE35C6ac414359f97329fc0b4be70d3f1
+    },
+    Kernel: {
+      file: "@aragon/os/contracts/kernel/Kernel.sol"
+    },
+    ACL: {
+      file: "@aragon/os/contracts/acl/ACL.sol"
+    }
+  }
+};
+
 module.exports = {
   // default applies to all environments
   default: {
@@ -115,13 +150,13 @@ module.exports = {
   // used with "embark run testnet"
   testnet: {},
 
-  rinkeby: {
-    enabled: true,
+  rinkeby: rinkebyBase,
+  rinkebyInfura: Object.assign({}, rinkebyBase, {
     deployment: {
       accounts: [
         {
           mnemonic: secret.mnemonic,
-          hdpath: "m/44'/1'/0'/0/",
+          hdpath: secret.hdpath || "m/44'/1'/0'/0/",
           numAddresses: "10"
         }
       ],
@@ -129,39 +164,8 @@ module.exports = {
       port: false,
       protocol: 'https',
       type: "rpc"
-    },
-    dappConnection: [
-      '$WEB3'
-    ],
-    strategy: 'explicit',
-    tracking: './testnet.chains.json',
-    contracts: {
-      LPVault: {
-      },
-      LiquidPledging: {
-      },
-      RecoveryVault: {
-      },
-      LPFactory: {
-        args: {
-          _vaultBase: '$LPVault',
-          _lpBase: '$LiquidPledging',
-        }
-      },
-      // contracts for testing
-      StandardToken: {
-      },
-      SNT: {
-        // minting address: 0xEdEB948dE35C6ac414359f97329fc0b4be70d3f1
-      },
-      Kernel: {
-        file: "@aragon/os/contracts/kernel/Kernel.sol"
-      },
-      ACL: {
-        file: "@aragon/os/contracts/acl/ACL.sol"
-      }
     }
-  },
+  }),
   // merges with the settings in default
   // used with "embark run livenet"
   livenet: {},
