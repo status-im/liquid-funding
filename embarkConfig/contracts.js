@@ -20,6 +20,7 @@ const rinkebyBase = {
     RecoveryVault: {
     },
     LPFactory: {
+      address: '0x968F0a788F29b5B33296C61cEB34F1c40C55e52c',
       args: {
         _vaultBase: '$LPVault',
         _lpBase: '$LiquidPledging',
@@ -32,6 +33,7 @@ const rinkebyBase = {
       // minting address: 0xEdEB948dE35C6ac414359f97329fc0b4be70d3f1
     },
     Kernel: {
+      address: "0x49798b01e64295497624645B77004614CC5160c3",
       file: "@aragon/os/contracts/kernel/Kernel.sol"
     },
     ACL: {
