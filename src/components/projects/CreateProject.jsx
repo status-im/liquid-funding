@@ -3,6 +3,7 @@ import React, { createRef, useState, useContext } from 'react'
 import { Formik } from 'formik'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import TextField from '@material-ui/core/TextField'
+import MenuItem from '@material-ui/core/MenuItem'
 import Divider from '@material-ui/core/Divider'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
@@ -11,6 +12,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
 import { formatForIpfs, uploadToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
+import { currencies, TOKEN_ICON_API } from '../../utils/currencies'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 
@@ -323,14 +325,27 @@ const SubmissionSection = ({ classes, history }) => {
               }}
               id="goalToken"
               name="goalToken"
+              select
               label="Select Token"
               placeholder="Select Token"
               margin="normal"
               variant="outlined"
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.token || ''}
-            />
+              value={values.goalToken || ''}
+            >
+              {currencies.map((option) => (
+                <MenuItem style={{display: 'flex', alignItems: 'center'}} key={option.value} value={option.value}>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    {option.icon || <img
+                      src={option.img || `${TOKEN_ICON_API}/${option.value}.png`}
+                      style={{width: option.width, marginRight: '3%'}}
+                    />}
+                    {option.label}
+                  </div>
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               className={classes.textField}
               InputProps={{
