@@ -1,18 +1,14 @@
 /*global web3*/
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Formik } from 'formik';
 import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
 import { MySnackbarContentWrapper } from './base/SnackBars'
-import { currencies, TOKEN_ICON_API, getTokenLabel } from '../utils/currencies'
-import { toEther } from '../utils/conversions'
-import { getLpAllowance, standardTokenApproval } from '../utils/initialize'
+import { getTokenLabel } from '../utils/currencies'
 import { FundingContext } from '../context'
+import CurrencySelect from './base/CurrencySelect'
 
 const { donate } = LiquidPledging.methods
 const _hoursToSeconds = hours => hours * 60 * 60
@@ -24,42 +20,6 @@ const _addFunderSucessMsg = response => {
 const CreateFunding = ({ refreshTable }) => {
   const context = useContext(FundingContext)
   const { account } = context
-  const [balances, setBalances] = useState({})
-  const [allowances, setAllowances] = useState({})
-
-  const updateBalancesAllowances = () => {
-    const latestBalances = {}
-    const latestAllowances = {}
-    currencies.forEach(async c => {
-      if (c.contract) {
-        const amount = await c.contract.methods.balanceOf(account).call()
-        const allowance = await getLpAllowance(c.contract)
-        latestBalances[c.value] = toEther(amount)
-        latestAllowances[c.value] = toEther(allowance)
-      } else {
-        latestBalances[c.value] = '0'
-        latestAllowances[c.value] = '0'
-      }
-    })
-    setBalances(latestBalances)
-    setAllowances(latestAllowances)
-  }
-
-  const toggleAllowance = e => {
-    const token = currencies[e.target.value]
-    const allowance = allowances[token.value]
-    standardTokenApproval(
-      token.contract,
-      Number(allowance) ? '0' : undefined
-    ).then(res => {
-      const { events: { Approval: { returnValues: { value } } } } = res
-      setAllowances(state => ({ ...state, [token.value]: toEther(value) }))
-    })
-  }
-
-  useEffect(() => {
-    if (account) updateBalancesAllowances()
-  }, [account])
 
   return (
     <Formik
@@ -123,44 +83,16 @@ const CreateFunding = ({ refreshTable }) => {
             onBlur={handleBlur}
             value={values.receiverId || ''}
           />
-          <TextField
+          <CurrencySelect
             id="tokenAddress"
             name="tokenAddress"
-            select
             label="Select token for funding"
-            placeholder="Select token for funding"
-            margin="normal"
-            variant="outlined"
             onChange={handleChange}
             onBlur={handleBlur}
-            value={values.tokenAddress || ''}
-          >
-            {currencies.map((option, idx) => (
-              <MenuItem style={{display: 'flex', alignItems: 'center'}} key={option.value} value={option.value}>
-                <div style={{display: 'flex', alignItems: 'center'}}>
-                  {option.icon || <img
-                    src={option.img || `${TOKEN_ICON_API}/${option.value}.png`}
-                    style={{width: option.width, marginRight: '3%'}}
-                  />}
-                  {option.label}
-                  <span style={{ marginLeft: '10%' }}>Your Balance: <strong>{balances[option.value]}</strong></span>
-                  <FormControlLabel
-                    style={{ marginLeft: '10%' }}
-                    onClick={e => e.stopPropagation()}
-                    control={
-                      <Switch
-                        checked={!!Number(allowances[option.value])}
-                        onChange={toggleAllowance}
-                        value={idx}
-                        color="primary"
-                      />
-                    }
-                    label="Enabled"
-                  />
-                </div>
-              </MenuItem>
-            ))}
-          </TextField>
+            value={values.tokenAddress}
+            showBalances
+            enableToggles
+          />
           <TextField
             id="amount"
             name="amount"

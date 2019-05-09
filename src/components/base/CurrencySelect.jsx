@@ -12,8 +12,8 @@ import { FundingContext } from '../../context'
 CurrencySelect.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleBlur: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
   value: PropTypes.string,
   showBalances: PropTypes.bool,
   enableToggles: PropTypes.bool
@@ -22,8 +22,8 @@ CurrencySelect.propTypes = {
 function CurrencySelect({
   id,
   label,
-  handleChange,
-  handleBlur,
+  onChange,
+  onBlur,
   value,
   showBalances,
   enableToggles
@@ -67,7 +67,6 @@ function CurrencySelect({
     if (account && showBalances) updateBalancesAllowances()
   }, [account])
 
-
   return (
     <TextField
       id={id}
@@ -77,8 +76,8 @@ function CurrencySelect({
       placeholder={label}
       margin="normal"
       variant="outlined"
-      onChange={handleChange}
-      onBlur={handleBlur}
+      onChange={onChange}
+      onBlur={onBlur}
       value={value || ''}
     >
       {currencies.map((option, idx) => (
