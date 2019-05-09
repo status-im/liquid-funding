@@ -16,7 +16,9 @@ CurrencySelect.propTypes = {
   onBlur: PropTypes.func.isRequired,
   value: PropTypes.string,
   showBalances: PropTypes.bool,
-  enableToggles: PropTypes.bool
+  enableToggles: PropTypes.bool,
+  className: PropTypes.string,
+  InputProps: PropTypes.object
 }
 
 function CurrencySelect({
@@ -26,7 +28,9 @@ function CurrencySelect({
   onBlur,
   value,
   showBalances,
-  enableToggles
+  enableToggles,
+  className,
+  InputProps
 }) {
   const context = useContext(FundingContext)
   const { account } = context
@@ -69,6 +73,8 @@ function CurrencySelect({
 
   return (
     <TextField
+      className={className}
+      InputProps={InputProps}
       id={id}
       name={id}
       select
