@@ -28,6 +28,7 @@ import Projects from './projects/Projects'
 import Project from './projects/Project'
 import BackProject from './projects/BackProject'
 import CreateProject from './projects/CreateProject'
+import CreateDelegate from './projects/CreateDelegate'
 
 const drawerWidth = 240
 
@@ -189,6 +190,7 @@ class PersistentDrawerLeft extends React.Component {
               <Route path="/projects" component={Projects} />
               <Route path="/project/:id" component={Project} />
               <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
+              <Route path="/create-delegate/" render={(props) => <CreateDelegate {...props} />} />
               <Route path="/back-project/:id" component={BackProject} />
             </Switch>
             {this.props.children}
