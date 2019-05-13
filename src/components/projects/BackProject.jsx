@@ -98,9 +98,10 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
         setStatus: _setStatus,
         status: _status
       }) => {
-        const filteredPledges = values.delegateProfile ? delegatePledges.filter(
-          d => d.profile.id === values.delegateProfile.id && d.pledgeData.amount !== '0' && d.pledgeData.pledgeState === 0 && d.pledgeData.intendedProject === 0
-        ) : null
+        const filterPledges = delegateProfile => delegatePledges.filter(
+          d => d.profile.id === delegateProfile.id && d.pledgeData.amount !== '0' && d.pledgeData.pledgeState === 0 && d.pledgeData.intendedProject === 0
+        )
+        const filteredPledges = values.delegateProfile ? filterPledges(values.delegateProfile) : null
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {profiles && profiles.length === 0 &&
@@ -122,11 +123,17 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
               disabled={!profiles || profiles.length === 0}
               value={values.delegateProfile || ''}
             >
-              {profiles && profiles.map((profile, index) => (
-                <MenuItem style={{display: 'flex', alignItems: 'center'}} key={`profile-${index}`} value={profile}>
-                  {profile.name}
-                </MenuItem>
-              ))}
+              {profiles && profiles.map((profile, index) => {
+                const filteredPledges = filterPledges(profile)
+                const numPledges = filteredPledges.length
+                const amount = filteredPledges.reduce((cv,pv) => cv + Number(pv.pledgeData.amount) ,0)
+                const token = numPledges ? filteredPledges[0].pledgeData.token : ''
+                return (
+                  <MenuItem style={{display: 'flex', alignItems: 'center'}} key={`profile-${index}`} value={profile}>
+                    {profile.name} - {numPledges} Pledges - {toEther(amount.toString())} {getTokenLabel(token)}
+                  </MenuItem>
+                )
+              })}
             </TextField>
             {filteredPledges && <TextField
               className={classes.textField}
