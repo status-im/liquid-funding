@@ -183,6 +183,7 @@ const getAvatarSrc = assets => {
 
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
+  const urlName = match.params[0]
   const { projectAge, projectAssets, manifest } = useProjectData(projectId, projectAddedEvents)
 
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
@@ -195,7 +196,8 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
     (Number(totalPledged) / Number(manifest.goal)) * 100,
     100
   ) : 0
-  console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged, pledges, transfers})
+  const profileType = profile[0] ? profile[0].type : urlName
+  console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged, pledges, transfers, match})
   return (<Fragment>
     {!projectAssets && <Loading/>}
     {projectAssets && <div className={classes.root}>
@@ -247,8 +249,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
           </div>
           <div>
             <Link to={`/back-project/${projectId}`} className={classes.link}>
-              <Button color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Back this
-                project</Button>
+              <Button color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Back this {profileType}</Button>
             </Link>
           </div>
         </div>
