@@ -106,7 +106,7 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
             {profiles && profiles.length === 0 &&
              <Typography color="error">
                Please create a Delegate profile before backing -
-               <Link href="/#/funds-management"> Delegate creation page</Link>
+               <Link href="/#/create-delegate"> Delegate creation page</Link>
              </Typography>}
             <TextField
               className={classes.textField}
