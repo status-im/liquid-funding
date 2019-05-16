@@ -27,6 +27,7 @@ import Dashboard from './Dashboard'
 import Projects from './projects/Projects'
 import Project from './projects/Project'
 import BackProject from './projects/BackProject'
+import ProjectPledges from './projects/ProjectPledges'
 import CreateProject from './projects/CreateProject'
 import CreateDelegate from './projects/CreateDelegate'
 
@@ -192,6 +193,7 @@ class PersistentDrawerLeft extends React.Component {
               <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
               <Route path="/create-delegate/" render={(props) => <CreateDelegate {...props} />} />
               <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
+              <Route path="/project-pledges/:id" component={ProjectPledges} />
             </Switch>
             {this.props.children}
           </div>
