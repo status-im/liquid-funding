@@ -6,7 +6,7 @@ import { getProfilesById } from './profiles'
 
 const createPledge = (pledge, data, profiles) => {
   const { id, owner, amount, blockNumber, token, commitTime, nDelegates, pledgeState, intendedProject, delegates } = data
-  const profile = profiles.find(p => p.idProfile === owner)
+  const profile = profiles.find(p => p.idProfile === Number(owner))
   pledge.idPledge = Number(id)
   pledge.owner = Number(owner)
   pledge.amount = amount
