@@ -1,3 +1,4 @@
+/*global web3*/
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Formik } from 'formik'
@@ -8,12 +9,23 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
 import { useProjectData, useProfileData } from './hooks'
 import { Button, Divider, Typography, Card, CardActions, CardContent, FormControlLabel, Switch } from '@material-ui/core'
-import { toEther, toWei } from '../../utils/conversions'
+import { toEther, /*toWei*/ } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 
 // create form with cards showing multiple pledges, allow each to be selected and use mWithdraw to submit a withdrawal for them all
 
-const { transfer } = LiquidPledging.methods
+const { mWithdraw, withdraw } = LiquidPledging.methods
+const { utils } = web3
+
+const encodePledges = pledges => pledges.map(p => {
+  // .substring is to remove the 0x prefix on the toHex result
+  return (
+    '0x' +
+    utils.padLeft(utils.toHex(p.amount).substring(2), 48) +
+    utils.padLeft(utils.toHex(p.id).substring(2), 16)
+  );
+});
+
 const pledgeStateMap = {
   0: 'Pledged',
   1: 'Paying',
@@ -132,16 +144,30 @@ const Title = ({ className, manifest }) => (
 const SubmissionSection = ({ classes, delegatePledges, projectId, openSnackBar, pledges }) => {
   return (
     <Formik
-      initialValues={{ amount: '', delegateProfile: '', delegatePledge: '' }}
       onSubmit={async(values, { resetForm }) => {
-        const { amount, delegateProfile, delegatePledge } = values
-        const dPledge = delegatePledges.find(d => d.idPledge === delegatePledge)
-        const pledge = await dPledge.pledge.fetch()
-        const args = [delegateProfile.idProfile, delegatePledge, toWei(amount), projectId]
-        console.log({values, args, pledge, delegatePledge})
-        const toSend = transfer(...args)
+        const { pledge } = values
+        const filteredPledges = Object.keys(pledge)
+          .filter(p => !!pledge[p])
+          .map(pledge => pledges.find(p => p.id === pledge))
+          .map(pledge => ({ amount: pledge.amount, id: pledge.idPledge }))
+        const encodedPledges = encodePledges(filteredPledges)
+        console.log({openSnackBar, resetForm, values, projectId, filteredPledges, encodePledges, pledges, mWithdraw})
+        const toSend = filteredPledges.length > 1 ? mWithdraw(encodedPledges) : withdraw(filteredPledges[0].id, filteredPledges[0].amount)
         const estimatedGas = await toSend.estimateGas()
-        console.log({estimatedGas, openSnackBar, resetForm})
+        console.log({estimatedGas})
+        toSend().send({gas: estimatedGas})
+          .then(async res => {
+            console.log({res})
+          })
+          .catch(e => {
+            openSnackBar('error', 'An error has occured with the transaction')
+            console.log({e})
+          })
+          .finally(() => {
+            openSnackBar('success', 'Withdraws initiated')
+            resetForm()
+          })
+
 
       }}
     >
@@ -165,7 +191,7 @@ const SubmissionSection = ({ classes, delegatePledges, projectId, openSnackBar, 
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {pledges.map(pledge => <PledgeInfo key={pledge.id} pledge={pledge} values={values} handleChange={handleChange} />)}
             <Button type="submit" color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Submit for
-               withdraw</Button>
+              withdraw</Button>
           </form>
         )
       }
