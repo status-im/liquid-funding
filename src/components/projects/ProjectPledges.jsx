@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Formik } from 'formik'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
@@ -11,10 +11,23 @@ import { Button, Divider, Typography, Card, CardActions, CardContent, FormContro
 import { toEther, toWei } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 
-
 // create form with cards showing multiple pledges, allow each to be selected and use mWithdraw to submit a withdrawal for them all
 
 const { transfer } = LiquidPledging.methods
+const pledgeStateMap = {
+  0: 'Pledged',
+  1: 'Paying',
+  2: 'Paid'
+}
+
+const getCommitTime = async (pledge, setState) => {
+  const { commitTime } = pledge
+  const profile = await pledge.profile.fetch()
+  if (!profile || Number(commitTime) === 0) return 0
+  const time = Number(commitTime) + Number(profile.commitTime)
+  const date = new Date(time * 1000)
+  setState(`${date.toLocaleDateString()} ${date.toLocaleTimeString()}`)
+}
 
 const styles = theme => ({
   card: {
@@ -41,7 +54,8 @@ const styles = theme => ({
     textAlign: 'center'
   },
   subText: {
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom: '0.5em'
   },
   switchSelect: {
     display: 'grid',
@@ -49,6 +63,8 @@ const styles = theme => ({
     gridColumnEnd: '9'
   },
   submissionRoot: {
+    display: 'grid',
+    gridRowGap: '36px',
     gridColumnStart: '1',
     gridColumnEnd: '13'
   },
@@ -58,10 +74,14 @@ const styles = theme => ({
 })
 
 function SimplePledge({ classes, pledge, values, handleChange }) {
+  const [commitTime, setCommitTime] = useState(0);
   const pledgeId = `pledge.${pledge.id}`
   const keys = Object.keys(values)
   const value = keys.find(k => values[k].id === pledgeId)
-  console.log({values})
+
+  useEffect(() => {
+    getCommitTime(pledge, setCommitTime)
+  }, [pledge])
 
   return (
     <Card className={classes.card}>
@@ -72,8 +92,11 @@ function SimplePledge({ classes, pledge, values, handleChange }) {
         <Typography variant="h5" component="h2" className={classes.subText}>
           Pledge ID: {pledge.idPledge}
         </Typography>
-        <Typography component="p" className={classes.subText}>
-          commit time {pledge.commitTime}
+        <Typography variant="h6" component="h3" className={classes.subText}>
+          Pledge Status: {pledgeStateMap[pledge.pledgeState]}
+        </Typography>
+        <Typography variant="h6" component="h3" className={classes.subText}>
+          Commit Time: {commitTime}
         </Typography>
       </CardContent>
       <CardActions style={{ justifyContent: 'center' }}>
@@ -142,7 +165,7 @@ const SubmissionSection = ({ classes, delegatePledges, projectId, openSnackBar, 
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {pledges.map(pledge => <PledgeInfo key={pledge.id} pledge={pledge} values={values} handleChange={handleChange} />)}
             <Button type="submit" color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Submit for
-               Funding</Button>
+               withdraw</Button>
           </form>
         )
       }
