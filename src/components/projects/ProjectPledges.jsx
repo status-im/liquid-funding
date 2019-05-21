@@ -228,7 +228,10 @@ export default withDatabase(withObservables([], ({ database, match }) => ({
     Q.where('event', 'DelegateAdded')
   ).observe(),
   pledges: database.collections.get('pledges').query(
-    Q.where('intended_project', match.params.id)
+    Q.or(
+      Q.where('intended_project', match.params.id),
+      Q.where('owner_id', match.params.id)
+    )
   ).observe()
 }))(StyledPledges))
 
