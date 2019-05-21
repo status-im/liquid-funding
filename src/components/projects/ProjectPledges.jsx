@@ -141,7 +141,7 @@ const Title = ({ className, manifest }) => (
     <Divider />
   </div>
 )
-const SubmissionSection = ({ classes, delegatePledges, projectId, openSnackBar, pledges }) => {
+const SubmissionSection = ({ classes, projectId, openSnackBar, pledges }) => {
   return (
     <Formik
       onSubmit={async(values, { resetForm }) => {
@@ -152,10 +152,12 @@ const SubmissionSection = ({ classes, delegatePledges, projectId, openSnackBar, 
           .map(pledge => ({ amount: pledge.amount, id: pledge.idPledge }))
         const encodedPledges = encodePledges(filteredPledges)
         console.log({openSnackBar, resetForm, values, projectId, filteredPledges, encodePledges, pledges, mWithdraw})
-        const toSend = filteredPledges.length > 1 ? mWithdraw(encodedPledges) : withdraw(filteredPledges[0].id, filteredPledges[0].amount)
+        const args = filteredPledges.length > 1 ? [encodedPledges] : [filteredPledges[0].id, filteredPledges[0].amount]
+        const sendFn = filteredPledges.length > 1 ? mWithdraw : withdraw
+        const toSend = sendFn(...args)
         const estimatedGas = await toSend.estimateGas()
         console.log({estimatedGas})
-        toSend().send({gas: estimatedGas})
+        toSend.send({gas: estimatedGas})
           .then(async res => {
             console.log({res})
           })
@@ -176,17 +178,11 @@ const SubmissionSection = ({ classes, delegatePledges, projectId, openSnackBar, 
         errors: _errors,
         touched: _touched,
         handleChange,
-        //handleBlur,
         handleSubmit,
         setFieldValue: _setFieldValue,
         setStatus: _setStatus,
         status: _status
       }) => {
-        const filterPledges = delegateProfile => delegatePledges.filter(
-          d => d.profile.id === delegateProfile.id && d.pledgeData.amount !== '0' && d.pledgeData.pledgeState === 0 && d.pledgeData.intendedProject === 0
-        )
-        const filteredPledges = values.delegateProfile ? filterPledges(values.delegateProfile) : null
-        console.log({filteredPledges})
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {pledges.map(pledge => <PledgeInfo key={pledge.id} pledge={pledge} values={values} handleChange={handleChange} />)}
