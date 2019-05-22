@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Formik } from 'formik'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
+import LPVault from '../../embarkArtifacts/contracts/LPVault'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
@@ -19,6 +20,7 @@ import { getTokenLabel } from '../../utils/currencies'
 // create form with cards showing multiple pledges, allow each to be selected and use mWithdraw to submit a withdrawal for them all
 
 const { mWithdraw, withdraw } = LiquidPledging.methods
+const { confirmPayment } = LPVault.methods
 const { utils } = web3
 
 const encodePledges = pledges => pledges.map(p => {
@@ -30,10 +32,13 @@ const encodePledges = pledges => pledges.map(p => {
   );
 });
 
-const pledgeStateMap = {
-  0: 'Pledged',
-  1: 'Paying',
-  2: 'Paid'
+const PLEDGED = 'Pledged'
+const PAYING = 'Paying'
+const PAID = 'Paid'
+const pledgeTypes = {
+  0: PLEDGED,
+  1: PAYING,
+  2: PAID
 }
 
 const getCommitTime = async (pledge, setState) => {
@@ -109,7 +114,7 @@ function SimplePledge({ classes, pledge, values, handleChange }) {
           Pledge ID: {pledge.idPledge}
         </Typography>
         <Typography variant="h6" component="h3" className={classes.subText}>
-          Pledge Status: {pledgeStateMap[pledge.pledgeState]}
+          Pledge Status: {pledgeTypes[pledge.pledgeState]}
         </Typography>
         <Typography variant="h6" component="h3" className={classes.subText}>
           Commit Time: {commitTime}
@@ -145,7 +150,25 @@ const Title = ({ className, manifest }) => (
     <Divider />
   </div>
 )
-const SubmissionSection = ({ classes, projectId, openSnackBar, pledges }) => {
+
+const getSendFn = (pledgeType, filteredPledges) => {
+  if (pledgeType === PLEDGED) {
+    return filteredPledges.length > 1 ? mWithdraw : withdraw
+  }
+  return confirmPayment
+
+}
+const getArgs = (pledgeType, filteredPledges) => {
+  if (pledgeType === PLEDGED) {
+    const formattedPledges = filteredPledges.map(pledge => ({ amount: pledge.amount, id: pledge.idPledge }))
+    const encodedPledges = encodePledges(formattedPledges)
+    const withdrawArgs = [filteredPledges[0].id, filteredPledges[0].amount]
+    return filteredPledges.length > 1 ? [encodedPledges] : withdrawArgs
+  }
+  const { idPayment } = filteredPledges[0].authorization.returnValues
+  return [idPayment]
+}
+const SubmissionSection = ({ classes, openSnackBar, pledges, pledgeType }) => {
   return (
     <Formik
       onSubmit={async(values, { resetForm }) => {
@@ -153,11 +176,9 @@ const SubmissionSection = ({ classes, projectId, openSnackBar, pledges }) => {
         const filteredPledges = Object.keys(pledge)
           .filter(p => !!pledge[p])
           .map(pledge => pledges.find(p => p.id === pledge))
-          .map(pledge => ({ amount: pledge.amount, id: pledge.idPledge }))
-        const encodedPledges = encodePledges(filteredPledges)
-        console.log({openSnackBar, resetForm, values, projectId, filteredPledges, encodePledges, pledges, mWithdraw})
-        const args = filteredPledges.length > 1 ? [encodedPledges] : [filteredPledges[0].id, filteredPledges[0].amount]
-        const sendFn = filteredPledges.length > 1 ? mWithdraw : withdraw
+        const sendFn = getSendFn(pledgeType, filteredPledges)
+        const args = getArgs(pledgeType, filteredPledges)
+        console.log({args, sendFn})
         const toSend = sendFn(...args)
         const estimatedGas = await toSend.estimateGas()
         console.log({estimatedGas})
@@ -173,8 +194,6 @@ const SubmissionSection = ({ classes, projectId, openSnackBar, pledges }) => {
             openSnackBar('success', 'Withdraws initiated')
             resetForm()
           })
-
-
       }}
     >
       {({
@@ -263,6 +282,7 @@ function ProjectPledges({classes, match, delegates: _delegates, projectAddedEven
         projectId={projectId}
         openSnackBar={openSnackBar}
         pledges={selectedPledges[pledgeType]}
+        pledgeType={pledgeType}
       />
     </div>
   )
