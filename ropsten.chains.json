@@ -1,0 +1,18 @@
+{
+  "0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d": {
+    "contracts": {
+      "0x106543bd4016aaa1c014e64ec41526991b2419349aca5672ce23308937475494": {
+        "name": "LPVault",
+        "address": "0x5c42825C445d1b97F8f85418696c1EdCceCD36A2"
+      },
+      "0x7a0ab6d93a816579b7dd3d4891d20948d89376edb70b4e9e35984081e97dc23d": {
+        "name": "StandardToken",
+        "address": "0x8f687BA68BEb8E6a1231BA56ef99D0017A5a1Df5"
+      },
+      "0x0d46f0491387471c715abfda03087d386047c88e523e55d9fd64ede4fd9401e4": {
+        "name": "LiquidPledging",
+        "address": "0x1B6609806c6eabb4898Dd6B59A2dBcE7e8e598B8"
+      }
+    }
+  }
+}
