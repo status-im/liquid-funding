@@ -207,18 +207,17 @@ const useStyles = makeStyles({
   },
 })
 
-function CenteredTabs({ pledged, paying, paid }) {
+function CenteredTabs({ pledged, paying, paid, pledgeType, setPledgeType }) {
   const classes = useStyles();
-  const [value, setValue] = useState(0);
 
   function handleChange(event, newValue) {
-    setValue(newValue);
+    setPledgeType(newValue);
   }
 
   return (
     <Paper className={classes.root}>
       <Tabs
-        value={value}
+        value={pledgeType}
         onChange={handleChange}
         indicatorColor="primary"
         textColor="primary"
@@ -233,6 +232,7 @@ function CenteredTabs({ pledged, paying, paid }) {
 }
 
 function ProjectPledges({classes, match, delegates: _delegates, projectAddedEvents, delegateAddedEvents: _delegateAddedEvents, pledges, authorizedPayments}) {
+  const [pledgeType, setPledgeType] = useState(0)
   const projectId = match.params.id
   const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
@@ -240,18 +240,29 @@ function ProjectPledges({classes, match, delegates: _delegates, projectAddedEven
   const pledged = enrichedPledges.filter(p => p.pledgeState === 0)
   const paying = enrichedPledges.filter(p => p.pledgeState === 1)
   const paid = enrichedPledges.filter(p => p.pledgeState === 2)
+  const selectedPledges = {
+    0: pledged,
+    1: paying,
+    2: paid
+  }
   console.log('pledges', {pledges, authorizedPayments, enrichedPledges})
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
-      <CenteredTabs pledged={pledged.length} paying={paying.length} paid={paid.length} />
+      <CenteredTabs
+        pledged={pledged.length}
+        paying={paying.length}
+        paid={paid.length}
+        pledgeType={pledgeType}
+        setPledgeType={setPledgeType}
+      />
       <SubmissionSection
         classes={classes}
         profiles={delegateProfiles}
         delegatePledges={delegatePledges}
         projectId={projectId}
         openSnackBar={openSnackBar}
-        pledges={pledges}
+        pledges={selectedPledges[pledgeType]}
       />
     </div>
   )
