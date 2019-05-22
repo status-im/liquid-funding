@@ -9,7 +9,11 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
 import { useProjectData, useProfileData, usePledgesAuthorizations } from './hooks'
 import { Button, Divider, Typography, Card, CardActions, CardContent, FormControlLabel, Switch } from '@material-ui/core'
-import { toEther, /*toWei*/ } from '../../utils/conversions'
+import { makeStyles } from '@material-ui/styles'
+import Paper from '@material-ui/core/Paper'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import { toEther } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 
 // create form with cards showing multiple pledges, allow each to be selected and use mWithdraw to submit a withdrawal for them all
@@ -196,15 +200,51 @@ const SubmissionSection = ({ classes, projectId, openSnackBar, pledges }) => {
   )
 }
 
+const useStyles = makeStyles({
+  root: {
+    gridColumnEnd: '13',
+    gridColumnStart: '1',
+  },
+})
+
+function CenteredTabs({ pledged, paying, paid }) {
+  const classes = useStyles();
+  const [value, setValue] = useState(0);
+
+  function handleChange(event, newValue) {
+    setValue(newValue);
+  }
+
+  return (
+    <Paper className={classes.root}>
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+      >
+        <Tab label={`Pledged (${pledged})`} />
+        <Tab label={`Paying (${paying})`} />
+        <Tab label={`Paid (${paid})`} />
+      </Tabs>
+    </Paper>
+  );
+}
+
 function ProjectPledges({classes, match, delegates: _delegates, projectAddedEvents, delegateAddedEvents: _delegateAddedEvents, pledges, authorizedPayments}) {
   const projectId = match.params.id
   const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
   const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments)
+  const pledged = enrichedPledges.filter(p => p.pledgeState === 0)
+  const paying = enrichedPledges.filter(p => p.pledgeState === 1)
+  const paid = enrichedPledges.filter(p => p.pledgeState === 2)
   console.log('pledges', {pledges, authorizedPayments, enrichedPledges})
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
+      <CenteredTabs pledged={pledged.length} paying={paying.length} paid={paid.length} />
       <SubmissionSection
         classes={classes}
         profiles={delegateProfiles}
