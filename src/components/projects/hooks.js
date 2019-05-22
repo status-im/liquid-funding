@@ -6,6 +6,7 @@ import { unnest } from 'ramda'
 import { timeSinceBlock } from '../../utils/dates'
 import { getFiles, ipfs } from '../../utils/ipfs'
 import { databaseExists } from '../../utils/db'
+import { arrayToObject } from '../../utils/array'
 import { FundingContext } from '../../context'
 import { getDelegateProfiles } from '../../actions/profiles'
 import { getDelegatePledgesByProfile } from '../../actions/delegates'
@@ -131,4 +132,23 @@ export function useProjectData(projectId, projectAddedEvents) {
     delegateProfiles,
     openSnackBar
   }
+}
+
+function mergePledgesAuthorizations(pledges, authorizations, setState) {
+  const auths = arrayToObject(authorizations, 'ref')
+  const enriched = pledges.map(pledge => {
+    const { idPledge } = pledge
+    if (auths[idPledge]) pledge.authorization = auths[idPledge]
+    return pledge
+  })
+  setState(enriched)
+}
+export function usePledgesAuthorizations(pledges, authorizations) {
+  const [enrichedPledges, setEnrichedPledges] = useState(pledges)
+
+  useEffect(() => {
+    mergePledgesAuthorizations(pledges, authorizations, setEnrichedPledges)
+  }, [pledges, authorizations])
+
+  return enrichedPledges
 }
