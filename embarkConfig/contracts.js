@@ -152,6 +152,37 @@ module.exports = {
   // used with "embark run testnet"
   testnet: {},
 
+  // merges with the settings in default
+  // used with "embark run ropsten"
+  ropsten: {
+    tracking: './ropsten.chains.json',
+    deployment: {
+      accounts: [
+        {
+          mnemonic: secret.mnemonic,
+          hdpath: secret.hdpath || "m/44'/1'/0'/0/",
+          numAddresses: "10"
+        }
+      ],
+      host: `ropsten.infura.io/${secret.infuraKey}`,
+      port: false,
+      protocol: 'https',
+      type: "rpc"
+    },
+    strategy: 'explicit',
+    contracts: {
+      LPVault: {},
+      LiquidPledging: {},
+      StandardToken: {}
+    },
+    afterDeploy: async (dependencies) => {
+      await dependencies.contracts.LiquidPledging.methods.initialize(dependencies.contracts.LPVault.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+      await dependencies.contracts.LPVault.methods.initialize(dependencies.contracts.LiquidPledging.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+    },
+    dappConnection: ["$WEB3"]
+  },
+  
+
   rinkeby: rinkebyBase,
   rinkebyInfura: Object.assign({}, rinkebyBase, {
     deployment: {
