@@ -17,8 +17,6 @@ import Tab from '@material-ui/core/Tab'
 import { toEther } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
 
-// create form with cards showing multiple pledges, allow each to be selected and use mWithdraw to submit a withdrawal for them all
-
 const { mWithdraw, withdraw } = LiquidPledging.methods
 const { confirmPayment } = LPVault.methods
 const { utils } = web3
@@ -39,6 +37,11 @@ const pledgeTypes = {
   0: PLEDGED,
   1: PAYING,
   2: PAID
+}
+const buttonText = {
+  0: 'Submit for withdraw',
+  1: 'Confirm withdraw',
+  2: 'Already paid'
 }
 
 const getCommitTime = async (pledge, setState) => {
@@ -94,7 +97,7 @@ const styles = theme => ({
   }
 })
 
-function SimplePledge({ classes, pledge, values, handleChange }) {
+function SimplePledge({ classes, pledge, values, handleChange, pledgeType }) {
   const [commitTime, setCommitTime] = useState(0);
   const pledgeId = `pledge.${pledge.id}`
   const keys = Object.keys(values)
@@ -104,6 +107,8 @@ function SimplePledge({ classes, pledge, values, handleChange }) {
     getCommitTime(pledge, setCommitTime)
   }, [pledge])
 
+  const notPaid = pledgeTypes[pledgeType] !== PAID
+  const notPaying = pledgeTypes[pledgeType] !== PAYING
   return (
     <Card className={classes.card}>
       <CardContent>
@@ -116,11 +121,11 @@ function SimplePledge({ classes, pledge, values, handleChange }) {
         <Typography variant="h6" component="h3" className={classes.subText}>
           Pledge Status: {pledgeTypes[pledge.pledgeState]}
         </Typography>
-        <Typography variant="h6" component="h3" className={classes.subText}>
+        {notPaid && <Typography variant="h6" component="h3" className={classes.subText}>
           Commit Time: {commitTime}
-        </Typography>
+        </Typography>}
       </CardContent>
-      <CardActions style={{ justifyContent: 'center' }}>
+      {notPaid && <CardActions style={{ justifyContent: 'center' }}>
         <FormControlLabel
           control={
             <Switch
@@ -130,16 +135,19 @@ function SimplePledge({ classes, pledge, values, handleChange }) {
               value="checkedA"
             />
           }
-          label="withdraw"
+          label={notPaying ? 'Withdraw' : 'Confirm'}
         />
-      </CardActions>
+      </CardActions>}
     </Card>
   );
 }
 
 SimplePledge.propTypes = {
   classes: PropTypes.object.isRequired,
-  pledge: PropTypes.object.isRequired
+  pledge: PropTypes.object.isRequired,
+  values: PropTypes.object.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  pledgeType: PropTypes.number.isRequired
 };
 const PledgeInfo = withStyles(styles)(SimplePledge);
 
@@ -178,7 +186,6 @@ const SubmissionSection = ({ classes, openSnackBar, pledges, pledgeType }) => {
           .map(pledge => pledges.find(p => p.id === pledge))
         const sendFn = getSendFn(pledgeType, filteredPledges)
         const args = getArgs(pledgeType, filteredPledges)
-        console.log({args, sendFn})
         const toSend = sendFn(...args)
         const estimatedGas = await toSend.estimateGas()
         console.log({estimatedGas})
@@ -208,9 +215,8 @@ const SubmissionSection = ({ classes, openSnackBar, pledges, pledgeType }) => {
       }) => {
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
-            {pledges.map(pledge => <PledgeInfo key={pledge.id} pledge={pledge} values={values} handleChange={handleChange} />)}
-            <Button type="submit" color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Submit for
-              withdraw</Button>
+            {pledges.map(pledge => <PledgeInfo key={pledge.id} pledge={pledge} values={values} handleChange={handleChange} pledgeType={pledgeType} />)}
+            {pledgeTypes[pledgeType] !== PAID && <Button type="submit" color="primary" variant="contained" style={{height: '50px', width: '100%'}}>{buttonText[pledgeType]}</Button>}
           </form>
         )
       }
@@ -250,12 +256,12 @@ function CenteredTabs({ pledged, paying, paid, pledgeType, setPledgeType }) {
   );
 }
 
-function ProjectPledges({classes, match, delegates: _delegates, projectAddedEvents, delegateAddedEvents: _delegateAddedEvents, pledges, authorizedPayments}) {
+function ProjectPledges({classes, match, projectAddedEvents, pledges, authorizedPayments}) {
   const [pledgeType, setPledgeType] = useState(0)
   const projectId = match.params.id
   const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
-  const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments)
+  const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments).filter(p => Number(p.amount) > 0)
   const pledged = enrichedPledges.filter(p => p.pledgeState === 0)
   const paying = enrichedPledges.filter(p => p.pledgeState === 1)
   const paid = enrichedPledges.filter(p => p.pledgeState === 2)
@@ -264,7 +270,6 @@ function ProjectPledges({classes, match, delegates: _delegates, projectAddedEven
     1: paying,
     2: paid
   }
-  console.log('pledges', {pledges, authorizedPayments, enrichedPledges})
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
@@ -295,9 +300,6 @@ export default withDatabase(withObservables([], ({ database, match }) => ({
   ).observe(),
   projectAddedEvents: database.collections.get('lp_events').query(
     Q.where('event', 'ProjectAdded')
-  ).observe(),
-  delegateAddedEvents: database.collections.get('lp_events').query(
-    Q.where('event', 'DelegateAdded')
   ).observe(),
   pledges: database.collections.get('pledges').query(
     Q.or(
