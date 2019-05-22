@@ -7,7 +7,7 @@ import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
-import { useProjectData, useProfileData } from './hooks'
+import { useProjectData, useProfileData, usePledgesAuthorizations } from './hooks'
 import { Button, Divider, Typography, Card, CardActions, CardContent, FormControlLabel, Switch } from '@material-ui/core'
 import { toEther, /*toWei*/ } from '../../utils/conversions'
 import { getTokenLabel } from '../../utils/currencies'
@@ -196,11 +196,12 @@ const SubmissionSection = ({ classes, projectId, openSnackBar, pledges }) => {
   )
 }
 
-function ProjectPledges({classes, match, delegates: _delegates, projectAddedEvents, delegateAddedEvents: _delegateAddedEvents, pledges}) {
+function ProjectPledges({classes, match, delegates: _delegates, projectAddedEvents, delegateAddedEvents: _delegateAddedEvents, pledges, authorizedPayments}) {
   const projectId = match.params.id
   const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
-  console.log('pledges', {pledges})
+  const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments)
+  console.log('pledges', {pledges, authorizedPayments, enrichedPledges})
   return (
     <div className={classes.root}>
       <Title className={classes.title} manifest={manifest} />
@@ -232,6 +233,9 @@ export default withDatabase(withObservables([], ({ database, match }) => ({
       Q.where('intended_project', match.params.id),
       Q.where('owner_id', match.params.id)
     )
+  ).observe(),
+  authorizedPayments: database.collections.get('vault_events').query(
+    Q.where('event', 'AuthorizePayment')
   ).observe()
 }))(StyledPledges))
 
