@@ -160,14 +160,14 @@ const Title = ({ className, manifest }) => (
 )
 
 const getSendFn = (pledgeType, filteredPledges) => {
-  if (pledgeType === PLEDGED) {
+  if (pledgeTypes[pledgeType] === PLEDGED) {
     return filteredPledges.length > 1 ? mWithdraw : withdraw
   }
   return confirmPayment
 
 }
 const getArgs = (pledgeType, filteredPledges) => {
-  if (pledgeType === PLEDGED) {
+  if (pledgeTypes[pledgeType] === PLEDGED) {
     const formattedPledges = filteredPledges.map(pledge => ({ amount: pledge.amount, id: pledge.idPledge }))
     const encodedPledges = encodePledges(formattedPledges)
     const withdrawArgs = [filteredPledges[0].id, filteredPledges[0].amount]
@@ -176,10 +176,10 @@ const getArgs = (pledgeType, filteredPledges) => {
   const { idPayment } = filteredPledges[0].authorization.returnValues
   return [idPayment]
 }
-const SubmissionSection = ({ classes, openSnackBar, pledges, pledgeType }) => {
+const SubmissionSection = ({ classes, openSnackBar, syncWithRemote, pledges, pledgeType }) => {
   return (
     <Formik
-      onSubmit={async(values, { resetForm }) => {
+      onSubmit={async(values) => {
         const { pledge } = values
         const filteredPledges = Object.keys(pledge)
           .filter(p => !!pledge[p])
@@ -199,7 +199,7 @@ const SubmissionSection = ({ classes, openSnackBar, pledges, pledgeType }) => {
           })
           .finally(() => {
             openSnackBar('success', 'Withdraws initiated')
-            resetForm()
+            syncWithRemote()
           })
       }}
     >
@@ -259,7 +259,7 @@ function CenteredTabs({ pledged, paying, paid, pledgeType, setPledgeType }) {
 function ProjectPledges({classes, match, projectAddedEvents, pledges, authorizedPayments}) {
   const [pledgeType, setPledgeType] = useState(0)
   const projectId = match.params.id
-  const {  manifest, delegateProfiles, openSnackBar } = useProjectData(projectId, projectAddedEvents)
+  const {  manifest, delegateProfiles, openSnackBar, syncWithRemote } = useProjectData(projectId, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
   const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments).filter(p => Number(p.amount) > 0)
   const pledged = enrichedPledges.filter(p => p.pledgeState === 0)
@@ -286,6 +286,7 @@ function ProjectPledges({classes, match, projectAddedEvents, pledges, authorized
         delegatePledges={delegatePledges}
         projectId={projectId}
         openSnackBar={openSnackBar}
+        syncWithRemote={syncWithRemote}
         pledges={selectedPledges[pledgeType]}
         pledgeType={pledgeType}
       />
