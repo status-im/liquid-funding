@@ -54,7 +54,8 @@ class App extends React.Component {
     })
   }
 
-  async syncWithRemote() {
+  syncWithRemote = async () => {
+    this.setState({ loading: true })
     // not running in parallel due to possible metamask / infura limitation
     await getAndAddLpEvents()
     await getAndAddVaultEvents()
@@ -82,8 +83,20 @@ class App extends React.Component {
 
   render() {
     const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar } = this.state
-    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar } = this
-    const fundingContext = { appendPledges, appendFundProfile, account, transferPledgeAmounts, authorizedPayments, needsInit, initVaultAndLP, standardTokenApproval, openSnackBar, closeSnackBar  }
+    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote } = this
+    const fundingContext = {
+      appendPledges,
+      appendFundProfile,
+      account,
+      transferPledgeAmounts,
+      authorizedPayments,
+      needsInit,
+      initVaultAndLP,
+      standardTokenApproval,
+      openSnackBar,
+      closeSnackBar,
+      syncWithRemote
+    }
     return (
       <FundingContext.Provider value={fundingContext}>
         <Router>

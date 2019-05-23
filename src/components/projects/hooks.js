@@ -105,7 +105,7 @@ export function useProjectData(projectId, projectAddedEvents) {
   const [projectAssets, setAssets] = useState(null)
   const [ipfsReady, setIpfsState] = useState(null)
   const [delegateProfiles, setDelegateProfiles] = useState(null)
-  const { account, openSnackBar } = useContext(FundingContext)
+  const { account, openSnackBar, syncWithRemote } = useContext(FundingContext)
 
   useEffect(() => {
     ipfs.on('ready', () => { setIpfsState(true) })
@@ -130,7 +130,8 @@ export function useProjectData(projectId, projectAddedEvents) {
     projectAssets,
     manifest,
     delegateProfiles,
-    openSnackBar
+    openSnackBar,
+    syncWithRemote
   }
 }
 
