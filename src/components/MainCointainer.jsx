@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import AddIcon from '@material-ui/icons/Add';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
@@ -175,6 +176,9 @@ class PersistentDrawerLeft extends React.Component {
             <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
           </List>
           <Divider/>
+          <List>
+            <MenuItem name="Create Project" to="/create-project" className={classes.link} icon={<AddIcon/>}/>
+          </List>
         </Drawer>
         <main
           className={classNames(classes.content, {
