@@ -192,13 +192,13 @@ const SubmissionSection = ({ classes, openSnackBar, syncWithRemote, pledges, ple
         toSend.send({gas: estimatedGas})
           .then(async res => {
             console.log({res})
+            openSnackBar('success', 'Withdraws initiated')
           })
           .catch(e => {
             openSnackBar('error', 'An error has occured with the transaction')
             console.log({e})
           })
           .finally(() => {
-            openSnackBar('success', 'Withdraws initiated')
             syncWithRemote()
           })
       }}
@@ -256,12 +256,12 @@ function CenteredTabs({ pledged, paying, paid, pledgeType, setPledgeType }) {
   );
 }
 
-function ProjectPledges({classes, match, projectAddedEvents, pledges, authorizedPayments}) {
+function ProjectPledges({classes, match, projectAddedEvents, pledges, authorizedPayments, confirmedPayments}) {
   const [pledgeType, setPledgeType] = useState(0)
   const projectId = match.params.id
   const {  manifest, delegateProfiles, openSnackBar, syncWithRemote } = useProjectData(projectId, projectAddedEvents)
   const delegatePledges = useProfileData(delegateProfiles)
-  const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments).filter(p => Number(p.amount) > 0)
+  const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments, confirmedPayments).filter(p => Number(p.amount) > 0)
   const pledged = enrichedPledges.filter(p => p.pledgeState === 0)
   const paying = enrichedPledges.filter(p => p.pledgeState === 1)
   const paid = enrichedPledges.filter(p => p.pledgeState === 2)
@@ -310,6 +310,9 @@ export default withDatabase(withObservables([], ({ database, match }) => ({
   ).observe(),
   authorizedPayments: database.collections.get('vault_events').query(
     Q.where('event', 'AuthorizePayment')
+  ).observe(),
+  confirmedPayments: database.collections.get('vault_events').query(
+    Q.where('event', 'ConfirmPayment')
   ).observe()
 }))(StyledPledges))
 

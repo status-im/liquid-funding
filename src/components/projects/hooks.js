@@ -144,11 +144,15 @@ function mergePledgesAuthorizations(pledges, authorizations, setState) {
   })
   setState(enriched)
 }
-export function usePledgesAuthorizations(pledges, authorizations) {
+export function usePledgesAuthorizations(pledges, authorizations, confirmedPayments) {
   const [enrichedPledges, setEnrichedPledges] = useState(pledges)
+  const confirmedIds = confirmedPayments.map(p => p.returnValues.idPayment)
+  const filteredAuths = authorizations.filter(
+    a => !confirmedIds.includes(a.returnValues.idPayment)
+  )
 
   useEffect(() => {
-    mergePledgesAuthorizations(pledges, authorizations, setEnrichedPledges)
+    mergePledgesAuthorizations(pledges, filteredAuths, setEnrichedPledges)
   }, [pledges, authorizations])
 
   return enrichedPledges
