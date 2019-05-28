@@ -177,6 +177,7 @@ class PersistentDrawerLeft extends React.Component {
           <Divider/>
           <List>
             <MenuItem name="Create Project" to="/create-project" className={classes.link} icon={<AddIcon/>}/>
+            <MenuItem name="Create Delegate" to="/create-delegate" className={classes.link} icon={<AddIcon/>}/>
             <MenuItem name="Projects" to="/projects" className={classes.link} icon={<ProjectIcon/>}/>
           </List>
         </Drawer>
