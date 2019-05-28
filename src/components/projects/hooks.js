@@ -126,6 +126,7 @@ export function useProjectData(projectId, projectAddedEvents) {
   const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets, projectId])
 
   return {
+    account,
     projectAge,
     projectAssets,
     manifest,
