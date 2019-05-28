@@ -1,3 +1,4 @@
+/*eslint complexity: ["error", 25]*/
 /*global web3*/
 import React, { useMemo, Fragment } from 'react'
 import { Link } from 'react-router-dom'
@@ -20,6 +21,9 @@ import { getAmountsPledged } from '../../utils/pledges'
 import { getFiles } from '../../utils/ipfs'
 import { getImageType } from '../../utils/images'
 import { useProjectData } from './hooks'
+
+const ROOT_PATH = '/root/'
+const DEFAULT_AVATAR = 'https://our.status.im/content/images/2018/07/status_logo_blue_1--2-.png'
 
 const styles = theme => ({
   root: {
@@ -173,6 +177,7 @@ const getMediaSrc = assets => {
 const getAvatarSrc = assets => {
   if (!assets) return null
   const { avatar } = getProjectManifest(assets)
+  if (!avatar || avatar === ROOT_PATH) return DEFAULT_AVATAR
   if (avatar.includes('http')) return avatar
   const type = getImageType(avatar)
   return formatAvatar(
@@ -200,6 +205,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
   const addr = profile[0] ? profile[0].addr.toUpperCase() : null
   const accountUpper = account ? account.toUpperCase() : account
   const userIsOwner = addr === accountUpper
+  const mediaSrc = mediaUrl || DEFAULT_AVATAR
   console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged, pledges, transfers, match})
   return (<Fragment>
     {!projectAssets && <Loading/>}
@@ -223,11 +229,11 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
           component="img"
           alt="video"
           className={classes.media}
-          src={mediaUrl}
+          src={mediaSrc}
           title="media-description"
         />}
         <div className={classes.infoBox}>
-          {mediaUrl ? <LinearProgress
+          {mediaUrl || avatarUrl ? <LinearProgress
             classes={{
               colorPrimary: classes.linearColorPrimary,
               barColorPrimary: classes.linearBarColorPrimary,
