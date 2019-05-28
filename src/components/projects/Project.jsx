@@ -184,7 +184,7 @@ const getAvatarSrc = assets => {
 function Project({ classes, match, profile, transfers, pledges, projectAddedEvents }) {
   const projectId = match.params.id
   const urlName = match.params[0]
-  const { projectAge, projectAssets, manifest } = useProjectData(projectId, projectAddedEvents)
+  const { account, projectAge, projectAssets, manifest } = useProjectData(projectId, projectAddedEvents)
 
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges, projectId])
@@ -197,6 +197,9 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
     100
   ) : 0
   const profileType = profile[0] ? profile[0].type : urlName
+  const addr = profile[0] ? profile[0].addr.toUpperCase() : null
+  const accountUpper = account ? account.toUpperCase() : account
+  const userIsOwner = addr === accountUpper
   console.log({profile, projectAssets, mediaUrl, mediaType, amountsPledged, pledges, transfers, match})
   return (<Fragment>
     {!projectAssets && <Loading/>}
@@ -248,9 +251,12 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
             <span className={classes.subtext}>days active</span>
           </div>
           <div>
-            <Link to={`/back-project/${projectId}`} className={classes.link}>
+            {!userIsOwner && <Link to={`/back-project/${projectId}`} className={classes.link}>
               <Button color="primary" variant="contained" style={{height: '50px', width: '100%'}}>Back this {profileType}</Button>
-            </Link>
+            </Link>}
+            {userIsOwner && <Link to={`/project-pledges/${projectId}`} className={classes.link}>
+              <Button color="primary" variant="contained" style={{height: '50px', width: '100%'}}>View project pledges</Button>
+            </Link>}
           </div>
         </div>
       </div>
