@@ -170,7 +170,6 @@ class PersistentDrawerLeft extends React.Component {
           <Divider/>
           <List>
             <MenuItem name="Dashboard" to="/dashboard" className={classes.link} icon={<InboxIcon/>}/>
-            <MenuItem name="Projects" to="/projects" className={classes.link} icon={<ProjectIcon/>}/>
             <MenuItem name="Funds Management" to="/funds-management" className={classes.link} icon={<InboxIcon/>}/>
             <MenuItem name="Insights" to="/insights/" className={classes.link} icon={<InboxIcon/>}/>
             <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
@@ -178,6 +177,7 @@ class PersistentDrawerLeft extends React.Component {
           <Divider/>
           <List>
             <MenuItem name="Create Project" to="/create-project" className={classes.link} icon={<AddIcon/>}/>
+            <MenuItem name="Projects" to="/projects" className={classes.link} icon={<ProjectIcon/>}/>
           </List>
         </Drawer>
         <main
