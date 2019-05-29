@@ -100,6 +100,8 @@
     "html-webpack-plugin": "4.0.0-alpha.2",
     "identity-obj-proxy": "3.0.0",
     "ipfs": "^0.35.0",
+    "ipfs-http-client": "^32.0.1",
+    "ipfs-mini": "^1.1.5",
     "jest": "23.6.0",
     "jest-pnp-resolver": "1.0.2",
     "jest-resolve": "23.6.0",

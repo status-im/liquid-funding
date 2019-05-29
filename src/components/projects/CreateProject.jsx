@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
-import { formatForIpfs, uploadToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
+import { formatForIpfs, uploadToIpfsGateway, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
@@ -144,7 +144,7 @@ const SubmissionSection = ({ classes, history }) => {
         fileLists.push({
           path: '/root/manifest.json', content: Buffer.from(manifest)
         })
-        const contentHash = await uploadToIpfs(fileLists)
+        const contentHash = await uploadToIpfsGateway(fileLists)
         const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
         addProject(...args)
           .estimateGas({ from: account })
