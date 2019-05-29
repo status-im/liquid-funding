@@ -1,14 +1,20 @@
 import IPFS from 'ipfs'
+import ipfsClient from 'ipfs-http-client'
 import fileReaderPullStream from 'pull-file-reader'
 import { Matcher } from '@areknawo/rex'
 import { getImageType } from './images'
 
 const ipfsMatcher = new Matcher().begin().find('ipfs/')
 export const ipfs = new IPFS()
+const ipfsMini = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
+
+window.ipfsMini = ipfsMini
+window.jsIPFS = ipfs
 
 ipfs.on('ready', () => {
   console.log('Node is ready to use!')
 })
+
 
 export const isIpfs = str => ipfsMatcher.test(str)
 export const captureFile = (event, cb, imgCb) => {
@@ -51,6 +57,15 @@ export const saveToIpfs = (files, cb, imgCb) => {
 
 export const uploadToIpfs = async files => {
   const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
+  const miniUpload = await ipfsMini.add(files)
+  console.log({miniUpload})
+  return `ipfs/${res[0].hash}`
+}
+
+export const uploadToIpfsGateway = async files => {
+  const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
+  const miniUpload = await ipfsMini.add(files)
+  console.log({miniUpload})
   return `ipfs/${res[0].hash}`
 }
 
