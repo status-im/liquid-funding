@@ -6,9 +6,9 @@ import { getImageType } from './images'
 
 const ipfsMatcher = new Matcher().begin().find('ipfs/')
 export const ipfs = new IPFS()
-const ipfsMini = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
+const ipfsHttp = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
 
-window.ipfsMini = ipfsMini
+window.ipfsHttp = ipfsHttp
 window.jsIPFS = ipfs
 
 ipfs.on('ready', () => {
@@ -57,15 +57,13 @@ export const saveToIpfs = (files, cb, imgCb) => {
 
 export const uploadToIpfs = async files => {
   const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
-  const miniUpload = await ipfsMini.add(files)
-  console.log({miniUpload})
   return `ipfs/${res[0].hash}`
 }
 
 export const uploadToIpfsGateway = async files => {
   const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
-  const miniUpload = await ipfsMini.add(files)
-  console.log({miniUpload})
+  const gatewayUpload = await ipfsHttp.add(files)
+  console.log({gatewayUpload})
   return `ipfs/${res[0].hash}`
 }
 
