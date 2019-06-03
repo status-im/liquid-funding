@@ -2,6 +2,7 @@
 /*global web3*/
 import React, { useMemo, Fragment } from 'react'
 import { Link } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import withObservables from '@nozbe/with-observables'
@@ -58,6 +59,10 @@ const styles = theme => ({
   },
   media: {
     objectFit: 'cover'
+  },
+  fullWidth: {
+    gridColumnStart: '1',
+    gridColumnEnd: '3',
   },
   secondRow: {
     gridColumnStart: '1',
@@ -224,7 +229,7 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
       </div>
       <div className={classes.secondRow}>
         {mediaType &&
-        <ReactPlayer width="100%" height="100%" url={mediaUrl} playing={manifest.media.isPlaying} controls/>}
+         <ReactPlayer width="100%" height="100%" url={mediaUrl} playing={manifest.media.isPlaying} controls/>}
         {!mediaType && <CardMedia
           component="img"
           alt="video"
@@ -265,6 +270,9 @@ function Project({ classes, match, profile, transfers, pledges, projectAddedEven
             </Link>}
           </div>
         </div>
+      </div>
+      <div className={classes.fullWidth}>
+        <ReactMarkdown source={manifest && manifest.description} />
       </div>
     </div>}
   </Fragment>)
