@@ -67,7 +67,7 @@ const styles = theme => ({
   },
   firstHalf: {
     gridColumnStart: '1',
-    gridColumnEnd: '7'
+    gridColumnEnd: '7',
   },
   secondHalf: {
     gridColumnStart: '7',
@@ -77,7 +77,7 @@ const styles = theme => ({
     borderStyle: 'solid',
     borderWidth: 'thin',
     borderColor: 'darkgray',
-    margin: '16px 0 0 0',
+    margin: '16px 0 8px 0',
     padding: '10%'
   },
   textInput: {
@@ -389,6 +389,9 @@ const SubmissionSection = ({ classes, history }) => {
             />
             <TextField
               className={classes.firstHalf}
+              InputProps={{
+                style: { height: '100%' }
+              }}
               id="description"
               name="description"
               multiline

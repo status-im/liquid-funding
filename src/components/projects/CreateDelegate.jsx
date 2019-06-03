@@ -1,6 +1,8 @@
 /*global Buffer*/
 import React, { createRef, useState, useContext } from 'react'
 import { Formik } from 'formik'
+import classnames from 'classnames'
+import ReactMarkdown from 'react-markdown'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import TextField from '@material-ui/core/TextField'
 import Divider from '@material-ui/core/Divider'
@@ -62,6 +64,21 @@ const styles = theme => ({
   textField: {
     gridColumnStart: '1',
     gridColumnEnd: '13'
+  },
+  firstHalf: {
+    gridColumnStart: '1',
+    gridColumnEnd: '7'
+  },
+  secondHalf: {
+    gridColumnStart: '7',
+    gridColumnEnd: '13'
+  },
+  markdown: {
+    borderStyle: 'solid',
+    borderWidth: 'thin',
+    borderColor: 'darkgray',
+    margin: '16px 0 8px 0',
+    padding: '10%'
   },
   textInput: {
     fontSize: '2rem'
@@ -371,18 +388,24 @@ const SubmissionSection = ({ classes, history }) => {
               label="Autoplay video?"
             />
             <TextField
-              className={classes.textField}
+              className={classes.firstHalf}
+              InputProps={{
+                style: { height: '100%' }
+              }}
               id="description"
               name="description"
               multiline
-              label="Enter extended description here"
-              placeholder="Enter extended description here"
+              label="Enter extended description (markdown)"
+              placeholder="Enter extended description (markdown)"
               margin="normal"
               variant="outlined"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.description || ''}
             />
+            <div className={classnames(classes.secondHalf, classes.markdown)}>
+              <ReactMarkdown source={values.description} />
+            </div>
             <Button type="submit" color="primary" variant="contained" className={classes.formButton}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Delegate'}</Button>
           </form>
         )
