@@ -161,6 +161,8 @@ const SubmissionSection = ({ classes, history }) => {
             addProject(...args)
               .send({ from: account, gas: gas + 100 })
               .then(res => {
+                // cache locally
+                uploadFilesToIpfs(uploads, manifest)
                 console.log({res})
                 openSnackBar('success', addProjectSucessMsg(res))
                 setTimeout(() => {
