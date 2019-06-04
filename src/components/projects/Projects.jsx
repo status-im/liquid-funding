@@ -1,4 +1,5 @@
 import React, {Fragment, useState, useMemo} from 'react'
+import { Link } from 'react-router-dom'
 import {withStyles} from '@material-ui/core/styles'
 import {withDatabase} from "@nozbe/watermelondb/DatabaseProvider";
 import withObservables from "@nozbe/with-observables";
@@ -119,6 +120,9 @@ const styles = theme => {
       top: cardAbsolutesDistance,
       right: cardAbsolutesDistance,
       zIndex: 9000
+    },
+    link: {
+      textDecoration: 'none'
     }
   })
 }
@@ -157,34 +161,38 @@ function RawProjectCard({classes, project, pledges, favorites, setFavorites}) {
   ) : 0
   return (
     <Card className={classes.card}>
-      <CardActionArea href={`/#/project/${project.projectId}`} onClick={e => { if (e.target.className.indexOf(classes.favorite) > -1) { e.preventDefault() } }}>
-        <CardMedia
-          className={classes.media}
-          image={defaultProjectImage}
-          title="Project image"
-        />
-        <LinearProgress className={classes.progress} variant="determinate" value={percentToGoal} />
-        <CardContent>
-          <Typography align="right" className={classes['card-content']}>{Math.round(totalPledged)} pledged of {manifest.goal} {pledgeCurrency}</Typography>
-          <Typography align="right" className={classes['card-content']}>3 funders</Typography> {/*TODO get actual funders*/}
-          <Typography gutterBottom variant="h5" component="h2" className={classes['card-title']} noWrap>
-            {project.manifest.title}
-          </Typography>
-          <Typography component="p" className={classes['card-content']} noWrap gutterBottom>
-            {project.manifest.description}&nbsp;
-          </Typography>
-          <Typography component="p" className={classes['card-content']} color="textSecondary">
-            Delegate: {project.manifest.creator} {/*TODO check if that really is the delegate*/}
-          </Typography>
-          {project.manifest.avatar && <img className={classes.avatarGrid} alt="avatar" src={project.manifest.avatar} width={40} height={40}/>}
-          <Favorite className={classes.cardFavorite} classes={classes} favorites={favorites} projectId={project.projectId} setFavorites={setFavorites}/>
-        </CardContent>
-      </CardActionArea>
-      <CardActions className={classes['card-actions']}>
-        <Button size="small" color="primary" href={`/#/project/${project.projectId}`}>
-          Read more
-        </Button>
-      </CardActions>
+      <Link to={`/project/${project.projectId}`} className={classes.link}>
+        <CardActionArea onClick={e => { if (e.target.className.indexOf(classes.favorite) > -1) { e.preventDefault() } }}>
+          <CardMedia
+            className={classes.media}
+            image={defaultProjectImage}
+            title="Project image"
+          />
+          <LinearProgress className={classes.progress} variant="determinate" value={percentToGoal} />
+          <CardContent>
+            <Typography align="right" className={classes['card-content']}>{Math.round(totalPledged)} pledged of {manifest.goal} {pledgeCurrency}</Typography>
+            <Typography align="right" className={classes['card-content']}>3 funders</Typography> {/*TODO get actual funders*/}
+            <Typography gutterBottom variant="h5" component="h2" className={classes['card-title']} noWrap>
+              {project.manifest.title}
+            </Typography>
+            <Typography component="p" className={classes['card-content']} noWrap gutterBottom>
+              {project.manifest.description}&nbsp;
+            </Typography>
+            <Typography component="p" className={classes['card-content']} color="textSecondary">
+              Delegate: {project.manifest.creator} {/*TODO check if that really is the delegate*/}
+            </Typography>
+            {project.manifest.avatar && <img className={classes.avatarGrid} alt="avatar" src={project.manifest.avatar} width={40} height={40}/>}
+            <Favorite className={classes.cardFavorite} classes={classes} favorites={favorites} projectId={project.projectId} setFavorites={setFavorites}/>
+          </CardContent>
+        </CardActionArea>
+        <CardActions className={classes['card-actions']}>
+          <Link to={`/project/${project.projectId}`} className={classes.link}>
+            <Button size="small" color="primary">
+              Read more
+            </Button>
+          </Link>
+        </CardActions>
+      </Link>
     </Card>)
 }
 
@@ -206,10 +214,12 @@ function GridView({classes, projects, favorites, setFavorites}) {
     })}
     <Grid item xs={12} sm={6} md={4} lg={3} className="project-list-item">
       <Card className={classes.card}>
-        <CardActionArea href="/#/create-project/" style={{height: 460}}>
-          <p className={classes['new-project-img']}><img alt="new project" src={newProjectImage}/></p>
-          <Typography align="center" className={classes['card-content']}>Add your own project</Typography>
-        </CardActionArea>
+        <Link to="/create-project/" className={classes.link} >
+          <CardActionArea style={{height: 460}}>
+            <p className={classes['new-project-img']}><img alt="new project" src={newProjectImage}/></p>
+            <Typography align="center" className={classes['card-content']}>Add your own project</Typography>
+          </CardActionArea>
+        </Link>
       </Card>
     </Grid>
   </Grid>)
@@ -262,7 +272,9 @@ function ListView({classes, projects, history, favorites, setFavorites}) {
               <Favorite classes={classes} favorites={favorites} projectId={project.projectId} setFavorites={setFavorites}/>
             </CustomTableCell>
             <CustomTableCell>
-              <Button size="small" color="primary" href={`/#/project/${project.projectId}`}>Read more</Button>
+              <Link to={`/project/${project.projectId}`} className={classes.link}>
+                <Button size="small" color="primary">Read more</Button>
+              </Link>
             </CustomTableCell>
           </TableRow>
         )
