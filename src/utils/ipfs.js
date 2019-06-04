@@ -1,6 +1,7 @@
 import IPFS from 'ipfs'
 import ipfsClient from 'ipfs-http-client'
 import fileReaderPullStream from 'pull-file-reader'
+import { Buffer } from 'buffer'
 import { Matcher } from '@areknawo/rex'
 import { getImageType } from './images'
 
@@ -42,6 +43,16 @@ export const formatForIpfs = file => {
     content
   }
 }
+
+export const formatForIpfsGateway = file => {
+  const { name, type: _type } = file
+  const content = file
+  return {
+    path:  `/root/${name}`,
+    content
+  }
+}
+
 export const saveToIpfs = (files, cb, imgCb) => {
   let ipfsId
   ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
@@ -55,15 +66,27 @@ export const saveToIpfs = (files, cb, imgCb) => {
     })
 }
 
+export const uploadFilesToIpfs = async (files, manifest, gateway = false) => {
+  let fileLists = []
+  const formatFn = gateway ? formatForIpfsGateway : formatForIpfs
+  const uploadFn = gateway ? uploadToIpfsGateway : uploadToIpfs
+  Object.keys(files).forEach(k => {
+    fileLists = [...fileLists, formatFn(files[k][0])]
+  })
+  fileLists.push({
+    path: '/root/manifest.json', content: Buffer.from(manifest)
+  })
+  const res = await uploadFn(fileLists)
+  return res
+}
+
 export const uploadToIpfs = async files => {
   const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
   return `ipfs/${res[0].hash}`
 }
 
 export const uploadToIpfsGateway = async files => {
-  const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
-  const gatewayUpload = await ipfsHttp.add(files)
-  console.log({gatewayUpload})
+  const res = await ipfsHttp.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
   return `ipfs/${res[0].hash}`
 }
 

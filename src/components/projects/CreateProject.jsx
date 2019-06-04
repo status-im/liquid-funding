@@ -1,4 +1,3 @@
-/*global Buffer*/
 import React, { createRef, useState, useContext } from 'react'
 import { Formik } from 'formik'
 import classnames from 'classnames'
@@ -12,7 +11,7 @@ import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
-import { formatForIpfs, uploadToIpfsGateway, formatMedia, isWeb } from '../../utils/ipfs'
+import { uploadFilesToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
@@ -154,14 +153,7 @@ const SubmissionSection = ({ classes, history }) => {
       onSubmit={async (values, { resetForm }) => {
         const { title, commitTime } = values
         const manifest = createJSON(values)
-        let fileLists = []
-        Object.keys(uploads).forEach(k => {
-          fileLists = [...fileLists, formatForIpfs(uploads[k][0])]
-        })
-        fileLists.push({
-          path: '/root/manifest.json', content: Buffer.from(manifest)
-        })
-        const contentHash = await uploadToIpfsGateway(fileLists)
+        const contentHash = await uploadFilesToIpfs(uploads, manifest, true)
         const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
         addProject(...args)
           .estimateGas({ from: account })
@@ -178,7 +170,7 @@ const SubmissionSection = ({ classes, history }) => {
               })
               .catch(e => openSnackBar('error', e))
           })
-        console.log({manifest, values, uploads, fileLists, contentHash})
+        console.log({manifest, values, uploads, contentHash})
 
       }}
     >
