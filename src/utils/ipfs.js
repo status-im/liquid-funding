@@ -86,10 +86,7 @@ export const uploadToIpfs = async files => {
 }
 
 export const uploadToIpfsGateway = async files => {
-  const options = {
-    progress: (prog) => console.log(`received: ${prog}`)
-  }
-  const res = await ipfsHttp.add(files, options)
+  const res = await ipfsHttp.add(files)
   return `ipfs/${res.slice(-1)[0].hash}`
 }
 
