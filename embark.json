@@ -15,7 +15,10 @@
     "ipfs-api": "17.2.4"
   },
   "plugins": {
-    "embarkjs-connector-web3": {}
+    "embarkjs-connector-web3": {},
+    "@trailofbits/embark-contract-info": {
+      "flags": ""
+    }
   },
   "options": {
     "solc": {
