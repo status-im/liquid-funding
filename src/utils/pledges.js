@@ -8,7 +8,7 @@ const getPledgeDelegates = (idPledge, numDelegates) => {
   const delegates = []
   const num = Number(numDelegates)
   if (!num) return delegates
-  for (let i = 1; i <= num; i++) {
+  for (let i = 1; i < num; i++) {
     delegates.push(getPledgeDelegate(idPledge, i).call())
   }
   return Promise.all(delegates)
@@ -30,7 +30,8 @@ export const getAllPledges = async (start = 1) => {
   const numPledges = await LiquidPledging.methods.numberOfPledges().call()
   const pledges = []
   for (let i = start; i <= numPledges; i++) {
-    pledges.push(getPledge(i).call())
+    const pledge = getPledge(i).call()
+    pledges.push(pledge)
   }
   return Promise.all(pledges.map(formatPledge))
 }
