@@ -56,11 +56,12 @@ export const updateStalePledges = async () => {
   const batch = stalePledges.map(p => {
     const updated = updatedPledges[p.idPledge - 1]
     return p.prepareUpdate(p => {
-      const { amount, nDelegates, pledgeState, blockNumber } = updated
+      const { amount, nDelegates, pledgeState, blockNumber, commitTime } = updated
       p.amount = amount
       p.nDelegates = Number(nDelegates)
       p.pledgeState = Number(pledgeState)
       p.blockNumber = blockNumber
+      p.commitTime = Number(commitTime)
     })
   })
   database.action(() => database.batch(...batch))
