@@ -201,7 +201,32 @@ module.exports = {
   }),
   // merges with the settings in default
   // used with "embark run livenet"
-  livenet: {},
+  livenet: {
+    enabled: true,
+    dappConnection: [
+      '$WEB3'
+    ],
+    strategy: 'explicit',
+    tracking: './livenet.chains.json',
+    contracts: {
+      LPVault: {},
+      LiquidPledging: {},
+      RecoveryVault: {},
+      LPFactory: {
+        args: {
+          _vaultBase: '$LPVault',
+          _lpBase: '$LiquidPledging',
+        }
+      },
+      SNT: {
+        address: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'
+      }
+    },
+    afterDeploy: async (dependencies) => {
+      await dependencies.contracts.LiquidPledging.methods.initialize(dependencies.contracts.LPVault.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+      await dependencies.contracts.LPVault.methods.initialize(dependencies.contracts.LiquidPledging.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+    }
+  },
 
   // you can name an environment with specific settings and then specify with
   // "embark run custom_name" or "embark blockchain custom_name"

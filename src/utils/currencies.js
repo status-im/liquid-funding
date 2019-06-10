@@ -6,7 +6,7 @@ export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tok
 export const TOKEN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/tokens'
 export const currencies = [
   {
-    value: 'WETH',
+    value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
     label: 'Wrapped Ether',
     img: `${TOKEN_COIN_API}/60.png`,
     width: '5%'
