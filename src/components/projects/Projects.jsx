@@ -203,7 +203,7 @@ const ProjectCard = withDatabase(withObservables(['project'], ({ database, proje
 }))(RawProjectCard))
 
 function GridView({classes, projects, favorites, setFavorites}) {
-  return (<Grid container spacing={40}>
+  return (<Grid container spacing={40} style={{ maxWidth: '100vw' }}>
     {projects.map((project, index) => {
       if (!project.manifest) {
         return ''
