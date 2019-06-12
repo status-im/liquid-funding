@@ -210,13 +210,8 @@ module.exports = {
     tracking: './livenet.chains.json',
     contracts: {
       LPVault: {},
-      LiquidPledging: {},
-      RecoveryVault: {},
-      LPFactory: {
-        args: {
-          _vaultBase: '$LPVault',
-          _lpBase: '$LiquidPledging',
-        }
+      LiquidPledging: {
+        address: '0x603A7249E64b8cACe20ffb55926145346ca42A97',
       },
       SNT: {
         address: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'

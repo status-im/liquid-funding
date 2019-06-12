@@ -12,6 +12,10 @@
       "0x337d95c008d3141f2f5e95c8fb3bad19740c79e7764cace727e7c8dbd48c5e7d": {
         "name": "RecoveryVault",
         "address": "0x4c9315fcC271794ED4584949fD8521710E67bb2c"
+      },
+      "0x0d46f0491387471c715abfda03087d386047c88e523e55d9fd64ede4fd9401e4": {
+        "name": "LiquidPledging",
+        "address": "0x603A7249E64b8cACe20ffb55926145346ca42A97"
       }
     }
   }
