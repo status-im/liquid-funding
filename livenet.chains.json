@@ -1,0 +1,18 @@
+{
+  "0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3": {
+    "contracts": {
+      "0xa9bac214a330fe3f2048f91b805d227afa147021ef497936a65911400cc3bdd5": {
+        "name": "SNT",
+        "address": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
+      },
+      "0x106543bd4016aaa1c014e64ec41526991b2419349aca5672ce23308937475494": {
+        "name": "LPVault",
+        "address": "0x1DC9F06caf1558287b1b8Afc8a152a739D1F3d38"
+      },
+      "0x337d95c008d3141f2f5e95c8fb3bad19740c79e7764cace727e7c8dbd48c5e7d": {
+        "name": "RecoveryVault",
+        "address": "0x4c9315fcC271794ED4584949fD8521710E67bb2c"
+      }
+    }
+  }
+}
