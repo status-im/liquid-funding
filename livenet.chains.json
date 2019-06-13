@@ -16,6 +16,18 @@
       "0x0d46f0491387471c715abfda03087d386047c88e523e55d9fd64ede4fd9401e4": {
         "name": "LiquidPledging",
         "address": "0x603A7249E64b8cACe20ffb55926145346ca42A97"
+      },
+      "0xd9d749fb529af69819711faec78815efe4334ea74c7785ece18e3f276d845934": {
+        "name": "DAI",
+        "address": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
+      },
+      "0xa68836f41c0a42f4733b00374bb3bd56cf5c81fac373950d7abd1b2d08a7f762": {
+        "name": "cDAI",
+        "address": "0xf5dce57282a584d2746faf1593d3121fcac444dc"
+      },
+      "0x3d0ad20751a1113f792d12598df6a74de849795c3090e38ef0e23b013e5470b6": {
+        "name": "cETH",
+        "address": "0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5"
       }
     }
   }

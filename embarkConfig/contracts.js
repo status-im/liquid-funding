@@ -213,6 +213,18 @@ module.exports = {
       LiquidPledging: {
         address: '0x603A7249E64b8cACe20ffb55926145346ca42A97',
       },
+      DAI: {
+        instanceOf: "StandardToken",
+        address: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'
+      },
+      cDAI: {
+        instanceOf: "StandardToken",
+        address: '0xf5dce57282a584d2746faf1593d3121fcac444dc'
+      },
+      cETH: {
+        instanceOf: "StandardToken",
+        address: '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5'
+      },
       SNT: {
         address: '0x744d70FDBE2Ba4CF95131626614a1763DF805B9E'
       }
