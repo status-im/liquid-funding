@@ -42,10 +42,11 @@ function CurrencySelect({
     const latestAllowances = {}
     currencies.forEach(async c => {
       if (c.contract) {
+        const { humanReadibleFn } = c
         const amount = await c.contract.methods.balanceOf(account).call()
         const allowance = await getLpAllowance(c.contract)
-        latestBalances[c.value] = toEther(amount)
-        latestAllowances[c.value] = toEther(allowance)
+        latestBalances[c.value] = humanReadibleFn(amount)
+        latestAllowances[c.value] = humanReadibleFn(allowance)
       } else {
         latestBalances[c.value] = '0'
         latestAllowances[c.value] = '0'
