@@ -3,7 +3,7 @@
     "contracts": {
       "0xa9bac214a330fe3f2048f91b805d227afa147021ef497936a65911400cc3bdd5": {
         "name": "SNT",
-        "address": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
+        "address": "0x744d70FDBE2Ba4CF95131626614a1763DF805B9E"
       },
       "0x106543bd4016aaa1c014e64ec41526991b2419349aca5672ce23308937475494": {
         "name": "LPVault",

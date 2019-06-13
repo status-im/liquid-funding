@@ -214,7 +214,7 @@ module.exports = {
         address: '0x603A7249E64b8cACe20ffb55926145346ca42A97',
       },
       SNT: {
-        address: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'
+        address: '0x744d70FDBE2Ba4CF95131626614a1763DF805B9E'
       }
     },
     afterDeploy: async (dependencies) => {
