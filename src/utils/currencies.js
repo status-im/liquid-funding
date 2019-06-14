@@ -3,7 +3,7 @@ import DAI from '../embarkArtifacts/contracts/DAI'
 import cDAI from '../embarkArtifacts/contracts/cDAI'
 import cETH from '../embarkArtifacts/contracts/cETH'
 import sntIco from 'cryptocurrency-icons/svg/color/snt.svg'
-import { toEther, compoundWhole } from './conversions'
+import { toEther, toWei, compoundWhole, compoundToChain } from './conversions'
 
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
 export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/coins'
@@ -16,6 +16,7 @@ export const currencies = [
     width: '5%',
     contract: cETH,
     humanReadibleFn: compoundWhole,
+    chainReadibleFn: compoundToChain
   },
   {
     value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -23,6 +24,7 @@ export const currencies = [
     img: `${TOKEN_COIN_API}/60.png`,
     width: '5%',
     humanReadibleFn: toEther,
+    chainReadibleFn: toWei
   },
   {
     value: SNT._address,
@@ -30,6 +32,7 @@ export const currencies = [
     img: sntIco,
     contract: SNT,
     humanReadibleFn: toEther,
+    chainReadibleFn: toWei
   },
   {
     value: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
@@ -38,6 +41,7 @@ export const currencies = [
     width: '5%',
     contract: DAI,
     humanReadibleFn: toEther,
+    chainReadibleFn: toWei
   },
   {
     value: '0xf5dce57282a584d2746faf1593d3121fcac444dc',
@@ -46,11 +50,13 @@ export const currencies = [
     width: '5%',
     contract: cDAI,
     humanReadibleFn: compoundWhole,
+    chainReadibleFn: compoundToChain
   }
 ]
 
+export const getTokenByAddress = value => currencies.find(currency => currency.value === value)
 export const getTokenLabel = value => {
-  const token = currencies.find(currency => currency.value === value)
+  const token = getTokenByAddress(value)
   return token ? token.label : null
 }
 

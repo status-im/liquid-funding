@@ -1,4 +1,3 @@
-/*global web3*/
 import React, { useContext } from 'react';
 import { Formik } from 'formik';
 import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging';
@@ -6,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import { MySnackbarContentWrapper } from './base/SnackBars'
-import { getTokenLabel } from '../utils/currencies'
+import { getTokenLabel, getTokenByAddress } from '../utils/currencies'
 import { FundingContext } from '../context'
 import CurrencySelect from './base/CurrencySelect'
 
@@ -26,7 +25,8 @@ const CreateFunding = ({ refreshTable }) => {
       initialValues={{ funderId: '', receiverId: '', tokenAddress : '', amount: '' }}
       onSubmit={async (values, { setSubmitting: _setSubmitting, resetForm: _resetForm, setStatus }) => {
         const { funderId, receiverId, tokenAddress, amount } = values
-        const args = [funderId, receiverId, tokenAddress, web3.utils.toWei(amount, 'ether')];
+        const { chainReadibleFn } = getTokenByAddress(tokenAddress)
+        const args = [funderId, receiverId, tokenAddress, chainReadibleFn(amount)]
 
         const toSend =  donate(...args);
 
