@@ -10,8 +10,7 @@ import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Collapse from '@material-ui/core/Collapse'
-import { getTokenLabel } from '../../utils/currencies'
-import { toWei } from '../../utils/conversions'
+import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import styles from './CardStyles'
 import { useRowData } from './hooks'
 
@@ -25,7 +24,8 @@ function TransferCard({ row, handleClose, classes }) {
       onSubmit={async (values, { setSubmitting: _setSubmitting, resetForm, setStatus: _setStatus }) => {
         const { idPledge, pledge } = row
         const { idSender, amount, idReceiver } = values
-        const args = [idSender, idPledge, toWei(amount.toString()), idReceiver]
+        const { chainReadibleFn } = getTokenByAddress(pledge.token)
+        const args = [idSender, idPledge, chainReadibleFn(amount), idReceiver]
         const toSend = transfer(...args)
         const estimatedGas = await toSend.estimateGas()
 

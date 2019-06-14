@@ -14,8 +14,7 @@ import TextField from '@material-ui/core/TextField'
 import Collapse from '@material-ui/core/Collapse'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import LPVault from '../../embarkArtifacts/contracts/LPVault'
-import { getTokenLabel } from '../../utils/currencies'
-import { toWei } from '../../utils/conversions'
+import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import styles from './CardStyles'
 import { useRowData } from './hooks'
 
@@ -31,7 +30,8 @@ function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
       onSubmit={async (values, { setSubmitting: _setSubmitting, resetForm: _resetForm, setStatus: _setStatus }) => {
         const { amount } = values
         const paymentId = isPaying ? authorizedPayment[0]['returnValues']['idPayment'] : rowData.idPledge
-        const args = isPaying ? [paymentId] : [paymentId, toWei(amount)]
+        const { chainReadibleFn } = getTokenByAddress(rowData.token)
+        const args = isPaying ? [paymentId] : [paymentId, chainReadibleFn(amount)]
         const sendFn = isPaying ? confirmPayment : withdraw
         try {
           const toSend = sendFn(...args)
