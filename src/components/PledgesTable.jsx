@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import MaterialTable from 'material-table'
 import withObservables from '@nozbe/with-observables'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
-import { toEther } from '../utils/conversions'
-import { getTokenLabel } from '../utils/currencies'
+import { getTokenLabel, getFormattedPledgeAmount } from '../utils/currencies'
 import TransferCard from './table/TransferCard'
 import WithdrawCard from './table/WithdrawCard'
 
@@ -27,7 +26,7 @@ const convertToDatetime = async field => {
 const formatField = async field => ({
   ...field.getFields(),
   commitTime: await convertToDatetime(field),
-  amount: toEther(field.amount),
+  amount: getFormattedPledgeAmount(field),
   token: getTokenLabel(field.token),
   intendedProject: projectText(field.intendedProject),
   pledgeState: pledgeStateMap[field.pledgeState],
@@ -51,7 +50,7 @@ class PledgesTable extends Component {
       pledges.some((pledge, idx) => {
         const current = data[idx]
         if (current) {
-          if (toEther(pledge.amount) !== current.amount || pledgeStateMap[pledge.pledgeState] !== current.pledgeState) this.setData()
+          if (getFormattedPledgeAmount(pledge) !== current.amount || pledgeStateMap[pledge.pledgeState] !== current.pledgeState) this.setData()
         }
       })
     }

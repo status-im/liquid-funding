@@ -1,3 +1,4 @@
+import { memoizeWith, identity } from 'ramda'
 import SNT from '../embarkArtifacts/contracts/SNT'
 import DAI from '../embarkArtifacts/contracts/DAI'
 import cDAI from '../embarkArtifacts/contracts/cDAI'
@@ -54,7 +55,7 @@ export const currencies = [
   }
 ]
 
-export const getTokenByAddress = value => currencies.find(currency => currency.value.toLowerCase() === value.toLowerCase())
+export const getTokenByAddress = memoizeWith(identity, value => currencies.find(currency => currency.value.toLowerCase() === value.toLowerCase()))
 export const getTokenLabel = value => {
   const token = getTokenByAddress(value)
   return token ? token.label : null
@@ -63,4 +64,9 @@ export const getTokenLabel = value => {
 export const getTokenAddress = label => {
   const token = currencies.find(currency => currency.label === label)
   return token ? token.value : null
+}
+
+export const getFormattedPledgeAmount = pledge => {
+  const { humanReadibleFn } = getTokenByAddress(pledge.token)
+  return humanReadibleFn(pledge.amount)
 }
