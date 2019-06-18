@@ -8,7 +8,7 @@ const getPledgeDelegates = (idPledge, numDelegates) => {
   const delegates = []
   const num = Number(numDelegates)
   if (!num) return delegates
-  for (let i = 1; i < num; i++) {
+  for (let i = 1; i <= num; i++) {
     delegates.push(getPledgeDelegate(idPledge, i).call())
   }
   return Promise.all(delegates)
