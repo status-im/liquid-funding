@@ -7,8 +7,8 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
 import { useProjectData, useProfileData } from './hooks'
 import {TextField, Button, MenuItem, Divider, Typography, Link} from '@material-ui/core'
-import { toEther, toWei } from '../../utils/conversions'
-import { getTokenLabel } from '../../utils/currencies'
+import { toEther } from '../../utils/conversions'
+import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 
 const { transfer } = LiquidPledging.methods
 
@@ -57,7 +57,8 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
         const { amount, delegateProfile, delegatePledge } = values
         const dPledge = delegatePledges.find(d => d.idPledge === delegatePledge)
         const pledge = await dPledge.pledge.fetch()
-        const args = [delegateProfile.idProfile, delegatePledge, toWei(amount), projectId]
+        const { chainReadibleFn } = getTokenByAddress(pledge.token)
+        const args = [delegateProfile.idProfile, delegatePledge, chainReadibleFn(amount), projectId]
         console.log({values, args, pledge, delegatePledge})
         const toSend = transfer(...args)
         const estimatedGas = await toSend.estimateGas()
@@ -128,9 +129,10 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
                 const numPledges = filteredPledges.length
                 const amount = filteredPledges.reduce((cv,pv) => cv + Number(pv.pledgeData.amount) ,0)
                 const token = numPledges ? filteredPledges[0].pledgeData.token : ''
+                const amountFormatter = token ? getTokenByAddress(token).humanReadibleFn : toEther
                 return (
                   <MenuItem style={{display: 'flex', alignItems: 'center'}} key={`profile-${index}`} value={profile}>
-                    {profile.name} - {numPledges} Pledges - {toEther(amount.toString())} {getTokenLabel(token)}
+                    {profile.name} - {numPledges} Pledges - {amountFormatter(amount.toString())} {getTokenLabel(token)}
                   </MenuItem>
                 )
               })}
@@ -150,7 +152,7 @@ const SubmissionSection = ({ classes, profiles, delegatePledges, projectId, open
             >
               {filteredPledges.map(pledge => (
                 <MenuItem style={{display: 'flex', alignItems: 'center'}} key={pledge.idPledge} value={pledge.idPledge}>
-                  {`Pledge no: ${pledge.idPledge} - Amount: ${toEther(pledge.pledgeData.amount)} ${getTokenLabel(pledge.pledgeData.token)}`}
+                  {`Pledge no: ${pledge.idPledge} - Amount: ${getTokenByAddress(pledge.pledgeData.token).humanReadibleFn(pledge.pledgeData.amount)} ${getTokenLabel(pledge.pledgeData.token)}`}
                 </MenuItem>
               ))}
             </TextField>}
