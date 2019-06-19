@@ -30,7 +30,7 @@ function Withdraw({ handleClose, classes, rowData, authorizedPayment }) {
       onSubmit={async (values, { setSubmitting: _setSubmitting, resetForm: _resetForm, setStatus: _setStatus }) => {
         const { amount } = values
         const paymentId = isPaying ? authorizedPayment[0]['returnValues']['idPayment'] : rowData.idPledge
-        const { chainReadibleFn } = getTokenByAddress(rowData.token)
+        const { chainReadibleFn } = getTokenByAddress(rowData.pledge.token)
         const args = isPaying ? [paymentId] : [paymentId, chainReadibleFn(amount)]
         const sendFn = isPaying ? confirmPayment : withdraw
         try {
