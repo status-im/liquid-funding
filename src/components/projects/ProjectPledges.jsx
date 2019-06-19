@@ -14,8 +14,7 @@ import { makeStyles } from '@material-ui/styles'
 import Paper from '@material-ui/core/Paper'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
-import { toEther } from '../../utils/conversions'
-import { getTokenLabel } from '../../utils/currencies'
+import { getTokenLabel, getHumanAmountFormatter } from '../../utils/currencies'
 
 const { mWithdraw, withdraw } = LiquidPledging.methods
 const { confirmPayment } = LPVault.methods
@@ -109,11 +108,12 @@ function SimplePledge({ classes, pledge, values, handleChange, pledgeType }) {
 
   const notPaid = pledgeTypes[pledgeType] !== PAID
   const notPaying = pledgeTypes[pledgeType] !== PAYING
+  const amtFormatter = getHumanAmountFormatter(pledge.token)
   return (
     <Card className={classes.card}>
       <CardContent>
         <Typography className={classes.title} color="primary" gutterBottom>
-          {toEther(pledge.amount)} {getTokenLabel(pledge.token)}
+          {amtFormatter(pledge.amount)} {getTokenLabel(pledge.token)}
         </Typography>
         <Typography variant="h5" component="h2" className={classes.subText}>
           Pledge ID: {pledge.idPledge}

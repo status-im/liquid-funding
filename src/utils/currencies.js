@@ -56,6 +56,7 @@ export const currencies = [
 ]
 
 export const getTokenByAddress = memoizeWith(identity, value => currencies.find(currency => currency.value.toLowerCase() === value.toLowerCase()))
+export const getHumanAmountFormatter = tokenAddress => getTokenByAddress(tokenAddress).humanReadibleFn
 export const getTokenLabel = value => {
   const token = getTokenByAddress(value)
   return token ? token.label : null
