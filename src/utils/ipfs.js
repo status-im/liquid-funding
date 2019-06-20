@@ -14,6 +14,8 @@ window.jsIPFS = ipfs
 
 ipfs.on('ready', () => {
   console.log('Node is ready to use!')
+  // Add status ipfs node as peer
+  ipfs.bootstrap.add('/ip4/35.188.209.83/tcp/4001/ipfs/QmZqW6QHdDVyHMvYktpA1PAuKgvqhwumbuFqFB5URedSbA')
 })
 
 
