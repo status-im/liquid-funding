@@ -9,14 +9,18 @@ import FormControl from '@material-ui/core/FormControl'
 
 const styles = theme => ({
   container: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(12, [col] 1fr)',
+    gridTemplateRows: '24px 24px 36px'
   },
   margin: {
     margin: theme.spacing.unit,
   },
   root: {
     'label + &': {
+      gridRowStart: 2,
+      gridColumnStart: 1,
+      gridColumnEnd: 13,
       marginTop: theme.spacing.unit * 3,
     },
   },
@@ -27,9 +31,18 @@ const styles = theme => ({
     padding: '20px 12px'
   },
   formLabel: {
+    gridRowStart: 1,
     fontSize: '18px',
     color: '#939BA1'
   },
+  top: {
+    gridRowStart: 1
+  },
+  bottomRight: {
+    fontSize: '15px',
+    gridRowStart: 4,
+    gridColumnStart: 12
+  }
 })
 
 const renderLabel = (formLabelClass, idFor, label, isRequired) => (
@@ -49,6 +62,7 @@ function Input({
   idFor,
   isRequired,
   label,
+  bottomRightLabel,
   placeholder,
   className,
   name,
@@ -56,9 +70,10 @@ function Input({
   onBlur,
   value
 }) {
-  const labelForm = label ? renderLabel(classes.formLabel, idFor, label, isRequired) : null
+  const labelForm = label ? renderLabel(classnames(classes.formLabel, classes.top), idFor, label, isRequired) : null
+  const bottomRight = bottomRightLabel ? renderLabel(classnames(classes.formLabel, classes.bottomRight), idFor, bottomRightLabel) : null
   return (
-    <FormControl className={classnames(classes.margin, className)}>
+    <FormControl className={classnames(classes.margin, classes.container, className)}>
       { labelForm }
       <InputBase
         id={idFor}
@@ -72,6 +87,7 @@ function Input({
         onBlur={onBlur}
         value={value}
       />
+      { bottomRight }
     </FormControl>
   )
 }
