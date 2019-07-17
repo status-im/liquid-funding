@@ -14,6 +14,7 @@ import { uploadFilesToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
+import StatusTextField from '../base/TextField'
 
 const { addProject } = LiquidPledging.methods
 
@@ -203,6 +204,17 @@ const SubmissionSection = ({ classes, history }) => {
               <div className={classnames(classes.breadCrumb, fullWidth)}>
                 {'All projects and delegates > Create new'}
               </div>
+              <StatusTextField
+                className={fullWidth}
+                isRequired={true}
+                idFor="title"
+                name="title"
+                label="Enter Project Name"
+                placeholder="Enter Project Name"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.title || ''}
+              />
               <TextField
                 className={fullWidth}
                 InputProps={{
