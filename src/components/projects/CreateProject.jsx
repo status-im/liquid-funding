@@ -207,9 +207,10 @@ const SubmissionSection = ({ classes, history }) => {
               <StatusTextField
                 className={fullWidth}
                 isRequired={true}
-                idFor="title"
+                idFor="Project Name"
                 name="title"
                 label="Enter Project Name"
+                bottomRightLabel="Max 20"
                 placeholder="Enter Project Name"
                 onChange={handleChange}
                 onBlur={handleBlur}
