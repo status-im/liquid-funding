@@ -41,7 +41,13 @@ const styles = theme => ({
   bottomRight: {
     fontSize: '15px',
     gridRowStart: 4,
-    gridColumnStart: 12
+    gridColumnStart: 12,
+    whiteSpace: 'nowrap'
+  },
+  bottomLeft: {
+    fontSize: '15px',
+    gridRowStart: 4,
+    gridColumnStart: 1,
   }
 })
 
@@ -63,14 +69,17 @@ function Input({
   isRequired,
   label,
   bottomRightLabel,
+  bottomLeftLabel,
   placeholder,
   className,
   name,
   onChange,
   onBlur,
-  value
+  value,
+  multiline
 }) {
   const labelForm = label ? renderLabel(classnames(classes.formLabel, classes.top), idFor, label, isRequired) : null
+  const bottomLeft = bottomLeftLabel ? renderLabel(classnames(classes.formLabel, classes.bottomLeft), idFor, bottomLeftLabel) : null
   const bottomRight = bottomRightLabel ? renderLabel(classnames(classes.formLabel, classes.bottomRight), idFor, bottomRightLabel) : null
   return (
     <FormControl className={classnames(classes.margin, classes.container, className)}>
@@ -86,7 +95,9 @@ function Input({
         }}
         onBlur={onBlur}
         value={value}
+        multiline={multiline}
       />
+      { bottomLeft }
       { bottomRight }
     </FormControl>
   )
