@@ -209,60 +209,33 @@ const SubmissionSection = ({ classes, history }) => {
                 isRequired={true}
                 idFor="Project Name"
                 name="title"
-                label="Enter Project Name"
+                label="Project Name"
                 bottomRightLabel="Max 20"
-                placeholder="Enter Project Name"
+                placeholder="Project Name"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.title || ''}
               />
-              <TextField
+              <StatusTextField
                 className={fullWidth}
-                InputProps={{
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                id="title"
-                name="title"
-                label="Enter Project Name"
-                placeholder="Enter Project Name"
-                margin="normal"
-                variant="outlined"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.title || ''}
-              />
-              <TextField
-                className={fullWidth}
-                InputProps={{
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                id="subtitle"
+                idFor="Short Description"
                 name="subtitle"
-                label="Short description"
-                placeholder="Enter a sub heading description for your project"
-                margin="normal"
-                variant="outlined"
+                label="Short Description"
+                bottomRightLabel="Max 120"
+                placeholder="Short Description"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.subtitle || ''}
+                multiline={true}
               />
-              <TextField
+              <StatusTextField
                 className={fullWidth}
-                InputProps={{
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                id="creator"
+                isRequired={true}
+                idFor="creator"
                 name="creator"
-                label="Enter the project creator"
-                placeholder="Enter the project creator"
-                margin="normal"
-                variant="outlined"
+                label="Contact Person"
+                bottomLeftLabel="Name of the primary contact"
+                placeholder="Short Description"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.creator || ''}
@@ -359,20 +332,14 @@ const SubmissionSection = ({ classes, history }) => {
               <div className={classnames(secondHalf, classes.markdown)}>
                 <ReactMarkdown source={values.description} />
               </div>
-              <TextField
-                id="commitTime"
-                name="commitTime"
+              <StatusTextField
                 className={fullWidth}
-                InputProps={{
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                label="Commit time in hours"
-                placeholder="Commit time in hours"
-                margin="normal"
-                variant="outlined"
-                helperText={helperText}
+                isRequired={true}
+                idFor="commitTime"
+                name="commitTime"
+                label="Commit Time (Hours)"
+                bottomLeftLabel={helperText}
+                placeholder="Commit Time (hours)"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.commitTime || ''}
