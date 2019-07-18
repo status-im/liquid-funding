@@ -15,6 +15,7 @@ import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
 import StatusTextField from '../base/TextField'
+import Icon from '../base/icons/IconByName'
 
 const { addProject } = LiquidPledging.methods
 
@@ -72,6 +73,17 @@ const styles = theme => ({
     gridColumnStart: '1',
     gridColumnEnd: '8',
   },
+  chatRoom: {
+    display: 'grid',
+    gridColumnStart: 1,
+    gridColumnEnd: 13,
+    justifyItems: 'start',
+    gridAutoFlow: 'column'
+  },
+  chatText: {
+    marginTop: '15px',
+    color: '#939BA1'
+  },
   secondHalf: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
@@ -97,6 +109,9 @@ const styles = theme => ({
   },
   breadCrumb: {
     color: '#939BA1'
+  },
+  icon: {
+    background: '#ECEFFC'
   }
 })
 
@@ -240,6 +255,10 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.creator || ''}
               />
+              <div className={classes.chatRoom}>
+                <Icon name="oneOnOneChat" />
+                <div className={classes.chatText}>{`Join #status-${values.title.replace(/\s/g, '')}`}</div>
+              </div>
               <TextField
                 className={classes.textField}
                 InputProps={{
@@ -356,19 +375,13 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.goalToken}
               />
-              <TextField
+              <StatusTextField
                 className={fullWidth}
-                InputProps={{
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                id="goal"
+                isRequired={true}
+                idFor="goal"
                 name="goal"
                 label="Enter your funding goal"
                 placeholder="Enter your funding goal"
-                margin="normal"
-                variant="outlined"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.goal || ''}
