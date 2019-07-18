@@ -24,6 +24,15 @@ const styles = theme => ({
       marginTop: theme.spacing.unit * 3,
     },
   },
+  multi: {
+    'label + &': {
+      gridRowStart: 2,
+      gridColumnStart: 1,
+      gridColumnEnd: 13,
+      marginTop: theme.spacing.unit * 3,
+      paddingRight: '24px'
+    },
+  },
   input: {
     borderRadius: 8,
     backgroundColor: '#edf2f5',
@@ -90,7 +99,7 @@ function Input({
         name={name}
         onChange={onChange}
         classes={{
-          root: classes.root,
+          root: multiline ? classes.multi : classes.root,
           input: classes.input,
         }}
         onBlur={onBlur}
