@@ -11,7 +11,7 @@ const styles = theme => ({
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
-    gridTemplateRows: '24px 24px 36px'
+    gridTemplateRows: 'auto auto 5px'
   },
   margin: {
     margin: theme.spacing.unit,
@@ -76,6 +76,7 @@ function Input({
   classes,
   idFor,
   isRequired,
+  InputProps,
   label,
   bottomRightLabel,
   bottomLeftLabel,
@@ -95,6 +96,7 @@ function Input({
       { labelForm }
       <InputBase
         id={idFor}
+        InputProps={InputProps}
         placeholder={placeholder}
         name={name}
         onChange={onChange}
