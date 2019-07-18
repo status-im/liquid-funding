@@ -313,25 +313,21 @@ const SubmissionSection = ({ classes, history }) => {
                 }
                 label="Autoplay video?"
               />
-              <TextField
-                className={classes.firstHalf}
+              <StatusTextField
+                className={fullWidth}
                 InputProps={{
                   style: { height: '100%' }
                 }}
-                id="description"
+                idFor="Full description"
                 name="description"
-                multiline
-                label="Enter extended description (markdown)"
-                placeholder="Enter extended description here (markdown)"
-                margin="normal"
-                variant="outlined"
+                label="Full description"
+                bottomLeftLabel="Markdown available"
+                placeholder="Full description"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.description || ''}
+                multiline={true}
               />
-              <div className={classnames(secondHalf, classes.markdown)}>
-                <ReactMarkdown source={values.description} />
-              </div>
               <StatusTextField
                 className={fullWidth}
                 isRequired={true}
@@ -397,6 +393,9 @@ const SubmissionSection = ({ classes, history }) => {
                 }
                 style={{display: 'none'}}
               />
+              <div className={classes.markdown}>
+                <ReactMarkdown source={values.description} />
+              </div>
             </div>
           </form>
         )
