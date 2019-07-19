@@ -1,9 +1,12 @@
 import React from 'react'
 import OneOnOneChat from './OneOnOneChat'
+import BoxArrow from './BoxArrow'
 
 const ONE_ON_ONE_CHAT = 'oneOnOneChat'
+const BOX_ARROW = 'boxArrow'
 const icons = {
-  [ONE_ON_ONE_CHAT]: OneOnOneChat
+  [ONE_ON_ONE_CHAT]: OneOnOneChat,
+  [BOX_ARROW]: BoxArrow
 }
 
 const Icon = ({ name }) => {
@@ -13,7 +16,8 @@ const Icon = ({ name }) => {
       background: '#ECEFFC',
       borderRadius: '50%',
       padding: '10px',
-      maxHeight: '45px'
+      maxHeight: '45px',
+      justifySelf: 'center'
     }}>
       <Component />
     </div>

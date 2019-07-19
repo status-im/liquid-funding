@@ -15,6 +15,7 @@ import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
 import StatusTextField from '../base/TextField'
+import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
 
 const { addProject } = LiquidPledging.methods
@@ -250,7 +251,7 @@ const SubmissionSection = ({ classes, history }) => {
                 name="creator"
                 label="Contact Person"
                 bottomLeftLabel="Name of the primary contact"
-                placeholder="Short Description"
+                placeholder="Contract Person"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.creator || ''}
@@ -259,6 +260,15 @@ const SubmissionSection = ({ classes, history }) => {
                 <Icon name="oneOnOneChat" />
                 <div className={classes.chatText}>{`Join #status-${values.title.replace(/\s/g, '')}`}</div>
               </div>
+              <IconTextField
+                iconName="boxArrow"
+                idFor="repo"
+                name="repo"
+                placeholder="Code Repo"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.repo || ''}
+              />
               <TextField
                 className={classes.textField}
                 InputProps={{
