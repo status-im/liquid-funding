@@ -11,12 +11,14 @@ const styles = theme => ({
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
-    gridTemplateRows: 'auto auto 5px'
+    gridTemplateRows: 'auto auto 5px',
   },
   margin: {
     margin: theme.spacing.unit,
   },
   root: {
+    gridColumnStart: 1,
+    gridColumnEnd: 13,
     'label + &': {
       gridRowStart: 2,
       gridColumnStart: 1,
