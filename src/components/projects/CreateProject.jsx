@@ -25,6 +25,10 @@ const hoursToSeconds = hours => hours * 60 * 60
 const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 
 const styles = theme => ({
+  adornmentText: {
+    cursor: 'pointer',
+    color: '#4360DF'
+  },
   root: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
@@ -301,60 +305,24 @@ const SubmissionSection = ({ classes, history }) => {
               />
               <IconTextField
                 iconName="photo"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CloudUpload
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          const activeField = 'video'
-                          setStatus({ ...status, activeField })
-                          uploadInput.click()
-                        }
-                        }
-                      />
-                    </InputAdornment>
-                  ),
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
+                endAdornment={(
+                  <InputAdornment position="start">
+                    <span
+                      className={classes.adornmentText}
+                      onClick={() => {
+                        const activeField = 'video'
+                        setStatus({ ...status, activeField })
+                        uploadInput.click()
+                      }
+                      }
+                    >Browse
+                    </span>
+                  </InputAdornment>
+                )}
                 className={fullWidth}
-                isRequired={true}
                 idFor="video"
                 name="video"
                 placeholder="Upload video or enter url"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.title || ''}
-              />
-
-              <TextField
-                className={classes.textField}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CloudUpload
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          const activeField = 'video'
-                          setStatus({ ...status, activeField })
-                          uploadInput.click()
-                        }
-                        }
-                      />
-                    </InputAdornment>
-                  ),
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                id="video"
-                name="video"
-                label="Upload video or enter url"
-                placeholder="Upload video or enter url"
-                margin="normal"
-                variant="outlined"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.video || ''}
