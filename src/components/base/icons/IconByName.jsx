@@ -1,12 +1,15 @@
 import React from 'react'
 import OneOnOneChat from './OneOnOneChat'
 import BoxArrow from './BoxArrow'
+import Photo from './Photo'
 
 const ONE_ON_ONE_CHAT = 'oneOnOneChat'
 const BOX_ARROW = 'boxArrow'
+const PHOTO = 'photo'
 const icons = {
   [ONE_ON_ONE_CHAT]: OneOnOneChat,
-  [BOX_ARROW]: BoxArrow
+  [BOX_ARROW]: BoxArrow,
+  [PHOTO]: Photo
 }
 
 const Icon = ({ name }) => {
