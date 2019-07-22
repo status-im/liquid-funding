@@ -19,6 +19,8 @@ const styles = theme => ({
   root: {
     gridColumnStart: 1,
     gridColumnEnd: 13,
+    borderRadius: 8,
+    backgroundColor: '#edf2f5',
     'label + &': {
       gridRowStart: 2,
       gridColumnStart: 1,
@@ -78,6 +80,7 @@ function Input({
   classes,
   idFor,
   isRequired,
+  endAdornment,
   InputProps,
   label,
   bottomRightLabel,
@@ -94,11 +97,14 @@ function Input({
   const bottomLeft = bottomLeftLabel ? renderLabel(classnames(classes.formLabel, classes.bottomLeft), idFor, bottomLeftLabel) : null
   const bottomRight = bottomRightLabel ? renderLabel(classnames(classes.formLabel, classes.bottomRight), idFor, bottomRightLabel) : null
   return (
-    <FormControl className={classnames(classes.margin, classes.container, className)}>
+    <FormControl
+      className={classnames(classes.margin, classes.container, className)}
+    >
       { labelForm }
       <InputBase
         id={idFor}
         InputProps={InputProps}
+        endAdornment={endAdornment}
         placeholder={placeholder}
         name={name}
         onChange={onChange}
