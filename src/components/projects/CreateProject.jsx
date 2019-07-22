@@ -299,6 +299,35 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.avatar || ''}
               />
+              <IconTextField
+                iconName="photo"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <CloudUpload
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          const activeField = 'video'
+                          setStatus({ ...status, activeField })
+                          uploadInput.click()
+                        }
+                        }
+                      />
+                    </InputAdornment>
+                  ),
+                  classes: {
+                    input: classes.textInput
+                  }
+                }}
+                className={fullWidth}
+                isRequired={true}
+                idFor="video"
+                name="video"
+                placeholder="Upload video or enter url"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.title || ''}
+              />
 
               <TextField
                 className={classes.textField}
