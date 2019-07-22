@@ -3,12 +3,10 @@ import { Formik } from 'formik'
 import classnames from 'classnames'
 import ReactMarkdown from 'react-markdown'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
-import TextField from '@material-ui/core/TextField'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import CloudUpload from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
 import { uploadFilesToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
@@ -273,32 +271,26 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.repo || ''}
               />
-              <TextField
-                className={classes.textField}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CloudUpload
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          const activeField = 'avatar'
-                          setStatus({ ...status, activeField })
-                          uploadInput.click()
-                        }
-                        }
-                      />
-                    </InputAdornment>
-                  ),
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                id="avatar"
+              <IconTextField
+                iconName="addPerson"
+                endAdornment={(
+                  <InputAdornment position="start">
+                    <span
+                      className={classes.adornmentText}
+                      onClick={() => {
+                        const activeField = 'avatar'
+                        setStatus({ ...status, activeField })
+                        uploadInput.click()
+                      }
+                      }
+                    >Browse
+                    </span>
+                  </InputAdornment>
+                )}
+                className={fullWidth}
+                idFor="avatar"
                 name="avatar"
-                label="Upload or enter link to creator avatar"
                 placeholder="upload or enter link to creator avatar"
-                margin="normal"
-                variant="outlined"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.avatar || ''}
