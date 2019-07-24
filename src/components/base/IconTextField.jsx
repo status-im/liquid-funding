@@ -25,7 +25,7 @@ function IconTextField(props) {
   const { iconName, classes } = props
   return (
     <div className={classes.iconRoot}>
-      <Icon name={iconName} className={classes.icon} />
+      <Icon name={iconName} className={classes.icon} centered />
       <StatusTextField {...props} className={classes.textField} />
     </div>
   )
