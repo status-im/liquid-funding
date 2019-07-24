@@ -82,7 +82,6 @@ function CurrencySelect({
       label={label}
       placeholder={label}
       margin="normal"
-      variant="outlined"
       onChange={onChange}
       onBlur={onBlur}
       value={value || ''}
