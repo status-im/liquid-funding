@@ -369,7 +369,7 @@ const SubmissionSection = ({ classes, history }) => {
                   }
                 }}
                 id="goalToken"
-                label="Select Token"
+                label="Token"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.goalToken}
