@@ -15,7 +15,7 @@ const icons = {
   [PHOTO]: Photo
 }
 
-const Icon = ({ name }) => {
+const Icon = ({ name, centered }) => {
   const Component = icons[name]
   return (
     <div style={{
@@ -23,8 +23,8 @@ const Icon = ({ name }) => {
       borderRadius: '50%',
       padding: '10px',
       maxHeight: '45px',
-      justifySelf: 'center'
-    }}>
+      justifySelf: centered ? 'center' : 'auto'
+    }} >
       <Component />
     </div>
   )

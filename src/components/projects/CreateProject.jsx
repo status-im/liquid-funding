@@ -81,7 +81,11 @@ const styles = theme => ({
     gridColumnStart: 1,
     gridColumnEnd: 13,
     justifyItems: 'start',
-    gridAutoFlow: 'column'
+    gridAutoFlow: 'column',
+    paddingLeft: '5px'
+  },
+  chatRoomIcon: {
+    justifySelf: 'auto'
   },
   chatText: {
     marginTop: '15px',
