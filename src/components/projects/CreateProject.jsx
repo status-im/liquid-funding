@@ -101,11 +101,12 @@ const styles = theme => ({
     height: 'fit-content'
   },
   markdown: {
-    borderStyle: 'solid',
-    borderWidth: 'thin',
-    borderColor: 'darkgray',
+    display: 'grid',
     margin: '16px 0 8px 0',
     padding: '10%'
+  },
+  markdownPreview: {
+    gridColumnStart: 12
   },
   textInput: {
     fontSize: '2rem'
@@ -119,6 +120,9 @@ const styles = theme => ({
   },
   icon: {
     background: '#ECEFFC'
+  },
+  preview: {
+    fontSize: '20px'
   }
 })
 
@@ -335,7 +339,23 @@ const SubmissionSection = ({ classes, history }) => {
                 }
                 label="Autoplay video?"
               />
-              <StatusTextField
+              {status && status.showPreview &&
+               <div className={classnames(classes.markdown, fullWidth)}>
+                 <div
+                   className={classnames(
+                     classes.adornmentText,
+                     classes.preview,
+                     classes.markdownPreview
+                   )}
+                   onClick={() => {
+                     setStatus({ ...status, showPreview: false })
+                   }}
+                 >
+                   Hide preview
+                 </div>
+                 <ReactMarkdown source={values.description} />
+               </div>}
+              {(!status || !status.showPreview) && <StatusTextField
                 className={fullWidth}
                 InputProps={{
                   style: { height: '100%' }
@@ -349,7 +369,17 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.description || ''}
                 multiline={true}
-              />
+                topRight={
+                  <span
+                    className={classnames(classes.adornmentText, classes.preview)}
+                    onClick={() => {
+                      setStatus({ ...status, showPreview: true })
+                    }}
+                  >
+                    Preview
+                  </span>
+                }
+              />}
               <StatusTextField
                 className={fullWidth}
                 isRequired={true}
@@ -409,9 +439,6 @@ const SubmissionSection = ({ classes, history }) => {
                 }
                 style={{display: 'none'}}
               />
-              <div className={classes.markdown}>
-                <ReactMarkdown source={values.description} />
-              </div>
             </div>
           </form>
         )

@@ -61,6 +61,11 @@ const styles = theme => ({
     fontSize: '15px',
     gridRowStart: 4,
     gridColumnStart: 1,
+  },
+  topRight: {
+    gridRowStart: 1,
+    gridColumnStart: 11,
+    gridColumnEnd: 12
   }
 })
 
@@ -91,9 +96,11 @@ function Input({
   onChange,
   onBlur,
   value,
-  multiline
+  multiline,
+  topRight
 }) {
   const labelForm = label ? renderLabel(classnames(classes.formLabel, classes.top), idFor, label, isRequired) : null
+  const topRightLabel = topRight ? renderLabel(classnames(classes.topRight), idFor, topRight) : null
   const bottomLeft = bottomLeftLabel ? renderLabel(classnames(classes.formLabel, classes.bottomLeft), idFor, bottomLeftLabel) : null
   const bottomRight = bottomRightLabel ? renderLabel(classnames(classes.formLabel, classes.bottomRight), idFor, bottomRightLabel) : null
   return (
@@ -101,6 +108,7 @@ function Input({
       className={classnames(classes.margin, classes.container, className)}
     >
       { labelForm }
+      { topRightLabel }
       <InputBase
         id={idFor}
         InputProps={InputProps}
