@@ -21,6 +21,7 @@ const { addProject } = LiquidPledging.methods
 
 const hoursToSeconds = hours => hours * 60 * 60
 const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
+const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
 
 const styles = theme => ({
   adornmentText: {
@@ -132,6 +133,7 @@ const createJSON = values => {
     title,
     subtitle,
     creator,
+    repo,
     avatar,
     goal,
     goalToken,
@@ -144,10 +146,12 @@ const createJSON = values => {
     title,
     subtitle,
     creator,
+    repo,
     avatar: formatMedia(avatar),
     goal,
     goalToken,
     description,
+    chatRoom: generateChatRoom(title),
     media: {
       isPlaying,
       type: 'video'
@@ -177,11 +181,12 @@ const SubmissionSection = ({ classes, history }) => {
         title: '',
         subtitle: '',
         creator: '',
+        repo: '',
         avatar: '',
+        video: '',
         goal: '',
         goalToken: '',
-        video: '',
-        isPlaying: true,
+        isPlaying: false,
         description: '',
         commitTime: 24
       }}
@@ -268,7 +273,7 @@ const SubmissionSection = ({ classes, history }) => {
               />
               <div className={classes.chatRoom}>
                 <Icon name="oneOnOneChat" />
-                <div className={classes.chatText}>{`Join #status-${values.title.replace(/\s/g, '')}`}</div>
+                <div className={classes.chatText}>{`Join ${generateChatRoom(values.title)}`}</div>
               </div>
               <IconTextField
                 iconName="boxArrow"
