@@ -204,7 +204,7 @@ const SubmissionSection = ({ classes, history }) => {
               .send({ from: account, gas: gas + 100 })
               .then(res => {
                 // cache locally
-                uploadFilesToIpfs(uploads, manifest)
+                uploadFilesToIpfs(uploads, manifest, true)
                 console.log({res})
                 openSnackBar('success', addProjectSucessMsg(res))
                 setTimeout(() => {
@@ -233,7 +233,6 @@ const SubmissionSection = ({ classes, history }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
         const { goalToken, goal } = values
         const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
-        console.log({prices, usdValue})
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <div className={firstHalf}>
