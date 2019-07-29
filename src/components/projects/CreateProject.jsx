@@ -15,6 +15,7 @@ import CurrencySelect from '../base/CurrencySelect'
 import StatusTextField from '../base/TextField'
 import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
+import { convertTokenAmountUsd } from '../../utils/prices'
 
 const { addProject } = LiquidPledging.methods
 
@@ -22,6 +23,7 @@ const { addProject } = LiquidPledging.methods
 const hoursToSeconds = hours => hours * 60 * 60
 const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
+
 
 const styles = theme => ({
   adornmentText: {
@@ -174,7 +176,7 @@ const addProjectSucessMsg = response => {
 }
 const SubmissionSection = ({ classes, history }) => {
   const [uploads, setUploads] = useState({})
-  const { account, openSnackBar } = useContext(FundingContext)
+  const { account, openSnackBar, prices } = useContext(FundingContext)
   return (
     <Formik
       initialValues={{
@@ -229,6 +231,9 @@ const SubmissionSection = ({ classes, history }) => {
         isSubmitting
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
+        const { goalToken, goal } = values
+        const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
+        console.log({prices, usdValue})
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <div className={firstHalf}>
@@ -420,6 +425,7 @@ const SubmissionSection = ({ classes, history }) => {
                 name="goal"
                 label="Enter your funding goal"
                 placeholder="Enter your funding goal"
+                bottomLeftLabel={usdValue}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.goal || ''}

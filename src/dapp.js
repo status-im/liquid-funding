@@ -14,6 +14,7 @@ import { addFormattedProfiles } from './actions/profiles'
 import { updateStalePledges, getAndAddPledges } from './actions/pledges'
 import { updateDelegates } from './actions/delegates'
 import { MySnackbarContentWrapper } from './components/base/SnackBars'
+import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
 
 const { getNetworkType } = web3.eth.net
 
@@ -22,6 +23,7 @@ class App extends React.Component {
     loading: true,
     lpAllowance: 0,
     needsInit: true,
+    prices: {}
   };
 
   componentDidMount(){
@@ -36,6 +38,7 @@ class App extends React.Component {
           if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
 
           const account = await web3.eth.getCoinbase()
+          this.getAndSetPrices()
           this.setState({ account })
           const lpAllowance = await getLpAllowance()
           //TODO add block based sync
@@ -68,6 +71,11 @@ class App extends React.Component {
     this.setState({ loading: false })
   }
 
+  getAndSetPrices = async () => {
+    const prices = await getPrices()
+    this.setState({ prices })
+  }
+
   openSnackBar = (variant, message) => {
     this.setState({ snackbar: { variant, message } })
   }
@@ -81,9 +89,16 @@ class App extends React.Component {
     getAndAddPledges()
   }
 
+  updateUsdPrice = async ticker => {
+    const { prices } = this.state
+    const key = generatePairKey(ticker, 'USD')
+    const price = await getUsdPrice(ticker)
+    this.setState({ prices: { ...prices, [key]: price }})
+  }
+
   render() {
-    const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar } = this.state
-    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote } = this
+    const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices } = this.state
+    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote, updateUsdPrice } = this
     const fundingContext = {
       appendPledges,
       appendFundProfile,
@@ -95,7 +110,9 @@ class App extends React.Component {
       standardTokenApproval,
       openSnackBar,
       closeSnackBar,
-      syncWithRemote
+      syncWithRemote,
+      prices,
+      updateUsdPrice
     }
     return (
       <FundingContext.Provider value={fundingContext}>
