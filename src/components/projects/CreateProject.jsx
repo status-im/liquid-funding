@@ -8,7 +8,7 @@ import Switch from '@material-ui/core/Switch'
 import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import { withStyles } from '@material-ui/core/styles'
-import { uploadFilesToIpfs, formatMedia, isWeb } from '../../utils/ipfs'
+import { uploadFilesToIpfs, pinToGateway, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
@@ -195,7 +195,7 @@ const SubmissionSection = ({ classes, history }) => {
       onSubmit={async (values, { resetForm }) => {
         const { title, commitTime } = values
         const manifest = createJSON(values)
-        const contentHash = await uploadFilesToIpfs(uploads, manifest, true)
+        const contentHash = await uploadFilesToIpfs(uploads, manifest)
         const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
         addProject(...args)
           .estimateGas({ from: account })
@@ -203,8 +203,9 @@ const SubmissionSection = ({ classes, history }) => {
             addProject(...args)
               .send({ from: account, gas: gas + 100 })
               .then(res => {
-                // cache locally
+                // upload to gateway
                 uploadFilesToIpfs(uploads, manifest, true)
+                pinToGateway(contentHash)
                 console.log({res})
                 openSnackBar('success', addProjectSucessMsg(res))
                 setTimeout(() => {

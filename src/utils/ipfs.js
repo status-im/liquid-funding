@@ -98,6 +98,12 @@ export const pinToIpfs = async hash => {
   console.log({res})
 }
 
+export const pinToGateway = async hash => {
+  const cid = hash.split('/').slice(-1)[0]
+  const res = await ipfsHttp.pin.add(cid, { recursive: true })
+  console.log({res})
+}
+
 export const getImageFromIpfs = async (hash, cb) => {
   const res = await getFromIpfs(hash)
   cb(res)
