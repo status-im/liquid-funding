@@ -27,6 +27,7 @@ import TransferGraph from './TransfersGraph'
 import Dashboard from './Dashboard'
 import Projects from './projects/Projects'
 import Project from './projects/Project'
+import FundProject from './projects/FundProject'
 import BackProject from './projects/BackProject'
 import ProjectPledges from './projects/ProjectPledges'
 import CreateProject from './projects/CreateProject'
@@ -195,6 +196,7 @@ class PersistentDrawerLeft extends React.Component {
               <Route path="/insights" component={TransferGraph} />
               <Route path="/projects" component={Projects} />
               <Route path="/(profile|delegate|project)/:id" component={Project} />
+              <Route path="/(fund-project)/:id" component={FundProject} />
               <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
               <Route path="/create-delegate/" render={(props) => <CreateDelegate {...props} />} />
               <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
