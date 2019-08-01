@@ -17,12 +17,14 @@ import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
 import StatusTextField from '../base/TextField'
+import TextDisplay from '../base/TextDisplay'
 import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
 import { getAmountsPledged } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getNumberOfBackers, getMediaType, getMediaSrc } from '../../utils/project'
+import { getDateCreated } from '../../utils/dates'
 
 const { addProject } = LiquidPledging.methods
 
@@ -60,12 +62,12 @@ const styles = theme => ({
   projectTitle:{
     fontSize: '28px',
     gridColumnStart: 1,
-    gridColumnEnd: 12
+    gridColumnEnd: 13
   },
   projectSubTitle:{
     fontSize: '15px',
     gridColumnStart: 1,
-    gridColumnEnd: 12
+    gridColumnEnd: 13
   },
   submissionRoot: {
     display: 'grid',
@@ -143,6 +145,14 @@ const styles = theme => ({
   },
   preview: {
     fontSize: '20px'
+  },
+  contact: {
+    gridColumnStart: '1',
+    gridColumnEnd: '6'
+  },
+  created: {
+    gridColumnStart: '7',
+    gridColumnEnd: '13'
   }
 })
 
@@ -199,7 +209,8 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges, projectId])
   const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
-  console.log({ projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, mediaType, mediaUrl})
+  const createdDate = getDateCreated(projectAge)
+  console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, mediaType, mediaUrl})
 
   return (
     <Formik
@@ -272,6 +283,17 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
               <Typography className={classes.projectSubTitle} component="h2" gutterBottom>
                 {manifest && manifest.subtitle}
               </Typography>
+              {manifest && <TextDisplay
+                name="Contact Person"
+                text={manifest.creator}
+                rootClass={classes.contact}
+              />}
+              {manifest && <TextDisplay
+                name="Profile created on"
+                text={createdDate}
+                rootClass={classes.created}
+              />}
+
               <StatusTextField
                 className={fullWidth}
                 isRequired={true}
