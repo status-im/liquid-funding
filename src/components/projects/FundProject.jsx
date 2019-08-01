@@ -273,7 +273,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
 
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
-            <div className={firstHalf}>
+            {manifest && <div className={firstHalf}>
               <div className={classnames(classes.breadCrumb, fullWidth)}>
                 {'All projects > title here'}
               </div>
@@ -283,42 +283,24 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
               <Typography className={classes.projectSubTitle} component="h2" gutterBottom>
                 {manifest && manifest.subtitle}
               </Typography>
-              {manifest && <TextDisplay
+              <TextDisplay
                 name="Contact Person"
                 text={manifest.creator}
                 rootClass={classes.contact}
-              />}
-              {manifest && <TextDisplay
+              />
+              <TextDisplay
                 name="Profile created on"
                 text={createdDate}
                 rootClass={classes.created}
-              />}
-
-              <StatusTextField
-                className={fullWidth}
-                isRequired={true}
-                idFor="creator"
-                name="creator"
-                label="Contact Person"
-                bottomLeftLabel="Name of the primary contact"
-                placeholder="Contract Person"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.creator || ''}
               />
               <div className={classes.chatRoom}>
                 <Icon name="oneOnOneChat" />
-                <div className={classes.chatText}>{`Join ${generateChatRoom(values.title)}`}</div>
+                <div className={classes.chatText}>{`Join ${manifest.chatRoom}`}</div>
               </div>
-              <IconTextField
-                iconName="boxArrow"
-                idFor="repo"
-                name="repo"
-                placeholder="Code Repo"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.repo || ''}
-              />
+              <div className={classes.chatRoom}>
+                <Icon name="boxArrow" />
+                <div className={classes.chatText}>{manifest.code}</div>
+              </div>
               <IconTextField
                 iconName="addPerson"
                 endAdornment={(
@@ -432,7 +414,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
                 onBlur={handleBlur}
                 value={values.commitTime || ''}
               />
-            </div>
+            </div>}
             <div className={secondHalf}>
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Project'}</Button>
               <CurrencySelect
