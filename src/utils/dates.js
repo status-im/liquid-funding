@@ -18,3 +18,9 @@ export function timeSinceBlock(date=false, interval) {
   default: return undefined
   }
 }
+
+export function getDateCreated(daysSince) {
+  const d = new Date();
+  d.setDate(d.getDate() - daysSince);
+  return `${d.getMonth()}/${d.getDate()}/${d.getFullYear()}`
+}
