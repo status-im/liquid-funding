@@ -6,6 +6,7 @@ import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import { withStyles } from '@material-ui/core/styles'
 import withObservables from '@nozbe/with-observables'
@@ -55,6 +56,16 @@ const styles = theme => ({
     gridRowStart: '1',
     gridRowEnd: '6',
     textAlign: 'center'
+  },
+  projectTitle:{
+    fontSize: '28px',
+    gridColumnStart: 1,
+    gridColumnEnd: 12
+  },
+  projectSubTitle:{
+    fontSize: '15px',
+    gridColumnStart: 1,
+    gridColumnEnd: 12
   },
   submissionRoot: {
     display: 'grid',
@@ -255,30 +266,12 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
               <div className={classnames(classes.breadCrumb, fullWidth)}>
                 {'All projects > title here'}
               </div>
-              <StatusTextField
-                className={fullWidth}
-                isRequired={true}
-                idFor="Project Name"
-                name="title"
-                label="Project Name"
-                bottomRightLabel="Max 20"
-                placeholder="Project Name"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.title || ''}
-              />
-              <StatusTextField
-                className={fullWidth}
-                idFor="Short Description"
-                name="subtitle"
-                label="Short Description"
-                bottomRightLabel="Max 120"
-                placeholder="Short Description"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.subtitle || ''}
-                multiline={true}
-              />
+              <Typography className={classes.projectTitle} component="h2" gutterBottom>
+                {manifest && manifest.title}
+              </Typography>
+              <Typography className={classes.projectSubTitle} component="h2" gutterBottom>
+                {manifest && manifest.subtitle}
+              </Typography>
               <StatusTextField
                 className={fullWidth}
                 isRequired={true}
