@@ -301,6 +301,11 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
                 <Icon name="boxArrow" />
                 <div className={classes.chatText}>{manifest.code}</div>
               </div>
+              <TextDisplay
+                name="Profile created on"
+                text={manifest.description}
+                isMarkdown={true}
+              />
               <IconTextField
                 iconName="addPerson"
                 endAdornment={(
