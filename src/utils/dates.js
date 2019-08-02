@@ -24,3 +24,5 @@ export function getDateCreated(daysSince) {
   d.setDate(d.getDate() - daysSince);
   return `${d.getMonth()}/${d.getDate()}/${d.getFullYear()}`
 }
+
+export const convertToHours = seconds => Number(seconds) / 60 / 60

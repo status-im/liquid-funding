@@ -27,15 +27,15 @@ const styles = theme => ({
   },
   text: {
     fontSize: '15px',
-    gridColumnStart: 4
+    gridColumnStart: 2
   }
 })
 
-function TextDisplay({ classes, name, text, rootClass, isMarkdown }) {
+function TextDisplay({ classes, name, text, rootClass, textClass, isMarkdown }) {
   return (
     <div className={classnames(classes.container, rootClass)} >
       <div className={classes.name}>{name}</div>
-      {!isMarkdown && <div className={classes.text}>{text}</div>}
+      {!isMarkdown && <div className={classnames(classes.text, textClass)}>{text}</div>}
       {isMarkdown &&
        <div className={classes.markdown}>
          <ReactMarkdown source={text} />
@@ -56,6 +56,7 @@ TextDisplay.propTypes = {
   name: PropTypes.string,
   text: PropTypes.string,
   rootClass: PropTypes.object,
+  textClass: PropTypes.object,
   isMarkdown: PropTypes.bool
 }
 

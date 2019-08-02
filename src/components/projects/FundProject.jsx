@@ -24,7 +24,7 @@ import { convertTokenAmountUsd } from '../../utils/prices'
 import { getAmountsPledged } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getNumberOfBackers, getMediaType, getMediaSrc } from '../../utils/project'
-import { getDateCreated } from '../../utils/dates'
+import { getDateCreated, convertToHours } from '../../utils/dates'
 
 const { addProject } = LiquidPledging.methods
 
@@ -105,6 +105,9 @@ const styles = theme => ({
     justifyItems: 'start',
     gridAutoFlow: 'column',
     paddingLeft: '5px'
+  },
+  halfText: {
+    gridColumnStart: 4
   },
   chatRoomIcon: {
     justifySelf: 'auto'
@@ -201,7 +204,7 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes, history, projectData, projectId, pledges }) => {
+const SubmissionSection = ({ classes, history, projectData, projectId, pledges, commitTime }) => {
   const [uploads, setUploads] = useState({})
   const { account, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
@@ -287,11 +290,13 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
                 name="Contact Person"
                 text={manifest.creator}
                 rootClass={classes.contact}
+                textClass={classes.halfText}
               />
               <TextDisplay
                 name="Profile created on"
                 text={createdDate}
                 rootClass={classes.created}
+                textClass={classes.halfText}
               />
               <div className={classes.chatRoom}>
                 <Icon name="oneOnOneChat" />
@@ -302,9 +307,13 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
                 <div className={classes.chatText}>{manifest.code}</div>
               </div>
               <TextDisplay
-                name="Profile created on"
+                name="Full description"
                 text={manifest.description}
                 isMarkdown={true}
+              />
+              <TextDisplay
+                name="Commit time (hours)"
+                text={commitTime}
               />
               <IconTextField
                 iconName="addPerson"
@@ -476,9 +485,10 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges }
   )
 }
 
-function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
+function FundProject({ classes, match, history, projectAddedEvents, pledges, profile }) {
   const projectId = match.params.id
   const projectData = useProjectData(projectId, projectAddedEvents)
+  const commitTime = convertToHours(profile[0].commitTime)
   return (
     <div className={classes.root}>
       <SubmissionSection
@@ -487,6 +497,7 @@ function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
         projectData={projectData}
         projectId={projectId}
         pledges={pledges}
+        commitTime={commitTime}
       />
     </div>
   )
