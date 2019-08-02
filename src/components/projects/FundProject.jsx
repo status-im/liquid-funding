@@ -1,13 +1,9 @@
-import React, { createRef, useState, useContext, useMemo } from 'react'
+import React, { useState, useContext, useMemo } from 'react'
 import { Formik } from 'formik'
 import classnames from 'classnames'
-import ReactMarkdown from 'react-markdown'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import { withStyles } from '@material-ui/core/styles'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
@@ -18,7 +14,6 @@ import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
 import StatusTextField from '../base/TextField'
 import TextDisplay from '../base/TextDisplay'
-import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
 import { getAmountsPledged } from '../../utils/pledges'
@@ -30,7 +25,6 @@ const { addProject } = LiquidPledging.methods
 
 
 const hoursToSeconds = hours => hours * 60 * 60
-const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
 
 
@@ -195,7 +189,6 @@ const createJSON = values => {
   return JSON.stringify(manifest, null, 2)
 }
 
-let uploadInput = createRef()
 const getProjectId = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return idProject
@@ -315,119 +308,6 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
                 name="Commit time (hours)"
                 text={commitTime}
               />
-              <IconTextField
-                iconName="addPerson"
-                endAdornment={(
-                  <InputAdornment position="start">
-                    <span
-                      className={classes.adornmentText}
-                      onClick={() => {
-                        const activeField = 'avatar'
-                        setStatus({ ...status, activeField })
-                        uploadInput.click()
-                      }
-                      }
-                    >Browse
-                    </span>
-                  </InputAdornment>
-                )}
-                className={fullWidth}
-                idFor="avatar"
-                name="avatar"
-                placeholder="upload or enter link to creator avatar"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.avatar || ''}
-              />
-              <IconTextField
-                iconName="photo"
-                endAdornment={(
-                  <InputAdornment position="start">
-                    <span
-                      className={classes.adornmentText}
-                      onClick={() => {
-                        const activeField = 'video'
-                        setStatus({ ...status, activeField })
-                        uploadInput.click()
-                      }
-                      }
-                    >Browse
-                    </span>
-                  </InputAdornment>
-                )}
-                className={fullWidth}
-                idFor="video"
-                name="video"
-                placeholder="Upload video or enter url"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.video || ''}
-              />
-              <FormControlLabel
-                className={classes.formControl}
-                control={
-                  <Switch
-                    id="isPlaying"
-                    checked={values.isPlaying}
-                    onChange={handleChange}
-                    value={values.isPlaying}
-                  />
-                }
-                label="Autoplay video?"
-              />
-              {status && status.showPreview &&
-               <div className={classnames(classes.markdown, fullWidth)}>
-                 <div
-                   className={classnames(
-                     classes.adornmentText,
-                     classes.preview,
-                     classes.markdownPreview
-                   )}
-                   onClick={() => {
-                     setStatus({ ...status, showPreview: false })
-                   }}
-                 >
-                   Hide preview
-                 </div>
-                 <ReactMarkdown source={values.description} />
-               </div>}
-              {(!status || !status.showPreview) && <StatusTextField
-                className={fullWidth}
-                InputProps={{
-                  style: { height: '100%' }
-                }}
-                idFor="Full description"
-                name="description"
-                label="Full description"
-                bottomLeftLabel="Markdown available"
-                placeholder="Full description"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.description || ''}
-                multiline={true}
-                topRight={
-                  <span
-                    className={classnames(classes.adornmentText, classes.preview)}
-                    onClick={() => {
-                      setStatus({ ...status, showPreview: true })
-                    }}
-                  >
-                    Preview
-                  </span>
-                }
-              />}
-              <StatusTextField
-                className={fullWidth}
-                isRequired={true}
-                idFor="commitTime"
-                name="commitTime"
-                label="Commit Time (Hours)"
-                bottomLeftLabel={helperText}
-                placeholder="Commit Time (hours)"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.commitTime || ''}
-              />
             </div>}
             <div className={secondHalf}>
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Project'}</Button>
@@ -457,9 +337,6 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
                 value={values.goal || ''}
               />
               <input
-                ref={(input) => {
-                  uploadInput = input
-                }}
                 type="file"
                 multiple
                 onChange={
