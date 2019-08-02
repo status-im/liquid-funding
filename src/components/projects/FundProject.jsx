@@ -20,6 +20,7 @@ import { getAmountsPledged } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getNumberOfBackers, getMediaType, getMediaSrc } from '../../utils/project'
 import { getDateCreated, convertToHours } from '../../utils/dates'
+import MediaView from '../base/MediaView'
 
 const { addProject } = LiquidPledging.methods
 
@@ -203,10 +204,10 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
   const { projectAge, projectAssets, manifest } = projectData
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
   const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges, projectId])
-  const mediaType = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
+  const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
-  console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, mediaType, mediaUrl})
+  console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, isVideo, mediaUrl})
 
   return (
     <Formik
@@ -299,6 +300,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
                 <Icon name="boxArrow" />
                 <div className={classes.chatText}>{manifest.code}</div>
               </div>
+              <MediaView className={classes.fullWidth} isVideo={isVideo} source={mediaUrl} />
               <TextDisplay
                 name="Full description"
                 text={manifest.description}
