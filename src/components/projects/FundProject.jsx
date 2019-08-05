@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { Formik } from 'formik'
 import classnames from 'classnames'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
@@ -8,10 +8,9 @@ import { withStyles } from '@material-ui/core/styles'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
-import { uploadFilesToIpfs, pinToGateway, formatMedia, isWeb } from '../../utils/ipfs'
+import { formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
-import CurrencySelect from '../base/CurrencySelect'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
@@ -19,6 +18,7 @@ import { getAmountsPledged } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getNumberOfBackers, getMediaType, getMediaSrc } from '../../utils/project'
 import { getDateCreated, convertToHours } from '../../utils/dates'
+import { getTokenLabel } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
 
@@ -35,7 +35,17 @@ const styles = theme => ({
     color: '#4360DF'
   },
   amount: {
-    marginTop: '3rem'
+    marginTop: '3rem',
+    display: 'grid'
+  },
+  amountLayout: {
+    gridColumnStart: 1,
+    gridColumnEnd: 5
+  },
+  amountText: {
+    gridColumnStart: 6,
+    alignSelf: 'center',
+    color: '#939BA1'
   },
   amountInput: {
     textAlign: 'right'
@@ -215,7 +225,6 @@ const addProjectSucessMsg = response => {
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
 const SubmissionSection = ({ classes, history, projectData, projectId, pledges, commitTime }) => {
-  const [uploads, setUploads] = useState({})
   const { account, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
@@ -230,23 +239,12 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
   return (
     <Formik
       initialValues={{
-        amount: '0',
-        subtitle: '',
-        creator: '',
-        repo: '',
-        avatar: '',
-        video: '',
-        goal: '',
-        goalToken: '',
-        isPlaying: false,
-        description: '',
-        commitTime: 24
+        amount: '',
       }}
       onSubmit={async (values, { resetForm }) => {
         const { title, commitTime } = values
         const manifest = createJSON(values)
-        const contentHash = await uploadFilesToIpfs(uploads, manifest)
-        const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
+        const args = [title, 0, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
         addProject(...args)
           .estimateGas({ from: account })
           .then(async gas => {
@@ -254,8 +252,6 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
               .send({ from: account, gas: gas + 100 })
               .then(res => {
                 // upload to gateway
-                uploadFilesToIpfs(uploads, manifest, true)
-                pinToGateway(contentHash)
                 console.log({res})
                 openSnackBar('success', addProjectSucessMsg(res))
                 setTimeout(() => {
@@ -265,7 +261,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
               })
               .catch(e => openSnackBar('error', e))
           })
-        console.log({manifest, values, uploads, contentHash})
+        console.log({manifest, values})
 
       }}
     >
@@ -276,9 +272,6 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
         handleChange,
         handleBlur,
         handleSubmit,
-        setFieldValue,
-        setStatus,
-        status,
         isSubmitting
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
@@ -339,49 +332,22 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
               <Typography className={classnames(classes.fullWidth, classes.usdText)}>
                 {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
               </Typography>
-              <StatusTextField
-                className={classnames(fullWidth, classes.amount)}
-                inputClass={classes.amountInput}
-                isRequired={true}
-                idFor="amount"
-                name="amount"
-                placeholder="Enter amount"
-                bottomRightLabel={usdValue}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.amount || ''}
-              />
+              <div className={classnames(fullWidth, classes.amount)}>
+                <StatusTextField
+                  className={classes.amountLayout}
+                  inputClass={classes.amountInput}
+                  isRequired={true}
+                  idFor="amount"
+                  name="amount"
+                  placeholder="Enter amount"
+                  bottomRightLabel={usdValue}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.amount || ''}
+                />
+                <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
+              </div>
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Fund'}</Button>
-              <CurrencySelect
-                className={fullWidth}
-                InputProps={{
-                  classes: {
-                    input: classes.textInput
-                  }
-                }}
-                id="goalToken"
-                label="Token"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.goalToken}
-              />
-              <input
-                type="file"
-                multiple
-                onChange={
-                  (e) => {
-                    const file = e.target.files
-                    const {activeField} = status
-                    setFieldValue(activeField, file[0]['name'])
-                    setUploads({...uploads, [activeField]: file})
-                    setStatus({
-                      ...status,
-                      activeField: null
-                    })
-                  }
-                }
-                style={{display: 'none'}}
-              />
             </div>}
           </form>
         )
