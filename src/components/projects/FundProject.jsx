@@ -12,7 +12,6 @@ import { uploadFilesToIpfs, pinToGateway, formatMedia, isWeb } from '../../utils
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
-import StatusTextField from '../base/TextField'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
@@ -82,9 +81,11 @@ const styles = theme => ({
     gridColumnStart: '6'
   },
   formButton: {
-    gridColumnStart: '6',
+    gridColumnStart: '1',
     gridColumnEnd: '13',
-    height: '50px'
+    height: '50px',
+    marginTop: '1.5rem',
+    borderRadius: '8px'
   },
   textField: {
     gridColumnStart: '1',
@@ -119,8 +120,7 @@ const styles = theme => ({
   secondHalf: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
-    gridTemplateRows: '7rem',
-    gridRowGap: '2rem',
+    gridTemplateRows: '9rem',
     gridColumnStart: '8',
     gridColumnEnd: '13',
     height: 'fit-content'
@@ -142,6 +142,10 @@ const styles = theme => ({
   },
   breadCrumb: {
     color: '#939BA1'
+  },
+  usdText: {
+    color: '#939BA1',
+    fontSize: '12px'
   },
   icon: {
     background: '#ECEFFC'
@@ -270,8 +274,6 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
         isSubmitting
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
-        const { goalToken, goal } = values
-        const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
         //start project view
 
         return (
@@ -317,12 +319,18 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
                 text={commitTime}
               />
             </div>}
-            <div className={secondHalf}>
+            {manifest && <div className={secondHalf}>
               <div className={classes.edit}>Edit</div>
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
                 {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`} pledged
               </Typography>
-              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Project'}</Button>
+              <Typography className={classes.fullWidth}>
+                {`0% of ${Number(manifest.goal).toLocaleString()} goal`}
+              </Typography>
+              <Typography className={classnames(classes.fullWidth, classes.usdText)}>
+                {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
+              </Typography>
+              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Fund'}</Button>
               <CurrencySelect
                 className={fullWidth}
                 InputProps={{
@@ -335,18 +343,6 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.goalToken}
-              />
-              <StatusTextField
-                className={fullWidth}
-                isRequired={true}
-                idFor="goal"
-                name="goal"
-                label="Enter your funding goal"
-                placeholder="Enter your funding goal"
-                bottomLeftLabel={usdValue}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.goal || ''}
               />
               <input
                 type="file"
@@ -365,7 +361,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
                 }
                 style={{display: 'none'}}
               />
-            </div>
+            </div>}
           </form>
         )
       }
