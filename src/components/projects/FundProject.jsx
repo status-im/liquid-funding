@@ -20,6 +20,7 @@ import { useProjectData } from './hooks'
 import { getNumberOfBackers, getMediaType, getMediaSrc } from '../../utils/project'
 import { getDateCreated, convertToHours } from '../../utils/dates'
 import MediaView from '../base/MediaView'
+import StatusTextField from '../base/TextField'
 
 const { addProject } = LiquidPledging.methods
 
@@ -32,6 +33,12 @@ const styles = theme => ({
   adornmentText: {
     cursor: 'pointer',
     color: '#4360DF'
+  },
+  amount: {
+    marginTop: '3rem'
+  },
+  amountInput: {
+    textAlign: 'right'
   },
   root: {
     display: 'grid',
@@ -223,7 +230,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
   return (
     <Formik
       initialValues={{
-        title: '',
+        amount: '0',
         subtitle: '',
         creator: '',
         repo: '',
@@ -275,6 +282,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
         isSubmitting
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
+        const usdValue = manifest ? convertTokenAmountUsd(manifest.goalToken, values.amount, prices) : 0
         //start project view
 
         return (
@@ -331,6 +339,18 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
               <Typography className={classnames(classes.fullWidth, classes.usdText)}>
                 {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
               </Typography>
+              <StatusTextField
+                className={classnames(fullWidth, classes.amount)}
+                inputClass={classes.amountInput}
+                isRequired={true}
+                idFor="amount"
+                name="amount"
+                placeholder="Enter amount"
+                bottomRightLabel={usdValue}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.amount || ''}
+              />
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Fund'}</Button>
               <CurrencySelect
                 className={fullWidth}

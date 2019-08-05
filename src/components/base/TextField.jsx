@@ -87,6 +87,7 @@ function Input({
   isRequired,
   endAdornment,
   InputProps,
+  inputClass,
   label,
   bottomRightLabel,
   bottomLeftLabel,
@@ -105,7 +106,7 @@ function Input({
   const bottomRight = bottomRightLabel ? renderLabel(classnames(classes.formLabel, classes.bottomRight), idFor, bottomRightLabel) : null
   return (
     <FormControl
-      className={classnames(classes.margin, classes.container, className)}
+      className={classnames(classes.container, className)}
     >
       { labelForm }
       { topRightLabel }
@@ -118,7 +119,7 @@ function Input({
         onChange={onChange}
         classes={{
           root: multiline ? classes.multi : classes.root,
-          input: classes.input,
+          input: classnames(classes.input, inputClass),
         }}
         onBlur={onBlur}
         value={value}
