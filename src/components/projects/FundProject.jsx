@@ -212,6 +212,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
+  const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, isVideo, mediaUrl})
 
   return (
@@ -318,6 +319,9 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
             </div>}
             <div className={secondHalf}>
               <div className={classes.edit}>Edit</div>
+              <Typography className={classes.projectTitle} component="h2" gutterBottom>
+                {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`} pledged
+              </Typography>
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Project'}</Button>
               <CurrencySelect
                 className={fullWidth}
