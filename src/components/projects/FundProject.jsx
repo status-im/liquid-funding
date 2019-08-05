@@ -217,6 +217,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
   const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
+  const percentToGoal = manifest ? (Number(totalPledged) / Number(manifest.goal)) * 100 : 0
   console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, isVideo, mediaUrl})
 
   return (
@@ -325,7 +326,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
                 {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`} pledged
               </Typography>
               <Typography className={classes.fullWidth}>
-                {`0% of ${Number(manifest.goal).toLocaleString()} goal`}
+                {`${percentToGoal}% of ${Number(manifest.goal).toLocaleString()} goal`}
               </Typography>
               <Typography className={classnames(classes.fullWidth, classes.usdText)}>
                 {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
