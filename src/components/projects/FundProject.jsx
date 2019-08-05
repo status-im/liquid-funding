@@ -73,6 +73,11 @@ const styles = theme => ({
     gridColumnEnd: '13',
     gridRowGap: '2ch',
   },
+  edit: {
+    gridColumnStart: 12,
+    color: '#4360DF',
+    fontSize: '15px'
+  },
   formControl: {
     gridColumnStart: '6'
   },
@@ -312,6 +317,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
               />
             </div>}
             <div className={secondHalf}>
+              <div className={classes.edit}>Edit</div>
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Project'}</Button>
               <CurrencySelect
                 className={fullWidth}
