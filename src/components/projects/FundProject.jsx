@@ -126,7 +126,7 @@ const styles = theme => ({
   },
   chatText: {
     marginTop: '15px',
-    color: '#939BA1'
+    color: '#4360DF'
   },
   secondHalf: {
     display: 'grid',
@@ -267,11 +267,15 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
               />
               <div className={classes.chatRoom}>
                 <Icon name="oneOnOneChat" />
-                <div className={classes.chatText}>{`Join ${manifest.chatRoom}`}</div>
+                <a href={`https://get.status.im/chat/public/${manifest.chatRoom}`}>
+                  <div className={classes.chatText}>{`Join ${manifest.chatRoom}`}</div>
+                </a>
               </div>
               <div className={classes.chatRoom}>
                 <Icon name="boxArrow" />
-                <div className={classes.chatText}>{manifest.code}</div>
+                <a href={manifest.code}>
+                  <div className={classes.chatText}>{manifest.code}</div>
+                </a>
               </div>
               <MediaView className={classes.fullWidth} isVideo={isVideo} source={mediaUrl} />
               <TextDisplay
