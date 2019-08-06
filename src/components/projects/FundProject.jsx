@@ -193,7 +193,8 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
   const createdDate = getDateCreated(projectAge)
   const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   const percentToGoal = manifest ? (Number(totalPledged) / Number(manifest.goal)) * 100 : 0
-  console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, isVideo, mediaUrl})
+  const isCreator = projectData.creator === account
+  console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, isVideo, mediaUrl, projectData, account})
 
   return (
     <Formik
@@ -284,7 +285,7 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
               />
             </div>}
             {manifest && <div className={secondHalf}>
-              <div className={classes.edit}>Edit</div>
+              <div className={classes.edit}>{isCreator ? 'Edit' : ''}</div>
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
                 {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`} pledged
               </Typography>
