@@ -21,6 +21,14 @@ async function getProjectAge(id, events, setState){
   }
 }
 
+async function getProjectCreator(id, events, setState){
+  const event = events.find(e => e.returnValues.idProject === id)
+  if (event) {
+    const { address } = event
+    setState(address)
+  }
+}
+
 async function getProjectAssets(projectId, setState, debug=false){
   EmbarkJS.onReady(async (_err) => {
     const projectInfo = await LiquidPledging.methods.getPledgeAdmin(projectId).call()
@@ -102,6 +110,7 @@ const getProjectManifest = assets => {
 
 export function useProjectData(projectId, projectAddedEvents) {
   const [projectAge, setAge] = useState(null)
+  const [creator, setCreator] = useState(null)
   const [projectAssets, setAssets] = useState(null)
   const [ipfsReady, setIpfsState] = useState(null)
   const [delegateProfiles, setDelegateProfiles] = useState(null)
@@ -120,6 +129,10 @@ export function useProjectData(projectId, projectAddedEvents) {
   }, [projectAddedEvents, projectId])
 
   useEffect(() => {
+    getProjectCreator(projectId, projectAddedEvents, setCreator)
+  }, [projectAddedEvents, projectId])
+
+  useEffect(() => {
     getProjectAssets(projectId, setAssets)
   }, [projectId, ipfsReady])
 
@@ -127,6 +140,7 @@ export function useProjectData(projectId, projectAddedEvents) {
 
   return {
     account,
+    creator,
     projectAge,
     projectAssets,
     manifest,
