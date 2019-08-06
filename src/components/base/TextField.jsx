@@ -112,7 +112,7 @@ function Input({
       { topRightLabel }
       <InputBase
         id={idFor}
-        InputProps={InputProps}
+        inputProps={InputProps}
         endAdornment={endAdornment}
         placeholder={placeholder}
         name={name}

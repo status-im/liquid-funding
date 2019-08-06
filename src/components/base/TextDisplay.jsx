@@ -55,8 +55,8 @@ TextDisplay.propTypes = {
   classes: PropTypes.object.isRequired,
   name: PropTypes.string,
   text: PropTypes.string,
-  rootClass: PropTypes.object,
-  textClass: PropTypes.object,
+  rootClass: PropTypes.string,
+  textClass: PropTypes.string,
   isMarkdown: PropTypes.bool
 }
 

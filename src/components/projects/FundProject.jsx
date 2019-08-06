@@ -8,9 +8,7 @@ import { withStyles } from '@material-ui/core/styles'
 import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
-import { formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
-import {ZERO_ADDRESS} from '../../utils/address'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
@@ -18,15 +16,11 @@ import { getAmountsPledged } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getNumberOfBackers, getMediaType, getMediaSrc } from '../../utils/project'
 import { getDateCreated, convertToHours } from '../../utils/dates'
-import { getTokenLabel } from '../../utils/currencies'
+import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
 
-const { addProject } = LiquidPledging.methods
-
-
-const hoursToSeconds = hours => hours * 60 * 60
-const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
+const { addGiverAndDonate } = LiquidPledging.methods
 
 
 const styles = theme => ({
@@ -181,41 +175,6 @@ const styles = theme => ({
 })
 
 
-const createJSON = values => {
-  const {
-    title,
-    subtitle,
-    creator,
-    repo,
-    avatar,
-    goal,
-    goalToken,
-    video,
-    isPlaying,
-    description
-  } = values
-
-  const manifest = {
-    title,
-    subtitle,
-    creator,
-    repo,
-    avatar: formatMedia(avatar),
-    goal,
-    goalToken,
-    description,
-    chatRoom: generateChatRoom(title),
-    media: {
-      isPlaying,
-      type: 'video'
-    }
-  }
-
-  if (isWeb(video)) Object.assign(manifest.media, { url: formatMedia(video) })
-  else Object.assign(manifest.media, { file: formatMedia(video) })
-  return JSON.stringify(manifest, null, 2)
-}
-
 const getProjectId = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return idProject
@@ -224,7 +183,7 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes, history, projectData, projectId, pledges, commitTime }) => {
+const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTime }) => {
   const { account, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
@@ -242,27 +201,30 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
         amount: '',
       }}
       onSubmit={async (values, { resetForm }) => {
-        const { title, commitTime } = values
-        const manifest = createJSON(values)
-        const args = [title, 0, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
-        addProject(...args)
-          .estimateGas({ from: account })
-          .then(async gas => {
-            addProject(...args)
-              .send({ from: account, gas: gas + 100 })
-              .then(res => {
-                // upload to gateway
-                console.log({res})
-                openSnackBar('success', addProjectSucessMsg(res))
-                setTimeout(() => {
-                  history.push(`/project/${getProjectId(res)}`)
-                  resetForm()
-                }, 5000)
-              })
-              .catch(e => openSnackBar('error', e))
-          })
-        console.log({manifest, values})
+        const { amount } = values
+        const { goalToken } = manifest
+        const { chainReadibleFn } = getTokenByAddress(goalToken)
+        const args = [projectId, account, goalToken, chainReadibleFn(amount)]
+        const toSend = addGiverAndDonate(...args)
+        const estimatedGas = await toSend.estimateGas()
+        console.log({estimatedGas})
 
+        toSend
+          .send({gas: estimatedGas + 100})
+          .then(async res => {
+            console.log({res})
+            openSnackBar('success', 'Successfully funded project')
+          })
+          .catch(e => {
+            openSnackBar('error', 'An error has occured with the transaction')
+            console.log({e})
+          })
+          .finally(() => {
+            openSnackBar('success', 'project backed!')
+            resetForm()
+          })
+
+        console.log({amount, resetForm, getProjectId, addProjectSucessMsg, account, openSnackBar})
       }}
     >
       {({
@@ -318,7 +280,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId, pledges, 
               />
               <TextDisplay
                 name="Commit time (hours)"
-                text={commitTime}
+                text={commitTime.toString()}
               />
             </div>}
             {manifest && <div className={secondHalf}>
