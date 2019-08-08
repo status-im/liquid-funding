@@ -4,7 +4,7 @@ import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import { useState, useEffect, useMemo, useContext } from 'react'
 import { unnest } from 'ramda'
 import { timeSinceBlock } from '../../utils/dates'
-import { getFiles, ipfs } from '../../utils/ipfs'
+import { getFiles, getFilesWeb, ipfs } from '../../utils/ipfs'
 import { databaseExists } from '../../utils/db'
 import { arrayToObject } from '../../utils/array'
 import { FundingContext } from '../../context'
@@ -45,7 +45,7 @@ async function getProjectAssets(projectId, setState, debug=false){
         databaseExists('ipfs')
           .catch(() => window.location.reload())
 
-        getFiles(CID)
+        getFilesWeb(CID)
           .then((files) => {
             setState(files)
             const manifest = files[2]
