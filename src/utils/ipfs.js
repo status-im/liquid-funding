@@ -129,6 +129,16 @@ export const getFiles = CID => {
   })
 }
 
+export const getFilesWeb = CID => {
+  const clean = CID.split('/').slice(-1)[0]
+  return new Promise(function(resolve, reject) {
+    ipfsHttp.get(clean, (err, files) => {
+      if (err) reject(err)
+      else resolve(files)
+    })
+  })
+}
+
 export const isWeb = str => str.includes('http')
 export const formatMedia = str => {
   return isWeb(str) ? str : `/root/${str}`
