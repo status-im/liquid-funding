@@ -22,10 +22,16 @@ export const getMediaType = assets => {
   if (media.type.toLowerCase().includes('video')) return true
 }
 
+export function setMediaType(url) {
+  if (url.match(/\.(jpeg|jpg|gif|png)$/) !== null) return 'image'
+  return 'video'
+}
+
 export const getMediaSrc = assets => {
   if (!assets) return null
   const { media } = getProjectManifest(assets)
-  if (media.type.includes('video')) {
+  const validMedia = media.type.includes('video') || media.type.includes('image')
+  if (validMedia) {
     if (media.url) return media.url
     if (media.file && media.file !== '/root/') {
       return formatMedia(

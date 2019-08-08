@@ -212,7 +212,6 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
         const args = [projectId, account, goalToken, chainReadibleFn(amount)]
         const toSend = addGiverAndDonate(...args)
         const estimatedGas = await toSend.estimateGas()
-        console.log({estimatedGas})
 
         toSend
           .send({gas: estimatedGas + 100})
@@ -243,7 +242,6 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
         const usdValue = manifest ? convertTokenAmountUsd(manifest.goalToken, values.amount, prices) : 0
-        //start project view
 
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
