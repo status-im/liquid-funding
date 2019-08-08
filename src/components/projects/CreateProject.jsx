@@ -99,7 +99,7 @@ const styles = theme => ({
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
     gridTemplateRows: '7rem',
     gridRowGap: '2rem',
-    gridColumnStart: '8',
+    gridColumnStart: '10',
     gridColumnEnd: '13',
     height: 'fit-content'
   },
@@ -363,7 +363,9 @@ const SubmissionSection = ({ classes, history }) => {
                  >
                    Hide preview
                  </div>
-                 <ReactMarkdown source={values.description} />
+                 <div>
+                   <ReactMarkdown source={values.description} />
+                 </div>
                </div>}
               {(!status || !status.showPreview) && <StatusTextField
                 className={fullWidth}
