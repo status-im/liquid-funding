@@ -14,7 +14,7 @@ import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
 import { getAmountsPledged } from '../../utils/pledges'
 import { useProjectData } from './hooks'
-import { getNumberOfBackers, getMediaType, getMediaSrc } from '../../utils/project'
+import { getMediaType, getMediaSrc } from '../../utils/project'
 import { getDateCreated, convertToHours } from '../../utils/dates'
 import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
@@ -112,11 +112,17 @@ const styles = theme => ({
   },
   chatRoom: {
     display: 'grid',
+    gridTemplateColumns: 'repeat(12, [col] 1fr)',
     gridColumnStart: 1,
     gridColumnEnd: 13,
     justifyItems: 'start',
     gridAutoFlow: 'column',
     paddingLeft: '5px'
+  },
+  chatLink: {
+    gridColumnStart: 3,
+    gridColumnEnd: 13,
+    textDecoration: 'none'
   },
   halfText: {
     gridColumnStart: 4
@@ -187,14 +193,12 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
   const { account, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
   const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
-  const numberOfBackers = useMemo(() => getNumberOfBackers(pledges), [pledges, projectId])
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
   const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   const percentToGoal = manifest ? (Number(totalPledged) / Number(manifest.goal)) * 100 : 0
   const isCreator = projectData.creator === account
-  console.log({createdDate, projectAge, projectAssets, manifest, amountsPledged, numberOfBackers, isVideo, mediaUrl, projectData, account})
 
   return (
     <Formik
@@ -245,7 +249,7 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {manifest && <div className={firstHalf}>
               <div className={classnames(classes.breadCrumb, fullWidth)}>
-                {'All projects > title here'}
+                {`All projects > ${manifest.title}`}
               </div>
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
                 {manifest && manifest.title}
@@ -267,13 +271,13 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
               />
               <div className={classes.chatRoom}>
                 <Icon name="oneOnOneChat" />
-                <a href={`https://get.status.im/chat/public/${manifest.chatRoom}`}>
+                <a className={classes.chatLink} href={`https://get.status.im/chat/public/${manifest.chatRoom.replace('#', '')}`}>
                   <div className={classes.chatText}>{`Join ${manifest.chatRoom}`}</div>
                 </a>
               </div>
               <div className={classes.chatRoom}>
                 <Icon name="boxArrow" />
-                <a href={manifest.code}>
+                <a className={classes.chatLink} href={manifest.code}>
                   <div className={classes.chatText}>{manifest.code}</div>
                 </a>
               </div>
@@ -354,6 +358,9 @@ export default withDatabase(withObservables(['match'], ({ database, match }) => 
     Q.where('event', 'ProjectAdded')
   ).observe(),
   pledges: database.collections.get('pledges').query(
-    Q.where('intended_project', match.params.id)
+    Q.or(
+      Q.where('intended_project', match.params.id),
+      Q.where('owner_id', match.params.id)
+    )
   ).observe()
 }))(StyledProject))
