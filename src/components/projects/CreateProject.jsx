@@ -16,6 +16,7 @@ import StatusTextField from '../base/TextField'
 import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
+import { setMediaType } from '../../utils/project'
 
 const { addProject } = LiquidPledging.methods
 
@@ -139,7 +140,7 @@ const createJSON = values => {
     avatar,
     goal,
     goalToken,
-    video,
+    media,
     isPlaying,
     description
   } = values
@@ -156,12 +157,12 @@ const createJSON = values => {
     chatRoom: generateChatRoom(title),
     media: {
       isPlaying,
-      type: 'video'
+      type: setMediaType(media)
     }
   }
 
-  if (isWeb(video)) Object.assign(manifest.media, { url: formatMedia(video) })
-  else Object.assign(manifest.media, { file: formatMedia(video) })
+  if (isWeb(media)) Object.assign(manifest.media, { url: formatMedia(media) })
+  else Object.assign(manifest.media, { file: formatMedia(media) })
   return JSON.stringify(manifest, null, 2)
 }
 
@@ -185,7 +186,7 @@ const SubmissionSection = ({ classes, history }) => {
         creator: '',
         repo: '',
         avatar: '',
-        video: '',
+        media: '',
         goal: '',
         goalToken: '',
         isPlaying: false,
@@ -320,7 +321,7 @@ const SubmissionSection = ({ classes, history }) => {
                     <span
                       className={classes.adornmentText}
                       onClick={() => {
-                        const activeField = 'video'
+                        const activeField = 'media'
                         setStatus({ ...status, activeField })
                         uploadInput.click()
                       }
@@ -330,12 +331,12 @@ const SubmissionSection = ({ classes, history }) => {
                   </InputAdornment>
                 )}
                 className={fullWidth}
-                idFor="video"
-                name="video"
-                placeholder="Upload video or enter url"
+                idFor="media"
+                name="media"
+                placeholder="Upload media or enter url"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.video || ''}
+                value={values.media || ''}
               />
               <FormControlLabel
                 className={classes.formControl}
@@ -347,7 +348,7 @@ const SubmissionSection = ({ classes, history }) => {
                     value={values.isPlaying}
                   />
                 }
-                label="Autoplay video?"
+                label="Autoplay media?"
               />
               {status && status.showPreview &&
                <div className={classnames(classes.markdown, fullWidth)}>
@@ -406,7 +407,7 @@ const SubmissionSection = ({ classes, history }) => {
               />
             </div>
             <div className={secondHalf}>
-              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Create Project'}</Button>
+              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Publish'}</Button>
               <CurrencySelect
                 className={fullWidth}
                 InputProps={{
