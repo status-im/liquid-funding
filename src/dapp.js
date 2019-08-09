@@ -4,7 +4,7 @@ import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from './embarkArtifacts/embarkjs'
 import LiquidPledging from './embarkArtifacts/contracts/LiquidPledging'
 import Snackbar from '@material-ui/core/Snackbar'
-import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval, getLpAllowance } from './utils/initialize'
+import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval } from './utils/initialize'
 import { getAuthorizedPayments } from './utils/events'
 import { FundingContext } from './context'
 import MainCointainer from './components/MainCointainer'
@@ -40,7 +40,6 @@ class App extends React.Component {
           const account = await web3.eth.getCoinbase()
           this.getAndSetPrices()
           this.setState({ account })
-          const lpAllowance = await getLpAllowance()
           //TODO add block based sync
           const authorizedPayments = await getAuthorizedPayments()
           this.syncWithRemote()
@@ -48,7 +47,6 @@ class App extends React.Component {
             account,
             network,
             environment,
-            lpAllowance,
             authorizedPayments,
             needsInit: false
           })

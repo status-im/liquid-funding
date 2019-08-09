@@ -181,7 +181,6 @@ module.exports = {
     },
     dappConnection: ["$WEB3"]
   },
-  
 
   rinkeby: rinkebyBase,
   rinkebyInfura: Object.assign({}, rinkebyBase, {
