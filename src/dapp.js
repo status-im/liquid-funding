@@ -15,6 +15,7 @@ import { updateStalePledges, getAndAddPledges } from './actions/pledges'
 import { updateDelegates } from './actions/delegates'
 import { MySnackbarContentWrapper } from './components/base/SnackBars'
 import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
+import { uris } from './remote/graph'
 
 const { getNetworkType } = web3.eth.net
 
@@ -37,6 +38,7 @@ class App extends React.Component {
         if (isInitialized) {
           if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
 
+          const graphUri = uris[network]
           const account = await web3.eth.getCoinbase()
           this.getAndSetPrices()
           this.setState({ account })
@@ -46,6 +48,7 @@ class App extends React.Component {
           this.setState({
             account,
             network,
+            graphUri,
             environment,
             authorizedPayments,
             needsInit: false
@@ -95,13 +98,14 @@ class App extends React.Component {
   }
 
   render() {
-    const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices } = this.state
+    const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices, graphUri } = this.state
     const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote, updateUsdPrice } = this
     const fundingContext = {
       appendPledges,
       appendFundProfile,
       account,
       transferPledgeAmounts,
+      graphUri,
       authorizedPayments,
       needsInit,
       initVaultAndLP,
