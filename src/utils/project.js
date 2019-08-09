@@ -14,7 +14,7 @@ const isManifest = asset => {
   const name = getName(asset)
   return name.toLowerCase() === 'manifest.json'
 }
-const getProjectManifest = assets => {
+export const getProjectManifest = assets => {
   return assets ? JSON.parse(assets.find(isManifest).content) : null
 }
 

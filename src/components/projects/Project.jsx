@@ -21,6 +21,7 @@ import { timeSinceBlock } from '../../utils/dates'
 import { getAmountsPledged } from '../../utils/pledges'
 import { getFiles } from '../../utils/ipfs'
 import { getImageType } from '../../utils/images'
+import { getProjectManifest } from '../../utils/project'
 import { useProjectData } from './hooks'
 
 const ROOT_PATH = '/root/'
@@ -140,10 +141,6 @@ async function _getProjectAssets(hash, setState){
       console.log({files}, JSON.parse(manifest.content))
     })
     .catch(console.log)
-}
-
-const getProjectManifest = assets => {
-  return assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
 }
 
 const formatMedia = content => {
