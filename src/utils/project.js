@@ -8,8 +8,14 @@ const formatMedia = content => {
   return src
 }
 
+
+const getName = asset => asset.path.split('/').slice(-1)[0]
+const isManifest = asset => {
+  const name = getName(asset)
+  return name.toLowerCase() === 'manifest.json'
+}
 const getProjectManifest = assets => {
-  return assets ? JSON.parse(assets.find(a => a.name.toLowerCase() === 'manifest.json').content) : null
+  return assets ? JSON.parse(assets.find(isManifest).content) : null
 }
 
 export function getNumberOfBackers(pledges){
@@ -35,7 +41,7 @@ export const getMediaSrc = assets => {
     if (media.url) return media.url
     if (media.file && media.file !== '/root/') {
       return formatMedia(
-        assets.find(a => a.name === getFile(media.file)).content
+        assets.find(a => getName(a) === getFile(media.file)).content
       )
     }
   }
