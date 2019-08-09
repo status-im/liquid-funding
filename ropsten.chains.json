@@ -12,6 +12,10 @@
       "0x106543bd4016aaa1c014e64ec41526991b2419349aca5672ce23308937475494": {
         "name": "LPVault",
         "address": "0x8B860ed047f832294AE249042F17bC0E4C629274"
+      },
+      "0xa9bac214a330fe3f2048f91b805d227afa147021ef497936a65911400cc3bdd5": {
+        "name": "SNT",
+        "address": "0x8aA3672a99C489E5Dc5dfDb40e607bE49970cbF7"
       }
     }
   }
