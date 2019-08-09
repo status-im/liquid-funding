@@ -4,6 +4,8 @@ import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from './embarkArtifacts/embarkjs'
 import LiquidPledging from './embarkArtifacts/contracts/LiquidPledging'
 import Snackbar from '@material-ui/core/Snackbar'
+import { ApolloProvider } from '@apollo/react-hooks'
+import ApolloClient, { gql } from 'apollo-boost'
 import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval } from './utils/initialize'
 import { getAuthorizedPayments } from './utils/events'
 import { FundingContext } from './context'
@@ -39,6 +41,9 @@ class App extends React.Component {
           if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
 
           const graphUri = uris[network]
+          this.client = new ApolloClient({
+            uri: graphUri,
+          })
           const account = await web3.eth.getCoinbase()
           this.getAndSetPrices()
           this.setState({ account })
@@ -98,14 +103,13 @@ class App extends React.Component {
   }
 
   render() {
-    const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices, graphUri } = this.state
-    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote, updateUsdPrice } = this
+    const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices } = this.state
+    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote, updateUsdPrice, client } = this
     const fundingContext = {
       appendPledges,
       appendFundProfile,
       account,
       transferPledgeAmounts,
-      graphUri,
       authorizedPayments,
       needsInit,
       initVaultAndLP,
@@ -116,27 +120,31 @@ class App extends React.Component {
       prices,
       updateUsdPrice
     }
-    return (
-      <FundingContext.Provider value={fundingContext}>
-        <Router>
-          <MainCointainer loading={loading} />
-        </Router>
-        {snackbar && <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          open={snackbar}
-          autoHideDuration={6000}
-          onClose={closeSnackBar}
-        >
-          <MySnackbarContentWrapper
-            variant={snackbar && snackbar.variant}
-            message={snackbar && snackbar.message}
-          />
-        </Snackbar>}
-      </FundingContext.Provider>
+
+    if (client) return (
+      <ApolloProvider client={client}>
+        <FundingContext.Provider value={fundingContext}>
+          <Router>
+            <MainCointainer loading={loading} />
+          </Router>
+          {snackbar && <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            open={snackbar}
+            autoHideDuration={6000}
+            onClose={closeSnackBar}
+          >
+            <MySnackbarContentWrapper
+              variant={snackbar && snackbar.variant}
+              message={snackbar && snackbar.message}
+            />
+          </Snackbar>}
+        </FundingContext.Provider>
+      </ApolloProvider>
     )
+    return <div>Loading</div>
   }
 }
 
