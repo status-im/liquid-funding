@@ -12,7 +12,7 @@ function MediaView({ className, isVideo, source, playing, imgClass }) {
        <ReactPlayer width="100%" height="100%" url={source} playing={playing} controls/>}
       {!isVideo && <CardMedia
         component="img"
-        alt="video"
+        alt="image"
         className={imgClass}
         src={source}
         title="media-description"
