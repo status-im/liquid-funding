@@ -127,6 +127,10 @@ const styles = theme => ({
   halfText: {
     gridColumnStart: 4
   },
+  imgClass: {
+    maxHeight: '40vh',
+    maxWidth: '30vw'
+  },
   chatRoomIcon: {
     justifySelf: 'auto'
   },
@@ -279,7 +283,7 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
                   <div className={classes.chatText}>{manifest.code}</div>
                 </a>
               </div>
-              <MediaView className={classes.fullWidth} isVideo={isVideo} source={mediaUrl} />
+              <MediaView className={classes.fullWidth} isVideo={isVideo} source={mediaUrl} imgClass={classes.imgClass} />
               <TextDisplay
                 name="Full description"
                 text={manifest.description}
