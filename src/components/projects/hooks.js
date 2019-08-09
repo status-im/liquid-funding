@@ -34,7 +34,7 @@ async function getProjectAssets(projectId, setState, debug=false){
     const projectInfo = await LiquidPledging.methods.getPledgeAdmin(projectId).call()
     const CID = projectInfo.url.split('/').slice(-1)[0]
     if (debug) console.log({CID, projectInfo, ipfs})
-    getFiles(CID)
+    getFilesWeb(CID)
       .then((files) => {
         setState(files)
         const manifest = files[2]
@@ -45,7 +45,7 @@ async function getProjectAssets(projectId, setState, debug=false){
         databaseExists('ipfs')
           .catch(() => window.location.reload())
 
-        getFilesWeb(CID)
+        getFiles(CID)
           .then((files) => {
             setState(files)
             const manifest = files[2]
@@ -93,11 +93,15 @@ export function useProfileData(profiles) {
   return delegatePledges
 }
 
+const isManifest = asset => {
+  const name = asset.path.split('/').slice(-1)[0]
+  return name.toLowerCase() === 'manifest.json'
+}
 const getProjectManifest = assets => {
   if (!assets) {
     return null;
   }
-  const manifest = assets.find(a => a.name.toLowerCase() === 'manifest.json');
+  const manifest = assets.find(isManifest);
   if (!manifest) {
     return null;
   }
