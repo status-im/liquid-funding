@@ -173,7 +173,10 @@ module.exports = {
     contracts: {
       LPVault: {},
       LiquidPledging: {},
-      StandardToken: {}
+      StandardToken: {},
+      SNT: {
+        address: "0x8aA3672a99C489E5Dc5dfDb40e607bE49970cbF7"
+      }
     },
     afterDeploy: async (dependencies) => {
       await dependencies.contracts.LiquidPledging.methods.initialize(dependencies.contracts.LPVault.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
