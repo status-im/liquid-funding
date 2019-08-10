@@ -331,16 +331,19 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
   )
 }
 
-function FundProject({ classes, match, history, projectAddedEvents, pledges, profile }) {
+function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
   const projectId = match.params.id
-  const projectData = useProjectData(projectId, projectAddedEvents)
   const { loading, error, data } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
   });
+  const projectData = useProjectData(projectId, projectAddedEvents, data)
+
+  if (loading) return <div>Loading</div>
+  if (error) return <div>{JSON.stringify(error)}</div>
 
   console.log({loading,error,data})
 
-  const commitTime = convertToHours(profile[0].commitTime)
+  const commitTime = convertToHours(data.profile.commitTime)
   return (
     <div className={classes.root}>
       <SubmissionSection
@@ -357,9 +360,6 @@ function FundProject({ classes, match, history, projectAddedEvents, pledges, pro
 
 const StyledProject = withStyles(styles)(FundProject)
 export default withDatabase(withObservables(['match'], ({ database, match }) => ({
-  profile: database.collections.get('profiles').query(
-    Q.where('id_profile', match.params.id)
-  ).observe(),
   transfers: database.collections.get('lp_events').query(
     Q.where('event', 'Transfer')
   ).observe(),
