@@ -1,5 +1,9 @@
+/*global web3*/
 import { uniqBy, length } from 'ramda'
 
+const { utils } = web3
+
+export const formatProjectId = id => utils.toHex(id)
 const getFile = filePath => filePath.split('/').slice(-1)[0]
 const formatMedia = content => {
   const type = 'video/mp4'

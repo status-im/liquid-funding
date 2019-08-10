@@ -1,6 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import { Formik } from 'formik'
 import classnames from 'classnames'
+import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
@@ -14,11 +15,12 @@ import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
 import { getAmountsPledged } from '../../utils/pledges'
 import { useProjectData } from './hooks'
-import { getMediaType, getMediaSrc } from '../../utils/project'
+import { getMediaType, getMediaSrc, formatProjectId } from '../../utils/project'
 import { getDateCreated, convertToHours } from '../../utils/dates'
 import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
+import { getProfileById } from './queries'
 
 const { addGiverAndDonate } = LiquidPledging.methods
 
@@ -203,7 +205,6 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
   const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   const percentToGoal = manifest ? (Number(totalPledged) / Number(manifest.goal)) * 100 : 0
   const isCreator = projectData.creator === account
-
   return (
     <Formik
       initialValues={{
@@ -333,6 +334,12 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
 function FundProject({ classes, match, history, projectAddedEvents, pledges, profile }) {
   const projectId = match.params.id
   const projectData = useProjectData(projectId, projectAddedEvents)
+  const { loading, error, data } = useQuery(getProfileById, {
+    variables: { id: formatProjectId(projectId) }
+  });
+
+  console.log({loading,error,data})
+
   const commitTime = convertToHours(profile[0].commitTime)
   return (
     <div className={classes.root}>
