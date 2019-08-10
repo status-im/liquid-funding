@@ -22,6 +22,8 @@ import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
 import { getProfileById } from './queries'
 import styles from './styles/FundProject'
+import Loading from '../base/Loading'
+
 
 const { addGiverAndDonate } = LiquidPledging.methods
 
@@ -176,7 +178,7 @@ function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
   });
   const projectData = useProjectData(projectId, projectAddedEvents, data)
 
-  if (loading) return <div>Loading</div>
+  if (loading) return <Loading />
   if (error) return <div>{JSON.stringify(error)}</div>
   if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
 
