@@ -129,6 +129,10 @@ const styles = theme => ({
   markdownPreview: {
     gridColumnStart: 12
   },
+  noProject: {
+    textAlign: 'center',
+    fontSize: '5rem'
+  },
   textInput: {
     fontSize: '2rem'
   },

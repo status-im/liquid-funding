@@ -178,7 +178,7 @@ function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
 
   if (loading) return <div>Loading</div>
   if (error) return <div>{JSON.stringify(error)}</div>
-  // TODO handle project not found
+  if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
 
   console.log({loading,error,data})
 
