@@ -18,6 +18,7 @@ import { updateDelegates } from './actions/delegates'
 import { MySnackbarContentWrapper } from './components/base/SnackBars'
 import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
 import { uris } from './remote/graph'
+import Loading from './components/base/Loading'
 
 const { getNetworkType } = web3.eth.net
 
@@ -144,7 +145,7 @@ class App extends React.Component {
         </FundingContext.Provider>
       </ApolloProvider>
     )
-    return <div>Loading</div>
+    return <Loading />
   }
 }
 
