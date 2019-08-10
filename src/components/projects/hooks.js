@@ -1,6 +1,4 @@
 /*global web3*/
-import EmbarkJS from '../../embarkArtifacts/embarkjs'
-import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import { useState, useEffect, useMemo, useContext } from 'react'
 import { unnest } from 'ramda'
 import { timeSinceBlock } from '../../utils/dates'
@@ -29,33 +27,32 @@ async function getProjectCreator(id, events, setState){
   }
 }
 
-async function getProjectAssets(projectId, setState, debug=false){
-  EmbarkJS.onReady(async (_err) => {
-    const projectInfo = await LiquidPledging.methods.getPledgeAdmin(projectId).call()
-    const CID = projectInfo.url.split('/').slice(-1)[0]
-    if (debug) console.log({CID, projectInfo, ipfs})
-    getFilesWeb(CID)
-      .then((files) => {
-        setState(files)
-        const manifest = files[2]
-        if (debug) console.log({files}, JSON.parse(manifest.content))
-      })
-      .catch(async (err) => {
-        console.log('IPFS getFiles error: ', err)
-        databaseExists('ipfs')
-          .catch(() => window.location.reload())
+async function getProjectAssets(data, setState, debug=false){
+  if (!data.profile) return
+  const { profile: { url } } = data
+  const CID = url.split('/').slice(-1)[0]
+  if (debug) console.log({CID, data, ipfs})
+  getFilesWeb(CID)
+    .then((files) => {
+      setState(files)
+      const manifest = files[2]
+      if (debug) console.log({files}, JSON.parse(manifest.content))
+    })
+    .catch(async (err) => {
+      console.log('IPFS getFiles error: ', err)
+      databaseExists('ipfs')
+        .catch(() => window.location.reload())
 
-        getFiles(CID)
-          .then((files) => {
-            setState(files)
-            const manifest = files[2]
-            if (debug) console.log({files}, JSON.parse(manifest.content))
-          })
-          .catch((err) => {
-            console.log('IPFS FAILED ON READY', err)
-          })
-      })
-  })
+      getFiles(CID)
+        .then((files) => {
+          setState(files)
+          const manifest = files[2]
+          if (debug) console.log({files}, JSON.parse(manifest.content))
+        })
+        .catch((err) => {
+          console.log('IPFS FAILED ON READY', err)
+        })
+    })
 }
 
 async function getPledge(dPledge) {
@@ -112,7 +109,7 @@ const getProjectManifest = assets => {
   }
 }
 
-export function useProjectData(projectId, projectAddedEvents) {
+export function useProjectData(projectId, projectAddedEvents, data) {
   const [projectAge, setAge] = useState(null)
   const [creator, setCreator] = useState(null)
   const [projectAssets, setAssets] = useState(null)
@@ -137,8 +134,8 @@ export function useProjectData(projectId, projectAddedEvents) {
   }, [projectAddedEvents, projectId])
 
   useEffect(() => {
-    getProjectAssets(projectId, setAssets)
-  }, [projectId, ipfsReady])
+    getProjectAssets(data, setAssets)
+  }, [ipfsReady, data])
 
   const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets, projectId])
 
