@@ -13,7 +13,7 @@ import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
-import { getAmountsPledged } from '../../utils/pledges'
+import { getAmountFromPledgesInfo } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getMediaType, getMediaSrc, formatProjectId } from '../../utils/project'
 import { getDateCreated, convertToHours } from '../../utils/dates'
@@ -35,14 +35,16 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTime }) => {
+const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData }) => {
   const { account, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
-  const amountsPledged = useMemo(() => getAmountsPledged(pledges), [pledges, projectId])
+  const { pledgesInfos } = profileData
+  const pledgesInfo = pledgesInfos[0]
+  const tokenLabel = getTokenLabel(pledgesInfo.token)
+  const totalPledged = getAmountFromPledgesInfo(pledgesInfo)
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
-  const totalPledged = amountsPledged[0] ? amountsPledged[0][1] : 0
   const percentToGoal = manifest ? (Number(totalPledged) / Number(manifest.goal)) * 100 : 0
   const isCreator = projectData.creator === account
   return (
@@ -138,7 +140,7 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
             {manifest && <div className={secondHalf}>
               <div className={classes.edit}>{isCreator ? 'Edit' : ''}</div>
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
-                {`${totalPledged.toLocaleString()} ${amountsPledged[0] ? amountsPledged[0][0] : ''}`} pledged
+                {`${totalPledged.toLocaleString()} ${tokenLabel}`} pledged
               </Typography>
               <Typography className={classes.fullWidth}>
                 {`${percentToGoal}% of ${Number(manifest.goal).toLocaleString()} goal`}
@@ -171,7 +173,7 @@ const SubmissionSection = ({ classes, projectData, projectId, pledges, commitTim
   )
 }
 
-function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
+function FundProject({ classes, match, history, projectAddedEvents }) {
   const projectId = match.params.id
   const { loading, error, data } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
@@ -179,7 +181,7 @@ function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
   const projectData = useProjectData(projectId, projectAddedEvents, data)
 
   if (loading) return <Loading />
-  if (error) return <div>{JSON.stringify(error)}</div>
+  if (error) return <div>{`Error! ${error.message}`}</div>
   if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
 
   console.log({loading,error,data})
@@ -192,7 +194,7 @@ function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
         history={history}
         projectData={projectData}
         projectId={projectId}
-        pledges={pledges}
+        profileData={data.profile}
         commitTime={commitTime}
       />
     </div>
@@ -200,17 +202,11 @@ function FundProject({ classes, match, history, projectAddedEvents, pledges }) {
 }
 
 const StyledProject = withStyles(styles)(FundProject)
-export default withDatabase(withObservables(['match'], ({ database, match }) => ({
+export default withDatabase(withObservables(['match'], ({ database }) => ({
   transfers: database.collections.get('lp_events').query(
     Q.where('event', 'Transfer')
   ).observe(),
   projectAddedEvents: database.collections.get('lp_events').query(
     Q.where('event', 'ProjectAdded')
-  ).observe(),
-  pledges: database.collections.get('pledges').query(
-    Q.or(
-      Q.where('intended_project', match.params.id),
-      Q.where('owner_id', match.params.id)
-    )
   ).observe()
 }))(StyledProject))

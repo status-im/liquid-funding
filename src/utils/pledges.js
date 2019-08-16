@@ -93,3 +93,10 @@ export function getAmountsPledged(pledges){
     .entries(amounts)
     .map(entry => ([getTokenLabel(entry[0]), entry[1]]))
 }
+
+export function getAmountFromPledgesInfo(info){
+  if (!info) return 0
+  const { token, lifetimeReceived } = info
+  const { humanReadibleFn } = getTokenByAddress(token)
+  return humanReadibleFn(lifetimeReceived)
+}

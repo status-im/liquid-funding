@@ -10,6 +10,12 @@ query Profile($id: ID!){
     profileId,
     type,
     name
+    pledgesInfos {
+      id
+      token
+      lifetimeReceived
+      balance
+    }
   }
 }
 `
