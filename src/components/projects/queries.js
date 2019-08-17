@@ -9,7 +9,8 @@ query Profile($id: ID!){
     url,
     profileId,
     type,
-    name
+    name,
+    creationTime,
     pledgesInfos {
       id
       token

@@ -6,9 +6,6 @@ import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
-import withObservables from '@nozbe/with-observables'
-import { Q } from '@nozbe/watermelondb'
-import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
@@ -173,18 +170,16 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
   )
 }
 
-function FundProject({ classes, match, history, projectAddedEvents }) {
+function FundProject({ classes, match, history }) {
   const projectId = match.params.id
   const { loading, error, data } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
   });
-  const projectData = useProjectData(projectId, projectAddedEvents, data)
+  const projectData = useProjectData(projectId, data)
 
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
-
-  console.log({loading,error,data})
 
   const commitTime = convertToHours(data.profile.commitTime)
   return (
@@ -201,12 +196,4 @@ function FundProject({ classes, match, history, projectAddedEvents }) {
   )
 }
 
-const StyledProject = withStyles(styles)(FundProject)
-export default withDatabase(withObservables(['match'], ({ database }) => ({
-  transfers: database.collections.get('lp_events').query(
-    Q.where('event', 'Transfer')
-  ).observe(),
-  projectAddedEvents: database.collections.get('lp_events').query(
-    Q.where('event', 'ProjectAdded')
-  ).observe()
-}))(StyledProject))
+export default withStyles(styles)(FundProject)

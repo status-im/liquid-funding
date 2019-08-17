@@ -1,4 +1,3 @@
-/*global web3*/
 import { useState, useEffect, useMemo, useContext } from 'react'
 import { unnest } from 'ramda'
 import { timeSinceBlock } from '../../utils/dates'
@@ -9,22 +8,18 @@ import { FundingContext } from '../../context'
 import { getDelegateProfiles } from '../../actions/profiles'
 import { getDelegatePledgesByProfile } from '../../actions/delegates'
 
-async function getProjectAge(id, events, setState){
-  const event = events.find(e => e.returnValues.idProject === id)
-  if (event) {
-    const { timestamp } = await web3.eth.getBlock(event.blockNumber)
-    setState(timeSinceBlock(timestamp, 'days'))
+async function getProjectAge(data, setState){
+  if (data.profile) {
+    setState(timeSinceBlock(data.profile.creationTime, 'days'))
   } else {
     setState(timeSinceBlock(false, 'days'))
   }
 }
 
-async function getProjectCreator(id, events, setState){
-  const event = events.find(e => e.returnValues.idProject === id)
-  if (event) {
-    const { address } = event
-    setState(address)
-  }
+async function getProjectCreator(data, setState){
+  if (!data.profile) return
+  const { addr } = data.profile
+  setState(addr)
 }
 
 async function getProjectAssets(data, setState, debug=false){
@@ -109,7 +104,7 @@ const getProjectManifest = assets => {
   }
 }
 
-export function useProjectData(projectId, projectAddedEvents, data) {
+export function useProjectData(projectId, data) {
   const [projectAge, setAge] = useState(null)
   const [creator, setCreator] = useState(null)
   const [projectAssets, setAssets] = useState(null)
@@ -126,12 +121,12 @@ export function useProjectData(projectId, projectAddedEvents, data) {
   }, [account])
 
   useEffect(() => {
-    getProjectAge(projectId, projectAddedEvents, setAge)
-  }, [projectAddedEvents, projectId])
+    getProjectAge(data, setAge)
+  }, [data, projectId])
 
   useEffect(() => {
-    getProjectCreator(projectId, projectAddedEvents, setCreator)
-  }, [projectAddedEvents, projectId])
+    getProjectCreator(data, setCreator)
+  }, [data, projectId])
 
   useEffect(() => {
     getProjectAssets(data, setAssets)
