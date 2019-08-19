@@ -72,7 +72,8 @@ const styles = theme => ({
     cursor: 'pointer'
   },
   connected: {
-    color: '#44D058'
+    color: '#44D058',
+    cursor: 'default'
   },
   connectedText: {
     display: 'flex',
@@ -179,7 +180,7 @@ class PersistentDrawerLeft extends React.Component {
             <Typography className={classes.menuText} variant="h6" noWrap>
               Liquid Funding
             </Typography>
-            <Typography className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={enableEthereum}>
+            <Typography className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
               {!!account && <div className={classes.connectedText}>
                 <div className={classes.accountText}>{formatAccount(account)}</div>
                 <div>Connected</div>
