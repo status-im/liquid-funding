@@ -32,6 +32,7 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
+const formatPercent = number => Number(number).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2})
 const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData, startPolling }) => {
   const { account, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
@@ -42,7 +43,7 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
-  const percentToGoal = manifest ? (Number(totalPledged) / Number(manifest.goal)) * 100 : 0
+  const percentToGoal = manifest ? formatPercent(Number(totalPledged) / Number(manifest.goal)) : formatPercent(0)
   const isCreator = projectData.creator === account
   return (
     <Formik
@@ -141,7 +142,7 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
                 {`${totalPledged.toLocaleString()} ${tokenLabel}`} pledged
               </Typography>
               <Typography className={classes.fullWidth}>
-                {`${percentToGoal}% of ${Number(manifest.goal).toLocaleString()} goal`}
+                {`${percentToGoal} of ${Number(manifest.goal).toLocaleString()} goal`}
               </Typography>
               <Typography className={classnames(classes.fullWidth, classes.usdText)}>
                 {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
