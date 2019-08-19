@@ -34,6 +34,7 @@ class App extends React.Component {
     getNetworkType().then(async network => {
       this.setGraphClient(network)
     })
+    this.getAndSetPrices()
 
     EmbarkJS.onReady(async (err) => {
       if (err) {
@@ -46,8 +47,6 @@ class App extends React.Component {
             if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
 
             const account = await web3.eth.getCoinbase()
-            console.log({account})
-            this.getAndSetPrices()
             this.setState({ account })
             //TODO add block based sync
             const authorizedPayments = await getAuthorizedPayments()
@@ -88,6 +87,12 @@ class App extends React.Component {
     this.setState({ loading: false })
   }
 
+  enableEthereum = async () => {
+    await EmbarkJS.enableEthereum()
+    const account = await web3.eth.getCoinbase()
+    this.setState({ account })
+  }
+
   getAndSetPrices = async () => {
     const prices = await getPrices()
     this.setState({ prices })
@@ -115,7 +120,7 @@ class App extends React.Component {
 
   render() {
     const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices } = this.state
-    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote, updateUsdPrice, client } = this
+    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote, updateUsdPrice, client, enableEthereum } = this
     const fundingContext = {
       appendPledges,
       appendFundProfile,
@@ -131,13 +136,12 @@ class App extends React.Component {
       prices,
       updateUsdPrice
     }
-    console.log({client, loading})
 
     if (client) return (
       <ApolloProvider client={client}>
         <FundingContext.Provider value={fundingContext}>
           <Router>
-            <MainCointainer loading={loading} />
+            <MainCointainer loading={loading} enableEthereum={enableEthereum} account={account} />
           </Router>
           {snackbar && <Snackbar
             anchorOrigin={{

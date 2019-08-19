@@ -34,6 +34,11 @@ import CreateProject from './projects/CreateProject'
 import CreateDelegate from './projects/CreateDelegate'
 
 const drawerWidth = 240
+const formatAccount = account => {
+  const start = account.slice(0,6)
+  const end = account.slice(-4)
+  return `${start}...${end}`
+}
 
 const styles = theme => ({
   root: {
@@ -56,11 +61,23 @@ const styles = theme => ({
   appBarBg: {
     backgroundColor: '#fff'
   },
+  accountText: {
+    color: '#939BA1'
+  },
   connect: {
     color: '#4360DF',
     fontSize: '15px',
     marginLeft: 'auto',
-    marginRight: '3rem'
+    marginRight: '3rem',
+    cursor: 'pointer'
+  },
+  connected: {
+    color: '#44D058'
+  },
+  connectedText: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end'
   },
   menuButton: {
     marginLeft: 12,
@@ -131,7 +148,7 @@ class PersistentDrawerLeft extends React.Component {
   };
 
   render() {
-    const { classes, theme, loading } = this.props
+    const { classes, theme, loading, account, enableEthereum } = this.props
     const { open } = this.state
 
     return (
@@ -162,7 +179,13 @@ class PersistentDrawerLeft extends React.Component {
             <Typography className={classes.menuText} variant="h6" noWrap>
               Liquid Funding
             </Typography>
-            <Typography className={classes.connect}>Connect</Typography>
+            <Typography className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={enableEthereum}>
+              {!!account && <div className={classes.connectedText}>
+                <div className={classes.accountText}>{formatAccount(account)}</div>
+                <div>Connected</div>
+              </div>}
+              {!account && <span>Connect</span>}
+            </Typography>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -224,7 +247,9 @@ class PersistentDrawerLeft extends React.Component {
 PersistentDrawerLeft.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
+  account: PropTypes.string,
+  enableEthereum: PropTypes.func.isRequired
 };
 
 export default withStyles(styles, { withTheme: true })(PersistentDrawerLeft)
