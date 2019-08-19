@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useMemo, useEffect } from 'react'
 import { Formik } from 'formik'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
@@ -32,7 +32,7 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData }) => {
+const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData, startPolling }) => {
   const { account, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos } = profileData
@@ -59,6 +59,7 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
 
         toSend
           .send({gas: estimatedGas + 100})
+          .on('transactionHash', () => { startPolling(10000) })
           .then(async res => {
             console.log({res})
             openSnackBar('success', 'Successfully funded project')
@@ -172,10 +173,14 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
 
 function FundProject({ classes, match, history }) {
   const projectId = match.params.id
-  const { loading, error, data } = useQuery(getProfileById, {
+  const { loading, error, data, stopPolling, startPolling } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
   });
   const projectData = useProjectData(projectId, data)
+
+  useEffect(() => {
+    stopPolling()
+  }, [data.profile])
 
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
@@ -191,6 +196,7 @@ function FundProject({ classes, match, history }) {
         projectId={projectId}
         profileData={data.profile}
         commitTime={commitTime}
+        startPolling={startPolling}
       />
     </div>
   )
