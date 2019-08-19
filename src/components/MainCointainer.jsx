@@ -54,11 +54,21 @@ const styles = theme => ({
     }),
   },
   appBarBg: {
-    backgroundColor: '#111735'
+    backgroundColor: '#fff'
+  },
+  connect: {
+    color: '#4360DF',
+    fontSize: '15px',
+    marginLeft: 'auto',
+    marginRight: '3rem'
   },
   menuButton: {
     marginLeft: 12,
     marginRight: 20,
+    color: '#000000'
+  },
+  menuText: {
+    color: '#000000'
   },
   hide: {
     display: 'none',
@@ -149,9 +159,10 @@ class PersistentDrawerLeft extends React.Component {
               />}
               {!loading && <MenuIcon/>}
             </IconButton>
-            <Typography variant="h6" color="inherit" noWrap>
+            <Typography className={classes.menuText} variant="h6" noWrap>
               Liquid Funding
             </Typography>
+            <Typography className={classes.connect}>Connect</Typography>
           </Toolbar>
         </AppBar>
         <Drawer
