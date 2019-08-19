@@ -24,44 +24,54 @@ const { getNetworkType } = web3.eth.net
 
 class App extends React.Component {
   state = {
-    loading: true,
+    loading: false,
     lpAllowance: 0,
     needsInit: true,
     prices: {}
   };
 
   componentDidMount(){
+    getNetworkType().then(async network => {
+      this.setGraphClient(network)
+    })
+
     EmbarkJS.onReady(async (err) => {
       if (err) {
         console.error(err);
-      }
-      getNetworkType().then(async network => {
-        const { environment } = EmbarkJS
-        const isInitialized = await vaultPledgingNeedsInit()
-        if (isInitialized) {
-          if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
+      } else {
+        getNetworkType().then(async network => {
+          const { environment } = EmbarkJS
+          const isInitialized = await vaultPledgingNeedsInit()
+          if (isInitialized) {
+            if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
 
-          const graphUri = uris[network]
-          this.client = new ApolloClient({
-            uri: graphUri,
-          })
-          const account = await web3.eth.getCoinbase()
-          this.getAndSetPrices()
-          this.setState({ account })
-          //TODO add block based sync
-          const authorizedPayments = await getAuthorizedPayments()
-          this.syncWithRemote()
-          this.setState({
-            account,
-            network,
-            graphUri,
-            environment,
-            authorizedPayments,
-            needsInit: false
-          })
-        }
-      })
+            const account = await web3.eth.getCoinbase()
+            console.log({account})
+            this.getAndSetPrices()
+            this.setState({ account })
+            //TODO add block based sync
+            const authorizedPayments = await getAuthorizedPayments()
+            this.syncWithRemote()
+            this.setState({
+              account,
+              network,
+              environment,
+              authorizedPayments,
+              needsInit: false
+            })
+          }
+        })
+      }
     })
+  }
+
+  setGraphClient = network => {
+    const graphUri = uris[network]
+    const client = new ApolloClient({
+      uri: graphUri,
+    })
+    this.client = client
+    this.setState({ clientReady: true })
   }
 
   syncWithRemote = async () => {
@@ -121,6 +131,7 @@ class App extends React.Component {
       prices,
       updateUsdPrice
     }
+    console.log({client, loading})
 
     if (client) return (
       <ApolloProvider client={client}>
