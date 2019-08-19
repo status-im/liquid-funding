@@ -76,6 +76,8 @@ module.exports = {
       'http://localhost:8545',
     ],
 
+    dappAutoEnable: false,
+
     gas: 'auto',
 
     // Strategy for the deployment of the contracts:
