@@ -89,10 +89,23 @@ const isManifest = asset => {
   const name = asset.path.split('/').slice(-1)[0]
   return name.toLowerCase() === 'manifest.json'
 }
-const getProjectManifest = assets => {
+const getProjectManifest = (data, assets) => {
+  if (data && data.profile && data.profile.projectInfo) {
+    const { isPlaying, type, file } = data.profile.projectInfo
+    return {
+      ...data.profile.projectInfo,
+      media: {
+        isPlaying,
+        type,
+        file
+      }
+    }
+  }
+
   if (!assets) {
     return null;
   }
+
   const manifest = assets.find(isManifest);
   if (!manifest) {
     return null;
@@ -132,7 +145,7 @@ export function useProjectData(projectId, data) {
     getProjectAssets(data, setAssets)
   }, [ipfsReady, data])
 
-  const manifest = useMemo(() => getProjectManifest(projectAssets), [projectAssets, projectId])
+  const manifest = useMemo(() => getProjectManifest(data, projectAssets), [data, projectAssets, projectId])
 
   return {
     account,

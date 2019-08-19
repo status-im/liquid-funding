@@ -32,7 +32,6 @@ export const batchAddPledges = async (pledges, profiles = []) => {
   const batch = pledges.map(data => {
     return pledgesCollection.prepareCreate(pledge => createPledge(pledge, data, profiles))
   })
-  console.log({batch})
   return await database.action(async () => await database.batch(...batch))
 }
 

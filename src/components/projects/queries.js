@@ -17,6 +17,21 @@ query Profile($id: ID!){
       lifetimeReceived
       balance
     }
+    projectInfo{
+      id
+      title
+      subtitle
+      creator
+      repo
+      avatar
+      goal
+      goalToken
+      description
+      chatRoom
+      file
+      type
+      isPlaying
+    }
   }
 }
 `
