@@ -36,6 +36,10 @@ class App extends React.Component {
     this.setGraphClient(network)
     this.getAndSetPrices()
 
+    if (window.ethereum) {
+      const { selectedAddress: account } = window.ethereum
+      if (account) this.setState({ account })
+    }
 
   }
 
@@ -67,6 +71,7 @@ class App extends React.Component {
     const account = await web3.eth.getCoinbase()
     this.setState({ account })
     this.web3Init()
+    return account
   }
 
   getAndSetPrices = async () => {
@@ -125,6 +130,7 @@ class App extends React.Component {
       appendPledges,
       appendFundProfile,
       account,
+      enableEthereum,
       transferPledgeAmounts,
       authorizedPayments,
       needsInit,
