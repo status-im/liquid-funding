@@ -34,7 +34,7 @@ const addProjectSucessMsg = response => {
 }
 const formatPercent = number => Number(number).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2})
 const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData, startPolling }) => {
-  const { account, openSnackBar, prices } = useContext(FundingContext)
+  const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos } = profileData
   const pledgesInfo = pledgesInfos[0]
@@ -45,6 +45,7 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
   const createdDate = getDateCreated(projectAge)
   const percentToGoal = manifest ? formatPercent(Number(totalPledged) / Number(manifest.goal)) : formatPercent(0)
   const isCreator = projectData.creator === account
+  const buttonText = account ? 'Fund' : 'Connect & Fund'
   return (
     <Formik
       initialValues={{
@@ -54,7 +55,8 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
         const { amount } = values
         const { goalToken } = manifest
         const { chainReadibleFn } = getTokenByAddress(goalToken)
-        const args = [projectId, account, goalToken, chainReadibleFn(amount)]
+        const userAccount = account ? account : await enableEthereum()
+        const args = [projectId, userAccount, goalToken, chainReadibleFn(amount)]
         const toSend = addGiverAndDonate(...args)
         const estimatedGas = await toSend.estimateGas()
 
@@ -162,7 +164,7 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
                 />
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>
-              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Fund'}</Button>
+              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : buttonText}</Button>
             </div>}
           </form>
         )
