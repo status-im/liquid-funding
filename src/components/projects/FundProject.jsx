@@ -141,7 +141,7 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
                 {`${totalPledged.toLocaleString()} ${tokenLabel}`} pledged
               </Typography>
-              <Typography className={classes.fullWidth}>
+              <Typography className={classnames(classes.fullWidth, classes.goal)}>
                 {`${percentToGoal} of ${Number(manifest.goal).toLocaleString()} goal`}
               </Typography>
               <Typography className={classnames(classes.fullWidth, classes.usdText)}>
