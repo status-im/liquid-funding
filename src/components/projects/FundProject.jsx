@@ -181,7 +181,7 @@ function FundProject({ classes, match, history }) {
 
   useEffect(() => {
     stopPolling()
-  }, [data.profile])
+  }, [data])
 
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>

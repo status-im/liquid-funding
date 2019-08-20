@@ -14,6 +14,7 @@
     "compile": "npm run compile:sol &&  npm run compile:js",
     "lint": "eslint src",
     "start": "node scripts/start.js",
+    "ropsten": "REACT_APP_NETWORK=ropsten node scripts/start.js",
     "build": "node scripts/build.js"
   },
   "repository": {

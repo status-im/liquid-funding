@@ -1,4 +1,5 @@
 /*global web3*/
+/*global process*/
 import React from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from './embarkArtifacts/embarkjs'
@@ -31,9 +32,8 @@ class App extends React.Component {
   };
 
   componentDidMount(){
-    getNetworkType().then(async network => {
-      this.setGraphClient(network)
-    })
+    const network = process.env.REACT_APP_NETWORK || 'ropsten'
+    this.setGraphClient(network)
     this.getAndSetPrices()
 
     EmbarkJS.onReady(async (err) => {
