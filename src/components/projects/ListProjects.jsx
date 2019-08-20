@@ -2,10 +2,13 @@ import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import classnames from 'classnames'
+import { useQuery } from '@apollo/react-hooks'
 import styles from './styles/ListProjects'
+import { getProjects } from './queries'
 
 function ListProjects({ classes }) {
-  console.log({classes})
+  const { loading, error, data } = useQuery(getProjects);
+  console.log({classes, loading, error, data})
   return (
     <div className={classes.main}>
       <Typography className={classnames(classes.title, classes.fullWidth)}>
