@@ -36,32 +36,7 @@ class App extends React.Component {
     this.setGraphClient(network)
     this.getAndSetPrices()
 
-    EmbarkJS.onReady(async (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        getNetworkType().then(async network => {
-          const { environment } = EmbarkJS
-          const isInitialized = await vaultPledgingNeedsInit()
-          if (isInitialized) {
-            if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
 
-            const account = await web3.eth.getCoinbase()
-            this.setState({ account })
-            //TODO add block based sync
-            const authorizedPayments = await getAuthorizedPayments()
-            this.syncWithRemote()
-            this.setState({
-              account,
-              network,
-              environment,
-              authorizedPayments,
-              needsInit: false
-            })
-          }
-        })
-      }
-    })
   }
 
   setGraphClient = network => {
@@ -91,6 +66,7 @@ class App extends React.Component {
     await EmbarkJS.enableEthereum()
     const account = await web3.eth.getCoinbase()
     this.setState({ account })
+    this.web3Init()
   }
 
   getAndSetPrices = async () => {
@@ -116,6 +92,30 @@ class App extends React.Component {
     const key = generatePairKey(ticker, 'USD')
     const price = await getUsdPrice(ticker)
     this.setState({ prices: { ...prices, [key]: price }})
+  }
+
+  web3Init = () => {
+    EmbarkJS.onReady(async (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        getNetworkType().then(async network => {
+          const { environment } = EmbarkJS
+          const isInitialized = await vaultPledgingNeedsInit()
+          if (isInitialized) {
+            if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
+            const authorizedPayments = await getAuthorizedPayments()
+            this.syncWithRemote()
+            this.setState({
+              network,
+              environment,
+              authorizedPayments,
+              needsInit: false
+            })
+          }
+        })
+      }
+    })
   }
 
   render() {
