@@ -32,6 +32,7 @@ import BackProject from './projects/BackProject'
 import ProjectPledges from './projects/ProjectPledges'
 import CreateProject from './projects/CreateProject'
 import CreateDelegate from './projects/CreateDelegate'
+import ListProjects from './projects/ListProjects'
 
 const drawerWidth = 240
 const formatAccount = account => {
@@ -225,7 +226,8 @@ class PersistentDrawerLeft extends React.Component {
           <div className={classes.drawerHeader} />
           <div className={classNames(classes.appBar)}>
             <Switch>
-              <Route path="/(|dashboard)" component={Dashboard} />
+              <Route path="/(|list-projects)" component={ListProjects} />
+              <Route path="/dashboard" component={Dashboard} />
               <Route path="/admin" component={ContractAdmin} />
               <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
               <Route path="/insights" component={TransferGraph} />
