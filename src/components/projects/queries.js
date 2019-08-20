@@ -35,3 +35,22 @@ query Profile($id: ID!){
   }
 }
 `
+export const getProjects = gql`
+query Projects($type: String! = "PROJECT"){
+  profiles(first: 5, where: {type: $type}) {
+    id
+    addr
+    canceled
+    commitTime
+    type
+    url
+    profileId
+    projectInfo {
+      id
+      title
+      subtitle
+      creator
+    }
+  }
+}
+`
