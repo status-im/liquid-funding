@@ -100,3 +100,5 @@ export function getAmountFromPledgesInfo(info){
   const { humanReadibleFn } = getTokenByAddress(token)
   return humanReadibleFn(lifetimeReceived)
 }
+
+export const getAmountFromWei = (token, lifetimeReceived) => getAmountFromPledgesInfo({token, lifetimeReceived})

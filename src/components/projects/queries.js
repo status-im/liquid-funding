@@ -50,6 +50,13 @@ query Projects($type: String! = "PROJECT"){
       title
       subtitle
       creator
+      goalToken
+      goal
+    }
+    pledgesInfos{
+      id
+      lifetimeReceived
+      token
     }
   }
 }

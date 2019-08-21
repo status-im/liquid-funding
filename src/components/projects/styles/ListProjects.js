@@ -3,7 +3,7 @@ const styles = theme => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '1fr 1fr 1fr'
+    gridTemplateRows: '1fr 1fr 1fr 0.5fr 1fr'
   },
   title: {
     fontSize: '2.5rem',
@@ -14,6 +14,21 @@ const styles = theme => ({
     color: '#4360DF',
     fontSize: '1.5rem',
     textAlign: 'center'
+  },
+  cellText: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '1.2rem',
+    background: '#F5F7F8',
+    flexFlow: 'column',
+    padding: '1rem'
+  },
+  centerText: {
+    textAlign: 'center'
+  },
+  cellDescription: {
+    fontSize: '1rem'
   },
   fullWidth: {
     gridColumn: '1 / 49'
@@ -29,22 +44,25 @@ const styles = theme => ({
     gridRow: '4 / 5'
   },
   headerName: {
-    gridColumn: '3 / 13'
+    gridColumn: '2 / 12'
   },
   headerDescription: {
-    gridColumn: '13 / 23'
+    gridColumn: '12 / 30'
   },
   headerDetails: {
-    gridColumn: '23 / 28'
-  },
-  headerContact: {
     gridColumn: '30 / 35'
   },
+  headerContact: {
+    gridColumn: '35 / 40'
+  },
   dateCreated: {
-    gridColumn: '37 / 42'
+    gridColumn: '40 / 45'
   },
   readMore: {
-    gridColumn: '43 / 46'
+    gridColumn: '45 / 48'
+  },
+  usdValue: {
+    color: '#939BA1'
   }
 })
 export default styles
