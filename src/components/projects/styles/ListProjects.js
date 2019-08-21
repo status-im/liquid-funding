@@ -10,6 +10,9 @@ const styles = theme => ({
   px15: {
     fontSize: '0.9375rem'
   },
+  px16: {
+    fontSize: '1rem'
+  },
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
@@ -51,7 +54,19 @@ const styles = theme => ({
   fab: {
     gridColumn: '3 / 5',
     background: '#EEF2F5',
-    boxShadow: 'none'
+    boxShadow: 'none',
+    marginRight: '1em'
+  },
+  fabText: {
+    fontWeight: 500,
+    fontSize: '1.2rem'
+  },
+  fabLink: {
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none',
+    marginTop: '2rem',
+    gridColumn: '3 / 49'
   },
   tableTitle: {
     color: '#939BA1',

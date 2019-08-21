@@ -85,9 +85,12 @@ function ListProjects({ classes }) {
         )
       })}
       <Divider className={classes.divider} />
-      <Fab className={classes.fab}>
-        <AddIcon className={classes.addIcon}/>
-      </Fab>
+      <Link to={`/create-project`} className={classes.fabLink}>
+        <Fab className={classes.fab}>
+          <AddIcon className={classes.addIcon}/>
+        </Fab>
+        <Typography className={classes.fabText}>Add your own project</Typography>
+      </Link>
     </div>
   )
 }
