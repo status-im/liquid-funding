@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Link, Switch } from 'react-router-dom'
+import { Route, Link, Switch, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -150,8 +150,9 @@ class PersistentDrawerLeft extends React.Component {
   };
 
   render() {
-    const { classes, theme, loading, account, enableEthereum } = this.props
+    const { classes, theme, loading, account, enableEthereum, location: { pathname } } = this.props
     const { open } = this.state
+    const isHome = pathname === "/"
 
     return (
       <div className={classes.root}>
@@ -178,9 +179,9 @@ class PersistentDrawerLeft extends React.Component {
               />}
               {!loading && <MenuIcon/>}
             </IconButton>
-            <Typography className={classes.menuText} variant="h6" noWrap>
+            {!isHome && <Typography className={classes.menuText} variant="h6" noWrap>
               Liquid Funding
-            </Typography>
+            </Typography>}
             <Typography className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
               {!!account && <div className={classes.connectedText}>
                 <div className={classes.accountText}>{formatAccount(account)}</div>
@@ -252,7 +253,9 @@ PersistentDrawerLeft.propTypes = {
   theme: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
   account: PropTypes.string,
-  enableEthereum: PropTypes.func.isRequired
+  enableEthereum: PropTypes.func.isRequired,
+  location: PropTypes.object
 };
 
-export default withStyles(styles, { withTheme: true })(PersistentDrawerLeft)
+const DrawerWithRouter = withRouter(PersistentDrawerLeft)
+export default withStyles(styles, { withTheme: true })(DrawerWithRouter)
