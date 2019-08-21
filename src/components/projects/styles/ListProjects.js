@@ -3,7 +3,7 @@ const styles = theme => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '1fr 1fr 1fr 0.5fr 1fr'
+    gridTemplateRows: '4rem 4rem 3rem 0.5fr 1fr'
   },
   title: {
     fontSize: '2.5rem',
@@ -36,7 +36,7 @@ const styles = theme => ({
   tableTitle: {
     color: '#939BA1',
     fontSize: '1.2rem',
-    gridColumn: '3 / 49'
+    gridColumn: '2 / 49'
   },
   tableHeader: {
     color: 'rgba(147, 155, 161, 0.4)',
