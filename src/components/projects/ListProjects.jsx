@@ -2,6 +2,7 @@ import React, { Fragment, useContext } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
+import Divider from '@material-ui/core/Divider'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
 import styles from './styles/ListProjects'
@@ -81,6 +82,7 @@ function ListProjects({ classes }) {
           </Fragment>
         )
       })}
+      <Divider className={classes.divider} />
     </div>
   )
 }

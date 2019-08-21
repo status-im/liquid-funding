@@ -38,6 +38,9 @@ const styles = theme => ({
   cellColor: {
     background: '#F5F7F8'
   },
+  divider: {
+    gridColumn: '2 / 48'
+  },
   fullWidth: {
     gridColumn: '1 / 49'
   },
