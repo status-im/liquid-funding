@@ -35,9 +35,9 @@ const addProjectSucessMsg = response => {
 const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData, startPolling }) => {
   const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
-  const { pledgesInfos } = profileData
+  const { pledgesInfos, projectInfo } = profileData
   const pledgesInfo = pledgesInfos[0]
-  const tokenLabel = getTokenLabel(pledgesInfo.token)
+  const tokenLabel = getTokenLabel(projectInfo.goalToken)
   const totalPledged = getAmountFromPledgesInfo(pledgesInfo)
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
