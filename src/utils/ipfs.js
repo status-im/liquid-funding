@@ -7,7 +7,8 @@ import { getImageType } from './images'
 
 const ipfsMatcher = new Matcher().begin().find('ipfs/')
 export const ipfs = new IPFS()
-const ipfsHttp = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
+//const ipfsHttp = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
+const ipfsHttp = ipfsClient({ host: 'api.thegraph.com', 'api-path': '/ipfs/api/v0/', protocol: 'https', port: '443' })
 
 window.ipfsHttp = ipfsHttp
 window.jsIPFS = ipfs
