@@ -37,7 +37,7 @@ query Profile($id: ID!){
 `
 export const getProjects = gql`
 query Projects($type: String! = "PROJECT"){
-  profiles(first: 5, where: {type: $type}) {
+  profiles(first: 5, where: {type: $type, projectInfo_not: null}) {
     id
     addr
     canceled
