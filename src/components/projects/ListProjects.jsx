@@ -1,5 +1,6 @@
 import React, { Fragment, useContext } from 'react'
 import { withStyles } from '@material-ui/core/styles'
+import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
@@ -31,9 +32,18 @@ function FundingDetail({ classes, pledgesInfos, goal, goalToken }) {
   )
 }
 
+function Cell({ spacerClass, textClass, text }) {
+  return (
+    <Fragment>
+      <div className={spacerClass} />
+      <Typography className={textClass}>{text}</Typography>
+    </Fragment>
+  )
+}
+
 function ListProjects({ classes }) {
-  const { tableHeader, cellText } = classes
-  const { loading, error, data } = useQuery(getProjects);
+  const { tableHeader, cellText, cellColor, nameSpacer } = classes
+  const { loading, error, data } = useQuery(getProjects)
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   console.log({classes, loading, error, data})
@@ -49,22 +59,25 @@ function ListProjects({ classes }) {
       <Typography className={classes.tableTitle}>
         All Projects
       </Typography>
-      <Typography className={classnames(tableHeader, classes.headerName)}>Name</Typography>
+      <Cell spacerClass={nameSpacer} textClass={classnames(tableHeader, classes.headerName)} text="Name" />
       <Typography className={classnames(tableHeader, classes.headerDescription)}>Description</Typography>
       <Typography className={classnames(tableHeader, classes.headerDetails)}>Funding details</Typography>
       <Typography className={classnames(tableHeader, classes.headerContact)}>Contact person</Typography>
       <Typography className={classnames(tableHeader, classes.dateCreated)}>Date created</Typography>
       {profiles.map((profile, i) => {
-        const { id, projectInfo: { title, subtitle, goal, goalToken, creator, creationTime }, pledgesInfos } = profile
+        const { id, profileId, projectInfo: { title, subtitle, goal, goalToken, creator, creationTime }, pledgesInfos } = profile
         console.log({i, profile})
         const creationDate = getDateFromTimestamp(creationTime)
         return (
           <Fragment key={id}>
-            <Typography className={classnames(classes.headerName, cellText)}>{title}</Typography>
+            <Cell spacerClass={classnames(nameSpacer, cellColor)} textClass={classnames(classes.headerName, cellText)} text={title} />
             <Typography className={classnames(classes.headerDescription, cellText, classes.cellDescription)}>{subtitle}</Typography>
             <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} />
             <Typography className={classnames(classes.headerContact, cellText, classes.cellDescription)}>{creator}</Typography>
             <Typography className={classnames(classes.dateCreated, cellText, classes.cellDescription)}>{creationDate}</Typography>
+            <Link to={`/fund-project/${profileId}`} className={classnames(classes.readMore, cellText)}>
+              <Typography className={classnames(classes.blue, classes.px15)}>Read more</Typography>
+            </Link>
           </Fragment>
         )
       })}
