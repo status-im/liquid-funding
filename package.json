@@ -15,6 +15,7 @@
     "lint": "eslint src",
     "start": "node scripts/start.js",
     "ropsten": "REACT_APP_NETWORK=ropsten node scripts/start.js",
+    "ropsten:build": "REACT_APP_NETWORK=ropsten node --max-old-space-size=4000 scripts/build.js",
     "build": "node scripts/build.js"
   },
   "repository": {
