@@ -1,5 +1,11 @@
 const styles = theme => ({
   theme,
+  blue: {
+    color: '#4360DF'
+  },
+  px15: {
+    fontSize: '0.9375rem'
+  },
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
@@ -18,17 +24,19 @@ const styles = theme => ({
   cellText: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: '1.2rem',
+    fontSize: '1rem',
     background: '#F5F7F8',
     flexFlow: 'column',
-    padding: '1rem'
+    padding: '1rem 1rem 1rem 0'
   },
   centerText: {
     textAlign: 'center'
   },
   cellDescription: {
     fontSize: '1rem'
+  },
+  cellColor: {
+    background: '#F5F7F8'
   },
   fullWidth: {
     gridColumn: '1 / 49'
@@ -44,6 +52,12 @@ const styles = theme => ({
     gridRow: '4 / 5'
   },
   headerName: {
+    gridColumn: '3 / 12'
+  },
+  nameSpacer: {
+    gridColumn: '2 / 3'
+  },
+  cellName: {
     gridColumn: '2 / 12'
   },
   headerDescription: {
@@ -56,10 +70,12 @@ const styles = theme => ({
     gridColumn: '35 / 40'
   },
   dateCreated: {
-    gridColumn: '40 / 45'
+    gridColumn: '40 / 44'
   },
   readMore: {
-    gridColumn: '45 / 48'
+    gridColumn: '44 / 48',
+    fontSize: '0.94rem',
+    textDecoration: 'none'
   },
   usdValue: {
     color: '#939BA1'
