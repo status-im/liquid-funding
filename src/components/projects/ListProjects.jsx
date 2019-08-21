@@ -16,8 +16,9 @@ import { getAmountFromWei } from '../../utils/pledges'
 import { getDateFromTimestamp } from '../../utils/dates'
 import { FundingContext } from '../../context'
 
-function FundingDetail({ classes, pledgesInfos, goal, goalToken }) {
-  const { cellText, headerDetails, centerText } = classes
+const isOdd = num => num % 2
+function FundingDetail({ classes, pledgesInfos, goal, goalToken, cellStyling }) {
+  const { headerDetails, centerText } = classes
   const { prices } = useContext(FundingContext)
   const pledgeInfo = pledgesInfos.find(p => p.token.toUpperCase() === goalToken.toUpperCase())
   const lifetimeReceived = pledgeInfo ? pledgeInfo.lifetimeReceived : '0'
@@ -28,7 +29,7 @@ function FundingDetail({ classes, pledgesInfos, goal, goalToken }) {
   const topText = `${fundedPercent} of ${goalAmount}${tokenLabel}`
   const usdValue = convertTokenAmountUsd(goalToken, lifetimeHumanReadible, prices)
   return (
-    <div className={classnames(cellText, headerDetails, centerText)}>
+    <div className={classnames(cellStyling, headerDetails, centerText)}>
       <Typography>{topText}</Typography>
       <Typography className={classes.usdValue}>{`${usdValue} USD`}</Typography>
     </div>
@@ -49,7 +50,6 @@ function ListProjects({ classes }) {
   const { loading, error, data } = useQuery(getProjects)
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
-  console.log({classes, loading, error, data})
   const { profiles } = data
   return (
     <div className={classes.main}>
@@ -69,16 +69,17 @@ function ListProjects({ classes }) {
       <Typography className={classnames(tableHeader, classes.dateCreated)}>Date created</Typography>
       {profiles.map((profile, i) => {
         const { id, profileId, projectInfo: { title, subtitle, goal, goalToken, creator, creationTime }, pledgesInfos } = profile
-        console.log({i, profile})
+        const cellStyling = isOdd(i) ? classnames(cellText) : classnames(cellText, classes.cellColor)
+        const spaceClass = isOdd(i) ? nameSpacer : classnames(nameSpacer, cellColor)
         const creationDate = getDateFromTimestamp(creationTime)
         return (
           <Fragment key={id}>
-            <Cell spacerClass={classnames(nameSpacer, cellColor)} textClass={classnames(classes.headerName, cellText)} text={title} />
-            <Typography className={classnames(classes.headerDescription, cellText, classes.cellDescription)}>{subtitle}</Typography>
-            <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} />
-            <Typography className={classnames(classes.headerContact, cellText, classes.cellDescription)}>{creator}</Typography>
-            <Typography className={classnames(classes.dateCreated, cellText, classes.cellDescription)}>{creationDate}</Typography>
-            <Link to={`/fund-project/${profileId}`} className={classnames(classes.readMore, cellText)}>
+            <Cell spacerClass={spaceClass} textClass={classnames(classes.headerName, cellStyling)} text={title} />
+            <Typography className={classnames(classes.headerDescription, cellStyling, classes.cellDescription)}>{subtitle}</Typography>
+            <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} cellStyling={cellStyling} />
+            <Typography className={classnames(classes.headerContact, cellStyling, classes.cellDescription)}>{creator}</Typography>
+            <Typography className={classnames(classes.dateCreated, cellStyling, classes.cellDescription)}>{creationDate}</Typography>
+            <Link to={`/fund-project/${profileId}`} className={classnames(classes.readMore, cellStyling)}>
               <Typography className={classnames(classes.blue, classes.px15)}>Read more</Typography>
             </Link>
           </Fragment>

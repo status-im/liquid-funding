@@ -32,7 +32,6 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'center',
     fontSize: '1rem',
-    background: '#F5F7F8',
     flexFlow: 'column',
     padding: '1rem 1rem 1rem 0'
   },
@@ -66,7 +65,7 @@ const styles = theme => ({
     alignItems: 'center',
     textDecoration: 'none',
     marginTop: '2rem',
-    gridColumn: '3 / 49'
+    gridColumn: '3 / 18'
   },
   tableTitle: {
     color: '#939BA1',
