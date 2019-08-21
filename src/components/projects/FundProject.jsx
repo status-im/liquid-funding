@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
-import { convertTokenAmountUsd } from '../../utils/prices'
+import { convertTokenAmountUsd, formatPercent } from '../../utils/prices'
 import { getAmountFromPledgesInfo } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getMediaType, getMediaSrc, formatProjectId } from '../../utils/project'
@@ -32,7 +32,6 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const formatPercent = number => Number(number).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2})
 const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData, startPolling }) => {
   const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData

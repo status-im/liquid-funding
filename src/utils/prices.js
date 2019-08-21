@@ -7,6 +7,10 @@ export const getUsdPrice = async ticker => {
   return price
 }
 
+export const formatPercent = number => Number(number).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2})
+
+export const percentToGoal = (pledged, goal) => formatPercent(Number(pledged) / Number(goal))
+
 export const getPrices = async () => {
   const prices = await cc.priceMulti(['ETH', 'SNT'], ['USD'])
   return prices
