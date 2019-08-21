@@ -45,6 +45,7 @@ query Projects($type: String! = "PROJECT"){
     type
     url
     profileId
+    creationTime
     projectInfo {
       id
       title
