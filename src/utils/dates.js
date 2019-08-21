@@ -22,7 +22,12 @@ export function timeSinceBlock(date=false, interval) {
 export function getDateCreated(daysSince) {
   const d = new Date();
   d.setDate(d.getDate() - daysSince);
-  return `${d.getMonth()}/${d.getDate()}/${d.getFullYear()}`
+  return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`
+}
+
+export function getDateFromTimestamp(ts) {
+  const daysSince = timeSinceBlock(ts, 'days')
+  return getDateCreated(daysSince)
 }
 
 export const convertToHours = seconds => Number(seconds) / 60 / 60

@@ -9,6 +9,7 @@ import Loading from '../base/Loading'
 import { convertTokenAmountUsd, percentToGoal } from '../../utils/prices'
 import { getTokenLabel } from '../../utils/currencies'
 import { getAmountFromWei } from '../../utils/pledges'
+import { getDateFromTimestamp } from '../../utils/dates'
 import { FundingContext } from '../../context'
 
 function FundingDetail({ classes, pledgesInfos, goal, goalToken }) {
@@ -54,14 +55,16 @@ function ListProjects({ classes }) {
       <Typography className={classnames(tableHeader, classes.headerContact)}>Contact person</Typography>
       <Typography className={classnames(tableHeader, classes.dateCreated)}>Date created</Typography>
       {profiles.map((profile, i) => {
-        const { id, projectInfo: { title, subtitle, goal, goalToken, creator }, pledgesInfos } = profile
+        const { id, projectInfo: { title, subtitle, goal, goalToken, creator, creationTime }, pledgesInfos } = profile
         console.log({i, profile})
+        const creationDate = getDateFromTimestamp(creationTime)
         return (
           <Fragment key={id}>
             <Typography className={classnames(classes.headerName, cellText)}>{title}</Typography>
             <Typography className={classnames(classes.headerDescription, cellText, classes.cellDescription)}>{subtitle}</Typography>
             <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} />
             <Typography className={classnames(classes.headerContact, cellText, classes.cellDescription)}>{creator}</Typography>
+            <Typography className={classnames(classes.dateCreated, cellText, classes.cellDescription)}>{creationDate}</Typography>
           </Fragment>
         )
       })}
