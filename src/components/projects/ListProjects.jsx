@@ -20,7 +20,7 @@ function FundingDetail({ classes, pledgesInfos, goal, goalToken }) {
   const { cellText, headerDetails, centerText } = classes
   const { prices } = useContext(FundingContext)
   const pledgeInfo = pledgesInfos.find(p => p.token.toUpperCase() === goalToken.toUpperCase())
-  const { lifetimeReceived } = pledgeInfo
+  const lifetimeReceived = pledgeInfo ? pledgeInfo.lifetimeReceived : '0'
   const lifetimeHumanReadible = getAmountFromWei(goalToken, lifetimeReceived)
   const fundedPercent = percentToGoal(lifetimeHumanReadible, goal)
   const goalAmount = Number(goal).toLocaleString()
