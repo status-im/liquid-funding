@@ -197,15 +197,14 @@ const SubmissionSection = ({ classes, history }) => {
         const { title, commitTime } = values
         const manifest = createJSON(values)
         const contentHash = await uploadFilesToIpfs(uploads, manifest)
+        uploadFilesToIpfs(uploads, manifest, true)
         const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
         addProject(...args)
           .estimateGas({ from: account })
           .then(async gas => {
             addProject(...args)
               .send({ from: account, gas: gas + 100 })
-              .then(res => {
-                // upload to gateway
-                uploadFilesToIpfs(uploads, manifest, true)
+              .then(async res => {
                 pinToGateway(contentHash)
                 console.log({res})
                 openSnackBar('success', addProjectSucessMsg(res))
