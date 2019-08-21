@@ -1,5 +1,9 @@
 const styles = theme => ({
   theme,
+  addIcon: {
+    color: '#4360DF',
+    fontSize: '2.5em'
+  },
   blue: {
     color: '#4360DF'
   },
@@ -9,7 +13,7 @@ const styles = theme => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '4rem 4rem 3rem 0.5fr 1fr'
+    gridTemplateRows: '4rem 4rem 3rem 0.5fr 1fr 0.3fr'
   },
   title: {
     fontSize: '2.5rem',
@@ -43,6 +47,11 @@ const styles = theme => ({
   },
   fullWidth: {
     gridColumn: '1 / 49'
+  },
+  fab: {
+    gridColumn: '3 / 5',
+    background: '#EEF2F5',
+    boxShadow: 'none'
   },
   tableTitle: {
     color: '#939BA1',

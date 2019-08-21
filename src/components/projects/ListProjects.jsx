@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
+import Fab from '@material-ui/core/Fab'
+import AddIcon from '@material-ui/icons/Add'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
 import styles from './styles/ListProjects'
@@ -83,6 +85,9 @@ function ListProjects({ classes }) {
         )
       })}
       <Divider className={classes.divider} />
+      <Fab className={classes.fab}>
+        <AddIcon className={classes.addIcon}/>
+      </Fab>
     </div>
   )
 }
