@@ -7,10 +7,11 @@ import { getImageType } from './images'
 
 const ipfsMatcher = new Matcher().begin().find('ipfs/')
 export const ipfs = new IPFS()
-//const ipfsHttp = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
-const ipfsHttp = ipfsClient({ host: 'api.thegraph.com', 'api-path': '/ipfs/api/v0/', protocol: 'https', port: '443' })
+const ipfsHttp = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
+const ipfsHttpTheGraph = ipfsClient({ host: 'api.thegraph.com', 'api-path': '/ipfs/api/v0/', protocol: 'https', port: '443' })
 
 window.ipfsHttp = ipfsHttp
+window.ipfsHttpTheGraph = ipfsHttpTheGraph
 window.jsIPFS = ipfs
 
 ipfs.on('ready', () => {
@@ -134,6 +135,16 @@ export const getFilesWeb = CID => {
   const clean = CID.split('/').slice(-1)[0]
   return new Promise(function(resolve, reject) {
     ipfsHttp.get(clean, (err, files) => {
+      if (err) reject(err)
+      else resolve(files)
+    })
+  })
+}
+
+export const getFilesWebTheGraph = CID => {
+  const clean = CID.split('/').slice(-1)[0]
+  return new Promise(function(resolve, reject) {
+    ipfsHttpTheGraph.get(clean, (err, files) => {
       if (err) reject(err)
       else resolve(files)
     })
