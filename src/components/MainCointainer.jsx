@@ -182,7 +182,7 @@ class PersistentDrawerLeft extends React.Component {
             {!isHome && <Typography className={classes.menuText} variant="h6" noWrap>
               Liquid Funding
             </Typography>}
-            <Typography className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
+            <Typography component={'span'} className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
               {!!account && <div className={classes.connectedText}>
                 <div className={classes.accountText}>{formatAccount(account)}</div>
                 <div>Connected</div>
