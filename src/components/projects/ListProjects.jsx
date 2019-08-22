@@ -68,7 +68,7 @@ function ListProjects({ classes }) {
       <Typography className={classnames(tableHeader, classes.headerContact)}>Contact person</Typography>
       <Typography className={classnames(tableHeader, classes.dateCreated)}>Date created</Typography>
       {profiles.map((profile, i) => {
-        const { id, profileId, projectInfo: { title, subtitle, goal, goalToken, creator, creationTime }, pledgesInfos } = profile
+        const { id, profileId, creationTime, projectInfo: { title, subtitle, goal, goalToken, creator }, pledgesInfos } = profile
         const cellStyling = isOdd(i) ? classnames(cellText) : classnames(cellText, classes.cellColor)
         const spaceClass = isOdd(i) ? nameSpacer : classnames(nameSpacer, cellColor)
         const creationDate = getDateFromTimestamp(creationTime)
