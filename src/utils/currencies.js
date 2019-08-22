@@ -38,7 +38,7 @@ export const currencies = [
   },
   {
     value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    label: 'Wrapped Ether',
+    label: 'WETH',
     img: `${TOKEN_COIN_API}/60.png`,
     width: '5%',
     humanReadibleFn: toEther,
