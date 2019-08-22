@@ -80,7 +80,12 @@ class App extends React.Component {
   }
 
   openSnackBar = (variant, message) => {
-    this.setState({ snackbar: { variant, message } })
+    if (typeof message === 'object') {
+      const msg = message.message
+      this.setState({ snackbar: { variant, message: msg } })
+    } else {
+      this.setState({ snackbar: { variant, message } })
+    }
   }
 
   closeSnackBar = () => {
