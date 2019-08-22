@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo, useContext } from 'react'
 import { unnest } from 'ramda'
 import { timeSinceBlock } from '../../utils/dates'
-import { getFiles, getFilesWeb, ipfs } from '../../utils/ipfs'
-import { databaseExists } from '../../utils/db'
+import { getFiles, getFilesWeb, ipfs, getFilesWebTheGraph } from '../../utils/ipfs'
 import { arrayToObject } from '../../utils/array'
 import { FundingContext } from '../../context'
 import { getDelegateProfiles } from '../../actions/profiles'
 import { getDelegatePledgesByProfile } from '../../actions/delegates'
 
+const callOrderFns = [getFilesWeb, getFilesWebTheGraph, getFiles]
 async function getProjectAge(data, setState){
   if (data.profile) {
     setState(timeSinceBlock(data.profile.creationTime, 'days'))
@@ -22,32 +22,24 @@ async function getProjectCreator(data, setState){
   setState(addr)
 }
 
+async function tryIpfsGets(CID, setState, index=0){
+  const ipfsFn = callOrderFns[index]
+  ipfsFn(CID)
+    .then((files) => {
+      setState(files)
+    })
+    .catch(async (err) => {
+      console.log('IPFS getFilesWeb error: ', err, 'Attempt: ', index + 1)
+      if (callOrderFns[index + 1]) tryIpfsGets(CID, setState, index + 1)
+    })
+}
+
 async function getProjectAssets(data, setState, debug=false){
   if (!data.profile) return
   const { profile: { url } } = data
   const CID = url.split('/').slice(-1)[0]
   if (debug) console.log({CID, data, ipfs})
-  getFilesWeb(CID)
-    .then((files) => {
-      setState(files)
-      const manifest = files[2]
-      if (debug) console.log({files}, JSON.parse(manifest.content))
-    })
-    .catch(async (err) => {
-      console.log('IPFS getFiles error: ', err)
-      databaseExists('ipfs')
-        .catch(() => window.location.reload())
-
-      getFiles(CID)
-        .then((files) => {
-          setState(files)
-          const manifest = files[2]
-          if (debug) console.log({files}, JSON.parse(manifest.content))
-        })
-        .catch((err) => {
-          console.log('IPFS FAILED ON READY', err)
-        })
-    })
+  tryIpfsGets(CID, setState)
 }
 
 async function getPledge(dPledge) {
