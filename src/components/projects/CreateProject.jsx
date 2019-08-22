@@ -3,8 +3,6 @@ import { Formik } from 'formik'
 import classnames from 'classnames'
 import ReactMarkdown from 'react-markdown'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
 import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import { withStyles } from '@material-ui/core/styles'
@@ -337,18 +335,6 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.media || ''}
               />
-              <FormControlLabel
-                className={classes.formControl}
-                control={
-                  <Switch
-                    id="isPlaying"
-                    checked={values.isPlaying}
-                    onChange={handleChange}
-                    value={values.isPlaying}
-                  />
-                }
-                label="Autoplay media?"
-              />
               {status && status.showPreview &&
                <div className={classnames(classes.markdown, fullWidth)}>
                  <div
@@ -370,7 +356,7 @@ const SubmissionSection = ({ classes, history }) => {
               {(!status || !status.showPreview) && <StatusTextField
                 className={fullWidth}
                 InputProps={{
-                  style: { height: '100%' }
+                  style: { height: '10em' }
                 }}
                 idFor="Full description"
                 name="description"

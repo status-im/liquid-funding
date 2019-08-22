@@ -34,7 +34,7 @@ const styles = theme => ({
       gridColumnStart: 1,
       gridColumnEnd: 13,
       marginTop: theme.spacing.unit * 3,
-      paddingRight: '24px'
+      paddingRight: '1.2em'
     },
   },
   input: {
@@ -64,8 +64,7 @@ const styles = theme => ({
   },
   topRight: {
     gridRowStart: 1,
-    gridColumnStart: 11,
-    gridColumnEnd: 12
+    gridColumnStart: 12,
   }
 })
 
