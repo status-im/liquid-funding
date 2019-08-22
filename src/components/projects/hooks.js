@@ -26,6 +26,7 @@ async function tryIpfsGets(CID, setState, index=0){
   const ipfsFn = callOrderFns[index]
   ipfsFn(CID)
     .then((files) => {
+      console.log('IPFS get sucessful on attempt: ', index+1)
       setState(files)
     })
     .catch(async (err) => {

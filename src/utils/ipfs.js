@@ -90,7 +90,7 @@ export const uploadToIpfs = async files => {
 }
 
 export const uploadToIpfsGateway = async files => {
-  const res = await ipfsHttp.add(files)
+  const res = await ipfsHttpTheGraph.add(files)
   return `ipfs/${res.slice(-1)[0].hash}`
 }
 
