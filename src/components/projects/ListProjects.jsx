@@ -72,14 +72,17 @@ function ListProjects({ classes }) {
         const cellStyling = isOdd(i) ? classnames(cellText) : classnames(cellText, classes.cellColor)
         const spaceClass = isOdd(i) ? nameSpacer : classnames(nameSpacer, cellColor)
         const creationDate = getDateFromTimestamp(creationTime)
+        const profileUrl = `/fund-project/${profileId}`
         return (
           <Fragment key={id}>
             <Cell spacerClass={spaceClass} textClass={classnames(classes.headerName, cellStyling)} text={title} />
-            <Typography className={classnames(classes.headerDescription, cellStyling, classes.cellDescription)}>{subtitle}</Typography>
+            <Link to={profileUrl} className={classnames(classes.headerDescription, cellStyling, classes.cellDescription)}>
+              <Typography className={classes.px16}>{subtitle}</Typography>
+            </Link>
             <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} cellStyling={cellStyling} />
             <Typography className={classnames(classes.headerContact, cellStyling, classes.cellDescription)}>{creator}</Typography>
             <Typography className={classnames(classes.dateCreated, cellStyling, classes.cellDescription)}>{creationDate}</Typography>
-            <Link to={`/fund-project/${profileId}`} className={classnames(classes.readMore, cellStyling)}>
+            <Link to={profileUrl} className={classnames(classes.readMore, cellStyling)}>
               <Typography className={classnames(classes.blue, classes.px15)}>Read more</Typography>
             </Link>
           </Fragment>
