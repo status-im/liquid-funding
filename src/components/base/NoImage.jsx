@@ -1,5 +1,6 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
+import PropTypes from 'prop-types'
 import PhotoIcon from './icons/Photo.jsx'
 
 const styles = theme => ({
@@ -11,7 +12,7 @@ const styles = theme => ({
     justifyContent: 'center',
     background: 'rgba(147, 155, 161, 0.1)',
     minHeight: '15em',
-    gridColumn: '1 / 13'
+    gridColumn: '1 / 7'
   },
   icon: {},
   subText: {
@@ -29,6 +30,10 @@ function NoImage({ classes }){
       <div className={classes.subText}>No image available</div>
     </div>
   )
+}
+
+NoImage.propTypes = {
+  classes: PropTypes.object
 }
 
 export default withStyles(styles)(NoImage)
