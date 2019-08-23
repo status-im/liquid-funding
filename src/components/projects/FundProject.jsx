@@ -13,7 +13,7 @@ import { convertTokenAmountUsd, formatPercent } from '../../utils/prices'
 import { getAmountFromPledgesInfo } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getMediaType, getMediaSrc, formatProjectId } from '../../utils/project'
-import { getDateCreated, convertToHours } from '../../utils/dates'
+import { getDateCreated } from '../../utils/dates'
 import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
@@ -32,7 +32,7 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes, projectData, projectId, commitTime, profileData, startPolling }) => {
+const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling }) => {
   const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos, projectInfo } = profileData
@@ -132,10 +132,6 @@ const SubmissionSection = ({ classes, projectData, projectId, commitTime, profil
                 text={manifest.description}
                 isMarkdown={true}
               />
-              <TextDisplay
-                name="Commit time (hours)"
-                text={commitTime.toString()}
-              />
             </div>}
             {manifest && <div className={secondHalf}>
               <div className={classes.edit}>{isCreator ? 'Edit' : ''}</div>
@@ -188,7 +184,6 @@ function FundProject({ classes, match, history }) {
   if (error) return <div>{`Error! ${error.message}`}</div>
   if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
 
-  const commitTime = convertToHours(data.profile.commitTime)
   return (
     <div className={classes.root}>
       <SubmissionSection
@@ -197,7 +192,6 @@ function FundProject({ classes, match, history }) {
         projectData={projectData}
         projectId={projectId}
         profileData={data.profile}
-        commitTime={commitTime}
         startPolling={startPolling}
       />
     </div>
