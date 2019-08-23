@@ -15,7 +15,9 @@ import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
 import { setMediaType } from '../../utils/project'
-import NoImage from '../base/NoImage'
+import MediaView from '../base/MediaView'
+import { isVideo } from '../../utils/images'
+
 
 const { addProject } = LiquidPledging.methods
 
@@ -115,8 +117,7 @@ const styles = theme => ({
     fontSize: '2rem'
   },
   fullWidth: {
-    gridColumnStart: '1',
-    gridColumnEnd: '13'
+    gridColumn: '1 / 13'
   },
   breadCrumb: {
     color: '#939BA1'
@@ -336,7 +337,7 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.media || ''}
               />
-              <NoImage />
+              {values.media && <MediaView isVideo={isVideo(uploads.media[0])} className={fullWidth} source={URL.createObjectURL(uploads.media[0])} />}
               {status && status.showPreview &&
                <div className={classnames(classes.markdown, fullWidth)}>
                  <div
