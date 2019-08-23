@@ -17,6 +17,7 @@ import { convertTokenAmountUsd } from '../../utils/prices'
 import { setMediaType } from '../../utils/project'
 import MediaView from '../base/MediaView'
 import { isVideo } from '../../utils/images'
+import BreadCrumb from '../base/BreadCrumb'
 
 
 const { addProject } = LiquidPledging.methods
@@ -237,9 +238,10 @@ const SubmissionSection = ({ classes, history }) => {
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <div className={firstHalf}>
-              <div className={classnames(classes.breadCrumb, fullWidth)}>
-                {'All projects and delegates > Create new'}
-              </div>
+              <BreadCrumb
+                className={fullWidth}
+                trail={['Create new']}
+              />
               <StatusTextField
                 className={fullWidth}
                 isRequired={true}

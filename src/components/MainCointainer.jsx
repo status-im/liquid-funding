@@ -153,7 +153,6 @@ class PersistentDrawerLeft extends React.Component {
   render() {
     const { classes, theme, loading, account, enableEthereum, location: { pathname, search } } = this.props
     const { open } = this.state
-    console.log(this.props)
     const isHome = pathname === "/"
     const queryParams = queryString.parse(search)
 
