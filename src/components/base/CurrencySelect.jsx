@@ -91,7 +91,7 @@ function CurrencySelect({
           <div style={{display: 'flex', alignItems: 'center'}}>
             {option.icon || <img
               src={option.img || `${TOKEN_ICON_API}/${option.value}.png`}
-              style={{width: option.width, marginRight: '3%'}}
+              style={{width: option.width, marginRight: '1rem'}}
             />}
             {option.label}
             {showBalances && <span style={{ marginLeft: '10%' }}>Your Balance: <strong>{balances[option.value]}</strong></span>}
