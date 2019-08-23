@@ -20,6 +20,7 @@ import StatusTextField from '../base/TextField'
 import { getProfileById } from './queries'
 import styles from './styles/FundProject'
 import Loading from '../base/Loading'
+import BreadCrumb from '../base/BreadCrumb'
 
 
 const { addGiverAndDonate } = LiquidPledging.methods
@@ -93,9 +94,10 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             {manifest && <div className={firstHalf}>
-              <div className={classnames(classes.breadCrumb, fullWidth)}>
-                {`All projects > ${manifest.title}`}
-              </div>
+              <BreadCrumb
+                className={fullWidth}
+                trail={[manifest.title]}
+              />
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
                 {manifest && manifest.title}
               </Typography>
