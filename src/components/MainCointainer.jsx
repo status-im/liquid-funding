@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Link, Switch, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import queryString from 'query-string'
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -83,11 +84,11 @@ const styles = theme => ({
   },
   menuButton: {
     marginLeft: 12,
-    marginRight: 20,
     color: '#000000'
   },
   menuText: {
-    color: '#000000'
+    color: '#000000',
+    marginLeft: '2rem'
   },
   hide: {
     display: 'none',
@@ -150,9 +151,11 @@ class PersistentDrawerLeft extends React.Component {
   };
 
   render() {
-    const { classes, theme, loading, account, enableEthereum, location: { pathname } } = this.props
+    const { classes, theme, loading, account, enableEthereum, location: { pathname, search } } = this.props
     const { open } = this.state
+    console.log(this.props)
     const isHome = pathname === "/"
+    const queryParams = queryString.parse(search)
 
     return (
       <div className={classes.root}>
@@ -164,7 +167,7 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <Toolbar disableGutters={!open}>
-            <IconButton
+            {queryParams.menu && <IconButton
               color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
@@ -178,7 +181,7 @@ class PersistentDrawerLeft extends React.Component {
                 color={'#FFFFFF'}
               />}
               {!loading && <MenuIcon/>}
-            </IconButton>
+            </IconButton>}
             {!isHome && <Typography variant="h6" noWrap>
               <Link to="/" className={classNames(classes.link, classes.menuText)}>Liquid Funding</Link>
             </Typography>}
