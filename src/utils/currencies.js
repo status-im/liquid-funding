@@ -3,7 +3,6 @@ import SNT from '../embarkArtifacts/contracts/SNT'
 import DAI from '../embarkArtifacts/contracts/DAI'
 import cDAI from '../embarkArtifacts/contracts/cDAI'
 import cETH from '../embarkArtifacts/contracts/cETH'
-import sntIco from 'cryptocurrency-icons/svg/color/snt.svg'
 import { toEther, toWei, compoundWhole, compoundToChain } from './conversions'
 
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
@@ -13,7 +12,8 @@ export const currencies = [
   {
     value: SNT._address,
     label: 'SNT',
-    img: sntIco,
+    img: `${TOKEN_API}/0x744d70fdbe2ba4cf95131626614a1763df805b9e.png`,
+    width: '2rem',
     contract: SNT,
     humanReadibleFn: toEther,
     chainReadibleFn: toWei
