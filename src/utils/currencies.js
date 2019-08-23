@@ -22,7 +22,7 @@ export const currencies = [
     value: '0xf5dce57282a584d2746faf1593d3121fcac444dc',
     label: 'cDAI',
     img: `${TOKEN_API}/0xf5dce57282a584d2746faf1593d3121fcac444dc.png`,
-    width: '5%',
+    width: '2rem',
     contract: cDAI,
     humanReadibleFn: compoundWhole,
     chainReadibleFn: compoundToChain
@@ -31,7 +31,7 @@ export const currencies = [
     value: '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5',
     label: 'cETH',
     img: `${TOKEN_API}/0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5.png`,
-    width: '5%',
+    width: '2rem',
     contract: cETH,
     humanReadibleFn: compoundWhole,
     chainReadibleFn: compoundToChain
@@ -40,7 +40,7 @@ export const currencies = [
     value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
     label: 'WETH',
     img: `${TOKEN_COIN_API}/60.png`,
-    width: '5%',
+    width: '2rem',
     humanReadibleFn: toEther,
     chainReadibleFn: toWei
   },
@@ -48,7 +48,7 @@ export const currencies = [
     value: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
     label: 'DAI',
     img: `${TOKEN_API}/0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359.png`,
-    width: '5%',
+    width: '2rem',
     contract: DAI,
     humanReadibleFn: toEther,
     chainReadibleFn: toWei
