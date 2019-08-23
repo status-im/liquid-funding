@@ -15,6 +15,7 @@ import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
 import { setMediaType } from '../../utils/project'
+import NoImage from '../base/NoImage'
 
 const { addProject } = LiquidPledging.methods
 
@@ -335,6 +336,7 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.media || ''}
               />
+              <NoImage />
               {status && status.showPreview &&
                <div className={classnames(classes.markdown, fullWidth)}>
                  <div
