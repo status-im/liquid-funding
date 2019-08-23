@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ Suspense, lazy }  from 'react';
 import { Route, Link, Switch, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -22,18 +22,20 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import ProjectIcon from '@material-ui/icons/Work';
 import { ScaleLoader } from 'react-spinners'
-import FundsManagement from './FundsManagement'
-import ContractAdmin from './ContractAdmin'
-import TransferGraph from './TransfersGraph'
-import Dashboard from './Dashboard'
-import Projects from './projects/Projects'
-import Project from './projects/Project'
-import FundProject from './projects/FundProject'
-import BackProject from './projects/BackProject'
-import ProjectPledges from './projects/ProjectPledges'
-import CreateProject from './projects/CreateProject'
-import CreateDelegate from './projects/CreateDelegate'
-import ListProjects from './projects/ListProjects'
+import Loading from '../components/base/Loading'
+
+const ListProjects = lazy(() => import('./projects/ListProjects'))
+const FundsManagement = lazy(() => import('./FundsManagement'))
+const ContractAdmin = lazy(() => import('./ContractAdmin'))
+const Dashboard = lazy(() => import('./Dashboard'))
+const Projects = lazy(() => import('./projects/Projects'))
+const Project = lazy(() => import('./projects/Project'))
+const FundProject = lazy(() => import('./projects/FundProject'))
+const BackProject = lazy(() => import('./projects/BackProject'))
+const ProjectPledges = lazy(() => import('./projects/ProjectPledges'))
+const CreateProject = lazy(() => import('./projects/CreateProject'))
+const CreateDelegate = lazy(() => import('./projects/CreateDelegate'))
+const TransferGraph = lazy(() => import('./TransfersGraph'))
 
 const drawerWidth = 240
 const formatAccount = account => {
@@ -228,20 +230,22 @@ class PersistentDrawerLeft extends React.Component {
         >
           <div className={classes.drawerHeader} />
           <div className={classNames(classes.appBar)}>
-            <Switch>
-              <Route path="/(|list-projects)" component={ListProjects} />
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/admin" component={ContractAdmin} />
-              <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
-              <Route path="/insights" component={TransferGraph} />
-              <Route path="/projects" component={Projects} />
-              <Route path="/(profile|delegate|project)/:id" component={Project} />
-              <Route path="/(fund-project)/:id" component={FundProject} />
-              <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
-              <Route path="/create-delegate/" render={(props) => <CreateDelegate {...props} />} />
-              <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
-              <Route path="/project-pledges/:id" component={ProjectPledges} />
-            </Switch>
+            <Suspense fallback={<Loading />}>
+              <Switch>
+                <Route path="/(|list-projects)" component={ListProjects} />
+                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/admin" component={ContractAdmin} />
+                <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
+                <Route path="/insights" component={TransferGraph} />
+                <Route path="/projects" component={Projects} />
+                <Route path="/(profile|delegate|project)/:id" component={Project} />
+                <Route path="/(fund-project)/:id" component={FundProject} />
+                <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
+                <Route path="/create-delegate/" render={(props) => <CreateDelegate {...props} />} />
+                <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
+                <Route path="/project-pledges/:id" component={ProjectPledges} />
+              </Switch>
+            </Suspense>
             {this.props.children}
           </div>
         </main>
