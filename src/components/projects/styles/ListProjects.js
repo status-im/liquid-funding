@@ -39,7 +39,8 @@ const styles = theme => ({
     textAlign: 'center'
   },
   cellDescription: {
-    fontSize: '1rem'
+    fontSize: '1rem',
+    textDecoration: 'none'
   },
   cellColor: {
     background: '#F5F7F8'
