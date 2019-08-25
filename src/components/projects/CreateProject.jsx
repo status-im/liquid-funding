@@ -6,6 +6,7 @@ import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import { withStyles } from '@material-ui/core/styles'
+import { withRouter } from "react-router-dom"
 import { uploadFilesToIpfs, pinToGateway, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
@@ -461,4 +462,4 @@ function CreateProject({ classes, history }) {
 }
 
 const StyledProject = withStyles(styles)(CreateProject)
-export default StyledProject
+export default withRouter(StyledProject)
