@@ -256,8 +256,8 @@ class PersistentDrawerLeft extends React.Component {
                 <Route path="/projects" component={Projects} />
                 <Route path="/(profile|delegate|project)/:id" component={Project} />
                 <Route path="/(fund-project)/:id" component={FundProject} />
-                <Route path="/create-project/" render={(props) => <CreateProject {...props} />} />
-                <Route path="/create-delegate/" render={(props) => <CreateDelegate {...props} />} />
+                <Route path="/create-project/" component={CreateProject} />
+                <Route path="/create-delegate/" component={CreateDelegate} />
                 <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
                 <Route path="/project-pledges/:id" component={ProjectPledges} />
                 <Route path="/console" render={() => <Console logs={logs} variant="dark" />} />

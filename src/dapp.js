@@ -39,6 +39,8 @@ class App extends React.Component {
     if (window.ethereum) {
       const { selectedAddress: account } = window.ethereum
       if (account) this.setState({ account })
+    } else {
+      console.log('window.ethreum not found :', {window})
     }
 
   }
@@ -67,11 +69,15 @@ class App extends React.Component {
   }
 
   enableEthereum = async () => {
-    await EmbarkJS.enableEthereum()
-    const account = await web3.eth.getCoinbase()
-    this.setState({ account })
-    this.web3Init()
-    return account
+    try {
+      await await window.ethereum.enable()
+      const account = await web3.eth.getCoinbase()
+      this.setState({ account })
+      this.web3Init()
+      return account
+    } catch (error) {
+      console.error('Enable Ethereum :', {error})
+    }
   }
 
   getAndSetPrices = async () => {
