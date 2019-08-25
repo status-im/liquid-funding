@@ -3,7 +3,8 @@ import { Route, Link, Switch, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import queryString from 'query-string'
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles'
+import { Hook, Console, Decode } from 'console-feed'
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -142,7 +143,22 @@ const MenuItem = ({to, name, className, icon}) => (
 class PersistentDrawerLeft extends React.Component {
   state = {
     open: false,
+    queryParams: {},
+    logs: []
   };
+
+  componentDidMount() {
+    const { location: { search } } = this.props
+    const queryParams = queryString.parse(search)
+    if (queryParams.logs) this.enableLogs()
+    this.setState({ queryParams })
+  }
+
+  enableLogs = () => {
+    Hook(window.console, log => {
+      this.setState(({ logs }) => ({ logs: [Decode(log), ...logs] }))
+    })
+  }
 
   handleDrawerOpen = () => {
     this.setState({ open: true })
@@ -153,10 +169,9 @@ class PersistentDrawerLeft extends React.Component {
   };
 
   render() {
-    const { classes, theme, loading, account, enableEthereum, location: { pathname, search } } = this.props
-    const { open } = this.state
+    const { classes, theme, loading, account, enableEthereum, location: { pathname } } = this.props
+    const { open, logs, queryParams } = this.state
     const isHome = pathname === "/"
-    const queryParams = queryString.parse(search)
 
     return (
       <div className={classes.root}>
@@ -215,6 +230,7 @@ class PersistentDrawerLeft extends React.Component {
             <MenuItem name="Funds Management" to="/funds-management" className={classes.link} icon={<InboxIcon/>}/>
             <MenuItem name="Insights" to="/insights/" className={classes.link} icon={<InboxIcon/>}/>
             <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
+            <MenuItem name="console" to="/console/" className={classes.link} icon={<InboxIcon/>}/>
           </List>
           <Divider/>
           <List>
@@ -244,6 +260,7 @@ class PersistentDrawerLeft extends React.Component {
                 <Route path="/create-delegate/" render={(props) => <CreateDelegate {...props} />} />
                 <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
                 <Route path="/project-pledges/:id" component={ProjectPledges} />
+                <Route path="/console" render={() => <Console logs={logs} variant="dark" />} />
               </Switch>
             </Suspense>
             {this.props.children}
