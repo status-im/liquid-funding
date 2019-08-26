@@ -6,7 +6,8 @@ import classnames from 'classnames'
 
 const useStyles = makeStyles({
   main: {
-    color: '#939BA1'
+    color: '#939BA1',
+    fontSize: '1.125rem'
   },
   link: {
     textDecoration: 'none',
