@@ -48,14 +48,7 @@ class App extends React.Component {
   setGraphClient = network => {
     const graphUri = uris[network]
     const client = new ApolloClient({
-      uri: graphUri,
-      resolvers: {
-        Profile: {
-          lifetimeReceived(infos) {
-            return infos.pledgesInfos[0].lifetimeReceived
-          }
-        }
-      }
+      uri: graphUri
     })
     this.client = client
     this.setState({ clientReady: true })

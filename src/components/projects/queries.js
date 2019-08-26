@@ -11,7 +11,6 @@ query Profile($id: ID!) {
     type
     name
     creationTime
-    lifetimeReceived @client
     pledgesInfos {
       id
       token
