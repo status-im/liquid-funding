@@ -1,11 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/styles'
 import { Link } from 'react-router-dom'
 import classnames from 'classnames'
 
-const styles = theme => ({
-  theme,
+const useStyles = makeStyles({
   main: {
     color: '#939BA1'
   },
@@ -15,7 +14,8 @@ const styles = theme => ({
   }
 })
 
-function BreadCrumb({ classes, className, trail }){
+function BreadCrumb({ className, trail }){
+  const classes = useStyles()
   const trailString = trail ? ` > ${trail.join(' > ')}` : ''
   return (
     <div className={classnames(classes.main, className)}>
@@ -28,9 +28,8 @@ function BreadCrumb({ classes, className, trail }){
 }
 
 BreadCrumb.propTypes = {
-  classes: PropTypes.object.isRequired,
   className: PropTypes.string,
   trail: PropTypes.array
 }
 
-export default withStyles(styles)(BreadCrumb)
+export default BreadCrumb
