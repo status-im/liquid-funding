@@ -33,7 +33,8 @@ const styles = theme => ({
     justifyContent: 'center',
     fontSize: '1rem',
     flexFlow: 'column',
-    padding: '1rem 1rem 1rem 0'
+    padding: '1rem 1rem 1rem 0',
+    color: '#000000'
   },
   centerText: {
     textAlign: 'center'
@@ -66,7 +67,8 @@ const styles = theme => ({
     alignItems: 'center',
     textDecoration: 'none',
     marginTop: '2rem',
-    gridColumn: '3 / 18'
+    gridColumn: '3 / 18',
+    color: '#000000'
   },
   tableTitle: {
     color: '#939BA1',
