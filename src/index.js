@@ -1,5 +1,5 @@
 import React from 'react';
-import {render} from 'react-dom';
+import { unstable_createRoot as createRoot} from 'react-dom';
 import DatabaseProvider from '@nozbe/watermelondb/DatabaseProvider';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import database from './db';
@@ -22,10 +22,10 @@ const theme = createMuiTheme({
   }
 });
 
-render(
+createRoot(document.getElementById('app')).render(
   <DatabaseProvider database={database}>
     <MuiThemeProvider theme={theme}>
       <App/>
     </MuiThemeProvider>
-  </DatabaseProvider>, document.getElementById('app')
+  </DatabaseProvider>
 );

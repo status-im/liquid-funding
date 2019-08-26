@@ -7,7 +7,6 @@ import LiquidPledging from './embarkArtifacts/contracts/LiquidPledging'
 import Snackbar from '@material-ui/core/Snackbar'
 import { ApolloProvider } from '@apollo/react-hooks'
 import ApolloClient from 'apollo-boost'
-import { InMemoryCache } from 'apollo-cache-inmemory'
 import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval } from './utils/initialize'
 import { getAuthorizedPayments } from './utils/events'
 import { FundingContext } from './context'
@@ -48,16 +47,7 @@ class App extends React.Component {
 
   setGraphClient = network => {
     const graphUri = uris[network]
-    const cache = new InMemoryCache()
-    cache.writeData({
-      data: {
-        profile: {
-          pledgesInfos: []
-        },
-      },
-    })
     const client = new ApolloClient({
-      cache,
       uri: graphUri,
       resolvers: {
         Profile: {
