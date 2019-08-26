@@ -1,13 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/styles'
 import classnames from 'classnames'
 import InputBase from '@material-ui/core/InputBase'
 import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 
-
-const styles = theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
@@ -66,7 +65,7 @@ const styles = theme => ({
     gridRowStart: 1,
     gridColumnStart: 12,
   }
-})
+}))
 
 const renderLabel = (formLabelClass, idFor, label, isRequired) => (
   <InputLabel
@@ -81,7 +80,6 @@ const renderLabel = (formLabelClass, idFor, label, isRequired) => (
 )
 
 function Input({
-  classes,
   idFor,
   isRequired,
   endAdornment,
@@ -99,6 +97,7 @@ function Input({
   multiline,
   topRight
 }) {
+  const classes = useStyles()
   const labelForm = label ? renderLabel(classnames(classes.formLabel, classes.top), idFor, label, isRequired) : null
   const topRightLabel = topRight ? renderLabel(classnames(classes.topRight), idFor, topRight) : null
   const bottomLeft = bottomLeftLabel ? renderLabel(classnames(classes.formLabel, classes.bottomLeft), idFor, bottomLeftLabel) : null
@@ -136,11 +135,10 @@ Input.defaultProps = {
 }
 
 Input.propTypes = {
-  classes: PropTypes.object.isRequired,
   idFor: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string,
   placeholder: PropTypes.string
 }
 
-export default withStyles(styles)(Input)
+export default Input
