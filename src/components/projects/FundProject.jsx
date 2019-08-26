@@ -14,6 +14,7 @@ import { getAmountFromPledgesInfo } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getMediaType, getMediaSrc, formatProjectId } from '../../utils/project'
 import { getDateCreated } from '../../utils/dates'
+import { toBN } from '../../utils/conversions'
 import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
@@ -33,7 +34,11 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling }) => {
+const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
+  const updatedLifetimeReceived = toBN(weiAmount).add(toBN(pledgesInfo.lifetimeReceived)).toString()
+  client.writeData({ data: { [`PledgesInfo:${pledgesInfo.id}`]:  {...pledgesInfo, lifetimeReceived: updatedLifetimeReceived } } })
+}
+const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling, client }) => {
   const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos, projectInfo } = profileData
@@ -56,23 +61,27 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         const { goalToken } = manifest
         const { chainReadibleFn } = getTokenByAddress(goalToken)
         const userAccount = account ? account : await enableEthereum()
-        const args = [projectId, userAccount, goalToken, chainReadibleFn(amount)]
+        const weiAmount = chainReadibleFn(amount)
+        const args = [projectId, userAccount, goalToken, weiAmount]
         const toSend = addGiverAndDonate(...args)
         const estimatedGas = await toSend.estimateGas()
-
         toSend
           .send({gas: estimatedGas + 100})
-          .on('transactionHash', () => { startPolling(10000) })
+          .on('transactionHash', (hash) => {
+            optimisticUpdate(client, pledgesInfo, weiAmount)
+            openSnackBar('success', `Submitted funding request to chain. TX Hash: ${hash}`)
+          })
           .then(async res => {
             console.log({res})
-            openSnackBar('success', 'Successfully funded project')
+            startPolling(10000)
+            openSnackBar('success', 'Funding Confirmed')
           })
           .catch(e => {
             openSnackBar('error', 'An error has occured with the transaction')
             console.log({e})
           })
           .finally(() => {
-            openSnackBar('success', 'project backed!')
+            client.resetStore()
             resetForm()
           })
 
@@ -173,7 +182,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
 
 function FundProject({ classes, match, history }) {
   const projectId = match.params.id
-  const { loading, error, data, stopPolling, startPolling } = useQuery(getProfileById, {
+  const { loading, error, data, stopPolling, startPolling, client } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
   });
   const projectData = useProjectData(projectId, data)
@@ -190,6 +199,7 @@ function FundProject({ classes, match, history }) {
     <div className={classes.root}>
       <SubmissionSection
         classes={classes}
+        client={client}
         history={history}
         projectData={projectData}
         projectId={projectId}
