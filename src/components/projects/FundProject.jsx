@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import useWindowSize from '@rehooks/window-size'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
@@ -55,6 +56,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   const pledgesInfo = pledgesInfos[0]
   const tokenLabel = getTokenLabel(projectInfo.goalToken)
   const totalPledged = getAmountFromPledgesInfo(pledgesInfo)
+  const windowSize = useWindowSize()
+  const isSmall = windowSize.innerWidth < 800
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
@@ -112,7 +115,9 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
 
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
-            {manifest && <div className={firstHalf}>
+            {manifest && <div className={classnames(firstHalf, {
+              [classes.fullWidth]: isSmall
+            })}>
               <BreadCrumb
                 className={fullWidth}
                 trail={[manifest.title]}
@@ -147,14 +152,18 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                   <div className={classes.chatText}>{manifest.code}</div>
                 </a>
               </div>
-              <MediaView className={classes.fullWidth} isVideo={isVideo} source={mediaUrl} imgClass={classes.imgClass} />
+              <MediaView className={classes.fullWidth} isVideo={isVideo} source={mediaUrl} imgClass={classnames(classes.imgClass, {
+                [classes.imgSmallViewport]: isSmall
+              })} />
               <TextDisplay
                 name="Full description"
                 text={manifest.description}
                 isMarkdown={true}
               />
             </div>}
-            {manifest && <div className={secondHalf}>
+            {manifest && <div className={classnames(secondHalf, {
+              [classes.fullWidth]: isSmall
+            })}>
               <div className={classes.edit}>{isCreator ? 'Edit' : ''}</div>
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
                 {`${totalPledged.toLocaleString()} ${tokenLabel}`} pledged
