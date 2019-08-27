@@ -49,7 +49,7 @@ const batchAddDelegates = async (pledges, profiles, existing) => {
       }
     })
   })
-  return database.action(async () => await database.batch(...batch))
+  return database.action(async () => database.batch(...batch))
 }
 
 export const updateDelegates = async () => {

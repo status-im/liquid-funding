@@ -29,7 +29,7 @@ export const batchAddEvents = async events => {
       lpEvent.returnValues = returnValues
     })
   })
-  return await database.action(async () => await database.batch(...batch))
+  return database.action(async () => database.batch(...batch))
 }
 
 export const getVaultEventById = async id => {

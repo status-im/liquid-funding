@@ -5,7 +5,7 @@ import { formatFundProfileEvent } from '../utils/events'
 
 const profilesCollection = database.collections.get('profiles')
 export const addProfile = async data => {
-  return await database.action(async () => {
+  return database.action(async () => {
     const res = await profilesCollection.create(profile => {
       const { id, addr, canceled, commitTime, type, name, url, idProfile } = data
       profile.eventId = id
@@ -35,7 +35,7 @@ export const batchAddProfiles = async profiles => {
       profile.idProfile = Number(idProfile)
     })
   })
-  return await database.action(async () => await database.batch(...batch))
+  return database.action(async () => database.batch(...batch))
 }
 
 export const addFormattedProfiles = async () => {

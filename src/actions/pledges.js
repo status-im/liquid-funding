@@ -22,7 +22,7 @@ const createPledge = (pledge, data, profiles) => {
 
 const pledgesCollection = database.collections.get('pledges')
 export const addPledge = async data => {
-  return await database.action(async () => {
+  return database.action(async () => {
     const res = await pledgesCollection.create(pledge => createPledge(pledge, data))
     return res
   })
@@ -32,7 +32,7 @@ export const batchAddPledges = async (pledges, profiles = []) => {
   const batch = pledges.map(data => {
     return pledgesCollection.prepareCreate(pledge => createPledge(pledge, data, profiles))
   })
-  return await database.action(async () => await database.batch(...batch))
+  return database.action(async () => database.batch(...batch))
 }
 
 const getLastPledge = pledges => {

@@ -19,7 +19,7 @@ export default class VaultEvent extends Model {
   @json('return_values', sanitizeValues) returnValues
 
   @action async addEvent(data) {
-    return await this.create(lpEvent => {
+    return this.create(lpEvent => {
       const { event, address, id, blockNumber } = data
       lpEvent.eventId = id
       lpEvent.address = address
