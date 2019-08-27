@@ -37,7 +37,11 @@ const useStyles = makeStyles(theme => ({
     color: '#000000'
   },
   cardTitle: {
-    fontWeight: 500
+    fontWeight: 500,
+    paddingTop: '1rem'
+  },
+  cardSubTitle: {
+    lineHeight: '1.5rem'
   },
   cardLightText: {
     color: '#545353'
@@ -46,7 +50,7 @@ const useStyles = makeStyles(theme => ({
     gridColumn: '1 / 36'
   },
   cardMore: {
-    gridColumn: '36 / 48'
+    gridColumn: '36 / 49',
   },
   cellText: {
     display: 'flex',
@@ -96,10 +100,22 @@ const useStyles = makeStyles(theme => ({
     gridColumn: '3 / 18',
     color: '#000000'
   },
+  fabSmall: {
+    gridColumn: '3 / 48'
+  },
+  paddingNone: {
+    padding: 0
+  },
   tableTitle: {
     color: '#939BA1',
     fontSize: '1.2rem',
     gridColumn: '2 / 49'
+  },
+  tableTitleSmall: {
+    color: '#000000',
+    fontSize: '1.2rem',
+    gridColumn: '1 / 49',
+    textAlign: 'center'
   },
   tableHeader: {
     color: 'rgba(147, 155, 161, 0.8)',
