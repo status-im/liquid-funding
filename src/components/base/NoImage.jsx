@@ -1,10 +1,8 @@
 import React from 'react'
-import { withStyles } from '@material-ui/core/styles'
-import PropTypes from 'prop-types'
+import { makeStyles } from '@material-ui/core/styles'
 import PhotoIcon from './icons/Photo.jsx'
 
-const styles = theme => ({
-  theme,
+const useStyles = makeStyles(({
   main: {
     display: 'flex',
     flexDirection: 'column',
@@ -19,9 +17,10 @@ const styles = theme => ({
     color: '#939BA1',
     fontSize: '0.9375rem'
   }
-})
+}))
 
-function NoImage({ classes }){
+function NoImage(){
+  const classes = useStyles()
   return (
     <div className={classes.main}>
       <div className={classes.icon}>
@@ -32,8 +31,4 @@ function NoImage({ classes }){
   )
 }
 
-NoImage.propTypes = {
-  classes: PropTypes.object
-}
-
-export default withStyles(styles)(NoImage)
+export default NoImage
