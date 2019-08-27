@@ -92,24 +92,22 @@ function TableRows({ profiles, classes }) {
 }
 
 function TableCards({ profiles, classes }) {
-  const { cardText, cellColor, nameSpacer } = classes
+  const { cardText } = classes
   return (
     <Fragment>
       {profiles.map((profile, i) => {
         const { id, profileId, projectInfo: { title, subtitle, goal, goalToken, creator }, pledgesInfos } = profile
         const cellStyling = isOdd(i) ? classnames(cardText) : classnames(cardText, classes.cellColor)
         const lightText = classnames(cellStyling, classes.cardLightText)
-        const spaceClass = isOdd(i) ? nameSpacer : classnames(nameSpacer, cellColor)
         const profileUrl = `/fund-project/${profileId}`
-        console.log({spaceClass, profileUrl})
         return (
           <Fragment key={id}>
             <Typography className={classnames(cellStyling, classes.cardTitle)}>{title}</Typography>
-            <Typography className={cellStyling}>{subtitle}</Typography>
+            <Typography className={classnames(cellStyling, classes.cardSubTitle)}>{subtitle}</Typography>
             <Typography className={lightText}>{`By ${creator}`}</Typography>
             <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} cellStyling={classnames(lightText, classes.cardAmount)} />
-            <Link to={profileUrl} className={classnames(classes.cardLink, cellStyling, classes.cardMore)}>
-              <Typography className={classnames(lightText)}>Read more</Typography>
+            <Link to={profileUrl} className={classnames(classes.cardLink, cellStyling, classes.cardMore, classes.paddingNone)}>
+              <Typography className={classnames(lightText, classes.paddingNone)}>Read more</Typography>
             </Link>
           </Fragment>
         )
@@ -126,9 +124,10 @@ function ListProjects() {
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   const { profiles } = data
-  console.log({windowSize})
   const { innerWidth } = windowSize
   const isSmall = innerWidth < 800
+  const fabStyle = isSmall ? classnames(classes.fabLink, classes.fabSmall) : classes.fabLink
+  const titleStyle = isSmall ? classes.tableTitleSmall : classes.tableTitle
   return (
     <div className={classes.main}>
       <Typography className={classnames(classes.title, classes.fullWidth)}>
@@ -137,13 +136,13 @@ function ListProjects() {
       <Typography className={classnames(classes.subTitle, classes.fullWidth)}>
         Fund. Build. Together.
       </Typography>
-      <Typography className={classes.tableTitle}>
+      <Typography className={titleStyle}>
         All Projects
       </Typography>
       {!isSmall && <TableHeader classes={classes} />}
       {!isSmall ? <TableRows profiles={profiles} classes={classes} /> : <TableCards profiles={profiles} classes={classes} />}
       <Divider className={classes.divider} />
-      <Link to={`/create-project`} className={classes.fabLink}>
+      <Link to={`/create-project`} className={fabStyle}>
         <Fab className={classes.fab}>
           <AddIcon className={classes.addIcon}/>
         </Fab>
