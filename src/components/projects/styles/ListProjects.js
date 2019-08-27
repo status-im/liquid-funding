@@ -1,4 +1,6 @@
-const styles = theme => ({
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles(theme => ({
   theme,
   addIcon: {
     color: '#4360DF',
@@ -109,5 +111,5 @@ const styles = theme => ({
   usdValue: {
     color: '#939BA1'
   }
-})
-export default styles
+}))
+export default useStyles

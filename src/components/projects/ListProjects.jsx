@@ -1,5 +1,4 @@
 import React, { Fragment, useContext } from 'react'
-import { withStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
@@ -7,7 +6,7 @@ import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
-import styles from './styles/ListProjects'
+import useStyles from './styles/ListProjects'
 import { getProjects } from './queries'
 import Loading from '../base/Loading'
 import { convertTokenAmountUsd, percentToGoal } from '../../utils/prices'
@@ -45,7 +44,8 @@ function Cell({ spacerClass, textClass, text }) {
   )
 }
 
-function ListProjects({ classes }) {
+function ListProjects() {
+  const classes = useStyles()
   const { tableHeader, cellText, cellColor, nameSpacer } = classes
   const { loading, error, data } = useQuery(getProjects)
   if (loading) return <Loading />
@@ -99,4 +99,4 @@ function ListProjects({ classes }) {
   )
 }
 
-export default withStyles(styles)(ListProjects)
+export default ListProjects
