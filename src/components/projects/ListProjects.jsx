@@ -57,25 +57,10 @@ function TableHeader({ classes }) {
   )
 }
 
-function ListProjects() {
-  const classes = useStyles()
+function TableRows({ profiles, classes }) {
   const { cellText, cellColor, nameSpacer } = classes
-  const { loading, error, data } = useQuery(getProjects)
-  if (loading) return <Loading />
-  if (error) return <div>{`Error! ${error.message}`}</div>
-  const { profiles } = data
   return (
-    <div className={classes.main}>
-      <Typography className={classnames(classes.title, classes.fullWidth)}>
-        Liquid Funding
-      </Typography>
-      <Typography className={classnames(classes.subTitle, classes.fullWidth)}>
-        Fund. Build. Together.
-      </Typography>
-      <Typography className={classes.tableTitle}>
-        All Projects
-      </Typography>
-      <TableHeader classes={classes} />
+    <Fragment>
       {profiles.map((profile, i) => {
         const { id, profileId, creationTime, projectInfo: { title, subtitle, goal, goalToken, creator }, pledgesInfos } = profile
         const cellStyling = isOdd(i) ? classnames(cellText) : classnames(cellText, classes.cellColor)
@@ -97,6 +82,29 @@ function ListProjects() {
           </Fragment>
         )
       })}
+    </Fragment>
+  )
+}
+
+function ListProjects() {
+  const classes = useStyles()
+  const { loading, error, data } = useQuery(getProjects)
+  if (loading) return <Loading />
+  if (error) return <div>{`Error! ${error.message}`}</div>
+  const { profiles } = data
+  return (
+    <div className={classes.main}>
+      <Typography className={classnames(classes.title, classes.fullWidth)}>
+        Liquid Funding
+      </Typography>
+      <Typography className={classnames(classes.subTitle, classes.fullWidth)}>
+        Fund. Build. Together.
+      </Typography>
+      <Typography className={classes.tableTitle}>
+        All Projects
+      </Typography>
+      <TableHeader classes={classes} />
+      <TableRows profiles={profiles} classes={classes} />
       <Divider className={classes.divider} />
       <Link to={`/create-project`} className={classes.fabLink}>
         <Fab className={classes.fab}>
