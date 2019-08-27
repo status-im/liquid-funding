@@ -1302,6 +1302,13 @@
     hoist-non-react-statics "^3.3.0"
     rxjs "^6.4.0"
 
+"@rehooks/window-scroll-position@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@rehooks/window-scroll-position/-/window-scroll-position-1.0.1.tgz#3cb80f22cbf9cdbd2041b5236ae1fce8245b2f1c"
+  integrity sha512-+7uUcU2DBzXW4ygKTCqjCrtT4Nq0f+hNxQvAw69pXSBc7DbqmzfpxrYu27dT4tXrUKSQPFPpo5AdMv2oUJVM7g==
+  dependencies:
+    lodash.throttle "^4.1.1"
+
 "@rehooks/window-size@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@rehooks/window-size/-/window-size-1.0.2.tgz#24583dda021969e7b7166b923b055a47cca4e4b5"
