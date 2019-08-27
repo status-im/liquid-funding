@@ -1,9 +1,9 @@
-import React,{ Suspense, lazy }  from 'react';
+import React,{ Suspense, lazy, useState, useEffect }  from 'react';
 import { Route, Link, Switch, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import queryString from 'query-string'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { Hook, Console, Decode } from 'console-feed'
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,7 +16,6 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import AddIcon from '@material-ui/icons/Add';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -45,7 +44,7 @@ const formatAccount = account => {
   return `${start}...${end}`
 }
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
   },
@@ -112,7 +111,7 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -129,7 +128,7 @@ const styles = theme => ({
   link: {
     textDecoration: 'none'
   }
-})
+}))
 
 const MenuItem = ({to, name, className, icon}) => (
   <Link to={to} className={className}>
@@ -140,145 +139,143 @@ const MenuItem = ({to, name, className, icon}) => (
   </Link>
 )
 
-class PersistentDrawerLeft extends React.Component {
-  state = {
-    open: false,
-    queryParams: {},
-    logs: []
-  };
+MenuItem.propTypes = {
+  to: PropTypes.string,
+  name: PropTypes.string,
+  className: PropTypes.string,
+  icon: PropTypes.object
+}
 
-  componentDidMount() {
-    const { location: { search } } = this.props
+function PersistentDrawerLeft({ loading, account, children, enableEthereum, location: { pathname, search } }) {
+  const [open, setOpen] = useState(false)
+  const [queryParams, setQueryParams] = useState({})
+  const [logs, setLogs] = useState([])
+
+  useEffect(() => {
     const queryParams = queryString.parse(search)
-    if (queryParams.logs) this.enableLogs()
-    this.setState({ queryParams })
-  }
+    if (queryParams.logs) enableLogs()
+    setQueryParams({ queryParams })
+  }, [search])
 
-  enableLogs = () => {
+  const enableLogs = () => {
     Hook(window.console, log => {
-      this.setState(({ logs }) => ({ logs: [Decode(log), ...logs] }))
+      setLogs(({ logs }) => ({ logs: [Decode(log), ...logs] }))
     })
   }
 
-  handleDrawerOpen = () => {
-    this.setState({ open: true })
+  const handleDrawerOpen = () => {
+    setOpen({ open: true })
   };
 
-  handleDrawerClose = () => {
-    this.setState({ open: false })
+  const handleDrawerClose = () => {
+    setOpen({ open: false })
   };
 
-  render() {
-    const { classes, theme, loading, account, enableEthereum, location: { pathname } } = this.props
-    const { open, logs, queryParams } = this.state
-    const isHome = pathname === "/"
+  const classes = useStyles()
+  const isHome = pathname === "/"
 
-    return (
-      <div className={classes.root}>
-        <CssBaseline />
-        <AppBar
-          position="fixed"
-          className={classNames(classes.appBar, classes.appBarBg, {
-            [classes.appBarShift]: open,
-          })}
-        >
-          <Toolbar disableGutters={!open}>
-            {queryParams.menu && <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerOpen}
-              className={classNames(classes.menuButton, open && !loading && classes.hide)}
-            >
-              {loading && <ScaleLoader
-                sizeUnit={'px'}
-                height={20}
-                width={2}
-                margin="3px"
-                color={'#FFFFFF'}
-              />}
-              {!loading && <MenuIcon/>}
-            </IconButton>}
-            {!isHome && <Typography variant="h6" noWrap>
-              <Link to="/" className={classNames(classes.link, classes.menuText)}>Liquid Funding</Link>
-            </Typography>}
-            <Typography component={'span'} className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
-              {!!account && <div className={classes.connectedText}>
-                <div className={classes.accountText}>{formatAccount(account)}</div>
-                <div>Connected</div>
-              </div>}
-              {!account && <span>Connect</span>}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          className={classes.drawer}
-          variant="persistent"
-          anchor="left"
-          open={open}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-        >
-          <div className={classes.drawerHeader}>
-            <IconButton onClick={this.handleDrawerClose}>
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </div>
-          <Divider/>
-          <List>
-            <MenuItem name="Dashboard" to="/dashboard" className={classes.link} icon={<InboxIcon/>}/>
-            <MenuItem name="Funds Management" to="/funds-management" className={classes.link} icon={<InboxIcon/>}/>
-            <MenuItem name="Insights" to="/insights/" className={classes.link} icon={<InboxIcon/>}/>
-            <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
-            <MenuItem name="console" to="/console/" className={classes.link} icon={<InboxIcon/>}/>
-          </List>
-          <Divider/>
-          <List>
-            <MenuItem name="Create Project" to="/create-project" className={classes.link} icon={<AddIcon/>}/>
-            <MenuItem name="Create Delegate" to="/create-delegate" className={classes.link} icon={<AddIcon/>}/>
-            <MenuItem name="Projects" to="/projects" className={classes.link} icon={<ProjectIcon/>}/>
-          </List>
-        </Drawer>
-        <main
-          className={classNames(classes.content, {
-            [classes.contentShift]: open,
-          })}
-        >
-          <div className={classes.drawerHeader} />
-          <div className={classNames(classes.appBar)}>
-            <Suspense fallback={<Loading />}>
-              <Switch>
-                <Route path="/(|list-projects)" component={ListProjects} />
-                <Route path="/dashboard" component={Dashboard} />
-                <Route path="/admin" component={ContractAdmin} />
-                <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
-                <Route path="/insights" component={TransferGraph} />
-                <Route path="/projects" component={Projects} />
-                <Route path="/(profile|delegate|project)/:id" component={Project} />
-                <Route path="/(fund-project)/:id" component={FundProject} />
-                <Route path="/create-project/" component={CreateProject} />
-                <Route path="/create-delegate/" component={CreateDelegate} />
-                <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
-                <Route path="/project-pledges/:id" component={ProjectPledges} />
-                <Route path="/console" render={() => <Console logs={logs} variant="dark" />} />
-              </Switch>
-            </Suspense>
-            {this.props.children}
-          </div>
-        </main>
-      </div>
-    );
-  }
+  return (
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        className={classNames(classes.appBar, classes.appBarBg, {
+          [classes.appBarShift]: open,
+        })}
+      >
+        <Toolbar disableGutters={!open}>
+          {queryParams.menu && <IconButton
+            color="inherit"
+            aria-label="Open drawer"
+            onClick={handleDrawerOpen}
+            className={classNames(classes.menuButton, open && !loading && classes.hide)}>
+            {loading && <ScaleLoader
+              sizeUnit={'px'}
+              height={20}
+              width={2}
+              margin="3px"
+              color={'#FFFFFF'} />}
+            {!loading && <MenuIcon/>}
+          </IconButton>}
+          {!isHome && <Typography variant="h6" noWrap>
+            <Link to="/" className={classNames(classes.link, classes.menuText)}>Liquid Funding</Link>
+          </Typography>}
+          <Typography component={'span'} className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
+            {!!account && <div className={classes.connectedText}>
+              <div className={classes.accountText}>{formatAccount(account)}</div>
+              <div>Connected</div>
+            </div>}
+            {!account && <span>Connect</span>}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        className={classes.drawer}
+        variant="persistent"
+        anchor="left"
+        open={open}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+      >
+        <div className={classes.drawerHeader}>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </div>
+        <Divider/>
+        <List>
+          <MenuItem name="Dashboard" to="/dashboard" className={classes.link} icon={<InboxIcon/>}/>
+          <MenuItem name="Funds Management" to="/funds-management" className={classes.link} icon={<InboxIcon/>}/>
+          <MenuItem name="Insights" to="/insights/" className={classes.link} icon={<InboxIcon/>}/>
+          <MenuItem name="Admin" to="/admin/" className={classes.link} icon={<InboxIcon/>}/>
+          <MenuItem name="console" to="/console/" className={classes.link} icon={<InboxIcon/>}/>
+        </List>
+        <Divider/>
+        <List>
+          <MenuItem name="Create Project" to="/create-project" className={classes.link} icon={<AddIcon/>}/>
+          <MenuItem name="Create Delegate" to="/create-delegate" className={classes.link} icon={<AddIcon/>}/>
+          <MenuItem name="Projects" to="/projects" className={classes.link} icon={<ProjectIcon/>}/>
+        </List>
+      </Drawer>
+      <main
+        className={classNames(classes.content, {
+          [classes.contentShift]: open,
+        })}
+      >
+        <div className={classes.drawerHeader} />
+        <div className={classNames(classes.appBar)}>
+          <Suspense fallback={<Loading />}>
+            <Switch>
+              <Route path="/(|list-projects)" component={ListProjects} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/admin" component={ContractAdmin} />
+              <Route path="/funds-management" render={() => <FundsManagement open={open} />} />
+              <Route path="/insights" component={TransferGraph} />
+              <Route path="/projects" component={Projects} />
+              <Route path="/(profile|delegate|project)/:id" component={Project} />
+              <Route path="/(fund-project)/:id" component={FundProject} />
+              <Route path="/create-project/" component={CreateProject} />
+              <Route path="/create-delegate/" component={CreateDelegate} />
+              <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
+              <Route path="/project-pledges/:id" component={ProjectPledges} />
+              <Route path="/console" render={() => <Console logs={logs} variant="dark" />} />
+            </Switch>
+          </Suspense>
+          {children}
+        </div>
+      </main>
+    </div>
+  );
 }
 
 PersistentDrawerLeft.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
   account: PropTypes.string,
   enableEthereum: PropTypes.func.isRequired,
-  location: PropTypes.object
+  location: PropTypes.object,
+  children: PropTypes.node
 };
 
 const DrawerWithRouter = withRouter(PersistentDrawerLeft)
-export default withStyles(styles, { withTheme: true })(DrawerWithRouter)
+export default DrawerWithRouter
