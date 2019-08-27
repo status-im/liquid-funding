@@ -1,6 +1,6 @@
 /*global web3*/
 /*global process*/
-import React from 'react'
+import React, { Suspense } from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from './embarkArtifacts/embarkjs'
 import LiquidPledging from './embarkArtifacts/contracts/LiquidPledging'
@@ -155,27 +155,29 @@ class App extends React.Component {
     }
 
     if (client) return (
-      <ApolloProvider client={client}>
-        <FundingContext.Provider value={fundingContext}>
-          <Router>
-            <MainCointainer loading={loading} enableEthereum={enableEthereum} account={account} />
-          </Router>
-          {snackbar && <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
-            open={snackbar}
-            autoHideDuration={6000}
-            onClose={closeSnackBar}
-          >
-            <MySnackbarContentWrapper
-              variant={snackbar && snackbar.variant}
-              message={snackbar && snackbar.message}
-            />
-          </Snackbar>}
-        </FundingContext.Provider>
-      </ApolloProvider>
+      <Suspense fallback={<Loading />}>
+        <ApolloProvider client={client}>
+          <FundingContext.Provider value={fundingContext}>
+            <Router>
+              <MainCointainer loading={loading} enableEthereum={enableEthereum} account={account} />
+            </Router>
+            {snackbar && <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              open={snackbar}
+              autoHideDuration={6000}
+              onClose={closeSnackBar}
+            >
+              <MySnackbarContentWrapper
+                variant={snackbar && snackbar.variant}
+                message={snackbar && snackbar.message}
+              />
+            </Snackbar>}
+          </FundingContext.Provider>
+        </ApolloProvider>
+      </Suspense>
     )
     return <Loading />
   }
