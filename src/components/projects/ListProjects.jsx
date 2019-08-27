@@ -44,9 +44,22 @@ function Cell({ spacerClass, textClass, text }) {
   )
 }
 
+function TableHeader({ classes }) {
+  const { tableHeader, nameSpacer } = classes
+  return (
+    <Fragment>
+      <Cell spacerClass={nameSpacer} textClass={classnames(tableHeader, classes.headerName)} text="Name" />
+      <Typography className={classnames(tableHeader, classes.headerDescription)}>Description</Typography>
+      <Typography className={classnames(tableHeader, classes.headerDetails)}>Funding details</Typography>
+      <Typography className={classnames(tableHeader, classes.headerContact)}>Contact person</Typography>
+      <Typography className={classnames(tableHeader, classes.dateCreated)}>Date created</Typography>
+    </Fragment>
+  )
+}
+
 function ListProjects() {
   const classes = useStyles()
-  const { tableHeader, cellText, cellColor, nameSpacer } = classes
+  const { cellText, cellColor, nameSpacer } = classes
   const { loading, error, data } = useQuery(getProjects)
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
@@ -62,11 +75,7 @@ function ListProjects() {
       <Typography className={classes.tableTitle}>
         All Projects
       </Typography>
-      <Cell spacerClass={nameSpacer} textClass={classnames(tableHeader, classes.headerName)} text="Name" />
-      <Typography className={classnames(tableHeader, classes.headerDescription)}>Description</Typography>
-      <Typography className={classnames(tableHeader, classes.headerDetails)}>Funding details</Typography>
-      <Typography className={classnames(tableHeader, classes.headerContact)}>Contact person</Typography>
-      <Typography className={classnames(tableHeader, classes.dateCreated)}>Date created</Typography>
+      <TableHeader classes={classes} />
       {profiles.map((profile, i) => {
         const { id, profileId, creationTime, projectInfo: { title, subtitle, goal, goalToken, creator }, pledgesInfos } = profile
         const cellStyling = isOdd(i) ? classnames(cellText) : classnames(cellText, classes.cellColor)
