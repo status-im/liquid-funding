@@ -4,18 +4,17 @@ const styles = theme => ({
     color: '#4360DF'
   },
   amount: {
-    display: 'grid',
-    marginBottom: '1em',
-    gridTemplateColumns: 'repeat(100, [col] 1%)'
+    marginTop: '3rem',
+    display: 'grid'
   },
   amountLayout: {
     gridColumnStart: 1,
-    gridColumnEnd: 84
+    gridColumnEnd: 5
   },
   amountText: {
-    gridColumnStart: 90,
+    gridColumnStart: 6,
     alignSelf: 'center',
-    color: '#939BA1',
+    color: '#939BA1'
   },
   amountInput: {
     textAlign: 'right'
@@ -69,10 +68,10 @@ const styles = theme => ({
   },
   formButton: {
     gridColumnStart: '1',
-    gridColumnEnd: '11',
+    gridColumnEnd: '13',
     height: '50px',
-    borderRadius: '8px',
-    gridRowEnd: 9
+    marginTop: '1.5rem',
+    borderRadius: '8px'
   },
   textField: {
     gridColumnStart: '1',
@@ -114,13 +113,10 @@ const styles = theme => ({
     marginTop: '15px',
     color: '#4360DF'
   },
-  goal: {
-    placeSelf: 'end start'
-  },
   secondHalf: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
-    gridTemplateRows: '9em repeat(auto-fill, minmax(30px,1fr))',
+    gridTemplateRows: '9rem',
     gridColumnStart: '8',
     gridColumnEnd: '13',
     height: 'fit-content'
@@ -149,8 +145,7 @@ const styles = theme => ({
   },
   usdText: {
     color: '#939BA1',
-    fontSize: '12px',
-    marginBottom: '1em'
+    fontSize: '12px'
   },
   icon: {
     background: '#ECEFFC'
