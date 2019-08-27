@@ -135,7 +135,7 @@
     "react-dom": "^16.9.0",
     "react-markdown": "^4.0.8",
     "react-player": "^1.9.3",
-    "react-router-dom": "^4.3.1",
+    "react-router-dom": "^5.0.1",
     "react-spinners": "^0.5.1",
     "reselect": "^4.0.0",
     "resolve": "1.10.0",
