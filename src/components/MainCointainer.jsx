@@ -1,5 +1,6 @@
 import React,{ Suspense, lazy, useState, useEffect }  from 'react';
 import { Route, Link, Switch, withRouter } from 'react-router-dom'
+import useWindowScrollPosition from '@rehooks/window-scroll-position'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import queryString from 'query-string'
@@ -62,8 +63,11 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  appBarTop: {
+    boxShadow: 'none'
+  },
   appBarBg: {
-    backgroundColor: '#fff'
+    backgroundColor: '#FAFAFA'
   },
   accountText: {
     color: '#939BA1'
@@ -150,6 +154,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
   const [open, setOpen] = useState(false)
   const [queryParams, setQueryParams] = useState({})
   const [logs, setLogs] = useState([])
+  const position = useWindowScrollPosition()
 
   useEffect(() => {
     const queryParams = queryString.parse(search)
@@ -173,6 +178,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
 
   const classes = useStyles()
   const isHome = pathname === "/"
+  const popoverPosition = position.y < 100
 
   return (
     <div className={classes.root}>
@@ -181,6 +187,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
         position="fixed"
         className={classNames(classes.appBar, classes.appBarBg, {
           [classes.appBarShift]: open,
+          [classes.appBarTop]: popoverPosition
         })}
       >
         <Toolbar disableGutters={!open}>
@@ -197,7 +204,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
               color={'#FFFFFF'} />}
             {!loading && <MenuIcon/>}
           </IconButton>}
-          {!isHome && <Typography variant="h6" noWrap>
+          {(!isHome || !popoverPosition) && <Typography variant="h6" noWrap>
             <Link to="/" className={classNames(classes.link, classes.menuText)}>Liquid Funding</Link>
           </Typography>}
           <Typography component={'span'} className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
