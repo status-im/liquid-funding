@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types';
 import { isIpfs, getFromIpfs } from '../../utils/ipfs'
 
-export default class ProfileUrlViewer extends PureComponent {
+class ProfileUrlViewer extends PureComponent {
   state = { url: null }
   componentDidMount() {
     this.getSource()
@@ -35,3 +36,9 @@ export default class ProfileUrlViewer extends PureComponent {
     )
   }
 }
+
+ProfileUrlViewer.PropTypes = {
+  url: PropTypes.string
+}
+
+export default ProfileUrlViewer
