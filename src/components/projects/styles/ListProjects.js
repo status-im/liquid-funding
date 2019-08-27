@@ -41,6 +41,9 @@ const useStyles = makeStyles(theme => ({
   centerText: {
     textAlign: 'center'
   },
+  leftAlign: {
+    textAlign: 'left'
+  },
   cellDescription: {
     fontSize: '1rem',
     textDecoration: 'none'

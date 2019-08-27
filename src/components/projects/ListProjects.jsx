@@ -17,7 +17,7 @@ import { FundingContext } from '../../context'
 
 const isOdd = num => num % 2
 function FundingDetail({ classes, pledgesInfos, goal, goalToken, cellStyling }) {
-  const { headerDetails, centerText } = classes
+  const { headerDetails, leftAlign } = classes
   const { prices } = useContext(FundingContext)
   const pledgeInfo = pledgesInfos.find(p => p.token.toUpperCase() === goalToken.toUpperCase())
   const lifetimeReceived = pledgeInfo ? pledgeInfo.lifetimeReceived : '0'
@@ -28,7 +28,7 @@ function FundingDetail({ classes, pledgesInfos, goal, goalToken, cellStyling }) 
   const topText = `${fundedPercent} of ${goalAmount}${tokenLabel}`
   const usdValue = convertTokenAmountUsd(goalToken, lifetimeHumanReadible, prices)
   return (
-    <div className={classnames(cellStyling, headerDetails, centerText)}>
+    <div className={classnames(cellStyling, headerDetails, leftAlign)}>
       <Typography>{topText}</Typography>
       <Typography className={classes.usdValue}>{`${usdValue} USD`}</Typography>
     </div>
