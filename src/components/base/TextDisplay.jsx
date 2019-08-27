@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import ReactMarkdown from 'react-markdown'
-import { withStyles } from '@material-ui/core/'
+import { makeStyles } from '@material-ui/core/styles'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(24, [col] 1fr)',
@@ -13,7 +13,7 @@ const styles = theme => ({
     gridColumnEnd: 13
   },
   margin: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   markdown: {
     gridColumnStart: 2,
@@ -29,9 +29,10 @@ const styles = theme => ({
     fontSize: '15px',
     gridColumnStart: 2
   }
-})
+}))
 
-function TextDisplay({ classes, name, text, rootClass, textClass, isMarkdown }) {
+function TextDisplay({ name, text, rootClass, textClass, isMarkdown }) {
+  const classes = useStyles()
   return (
     <div className={classnames(classes.container, rootClass)} >
       <div className={classes.name}>{name}</div>
@@ -52,7 +53,6 @@ TextDisplay.defaultProps = {
 }
 
 TextDisplay.propTypes = {
-  classes: PropTypes.object.isRequired,
   name: PropTypes.string,
   text: PropTypes.string,
   rootClass: PropTypes.string,
@@ -60,4 +60,4 @@ TextDisplay.propTypes = {
   isMarkdown: PropTypes.bool
 }
 
-export default withStyles(styles)(TextDisplay)
+export default TextDisplay
