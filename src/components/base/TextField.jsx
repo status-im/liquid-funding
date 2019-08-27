@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateRows: 'auto auto 5px',
   },
   margin: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   root: {
     gridColumnStart: 1,
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
       gridRowStart: 2,
       gridColumnStart: 1,
       gridColumnEnd: 13,
-      marginTop: theme.spacing.unit * 3,
+      marginTop: theme.spacing(3),
     },
   },
   multi: {
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
       gridRowStart: 2,
       gridColumnStart: 1,
       gridColumnEnd: 13,
-      marginTop: theme.spacing.unit * 3,
+      marginTop: theme.spacing(3),
       paddingRight: '1.2em'
     },
   },
