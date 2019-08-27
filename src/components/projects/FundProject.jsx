@@ -1,11 +1,11 @@
 import React, { useContext, useMemo, useEffect } from 'react'
 import { Formik } from 'formik'
+import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import { withStyles } from '@material-ui/core/styles'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
@@ -26,6 +26,7 @@ import BreadCrumb from '../base/BreadCrumb'
 
 const { addGiverAndDonate } = LiquidPledging.methods
 
+const useStyles = makeStyles(styles)
 const getProjectId = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return idProject
@@ -180,8 +181,9 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   )
 }
 
-function FundProject({ classes, match, history }) {
+function FundProject({ match, history }) {
   const projectId = match.params.id
+  const classes = useStyles()
   const { loading, error, data, stopPolling, startPolling, client } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
   });
@@ -210,4 +212,4 @@ function FundProject({ classes, match, history }) {
   )
 }
 
-export default withStyles(styles)(FundProject)
+export default FundProject
