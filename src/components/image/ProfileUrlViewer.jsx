@@ -37,7 +37,7 @@ class ProfileUrlViewer extends PureComponent {
   }
 }
 
-ProfileUrlViewer.PropTypes = {
+ProfileUrlViewer.propTypes = {
   url: PropTypes.string
 }
 
