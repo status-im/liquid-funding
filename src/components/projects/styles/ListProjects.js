@@ -30,6 +30,24 @@ const useStyles = makeStyles(theme => ({
     fontSize: '1.5rem',
     textAlign: 'center'
   },
+  cardText: {
+    gridColumn: '1 / 49',
+    lineHeight: '2rem',
+    padding: '0.25rem 1rem',
+    color: '#000000'
+  },
+  cardTitle: {
+    fontWeight: 500
+  },
+  cardLightText: {
+    color: '#545353'
+  },
+  cardAmount: {
+    gridColumn: '1 / 36'
+  },
+  cardMore: {
+    gridColumn: '36 / 48'
+  },
   cellText: {
     display: 'flex',
     justifyContent: 'center',
@@ -40,6 +58,9 @@ const useStyles = makeStyles(theme => ({
   },
   centerText: {
     textAlign: 'center'
+  },
+  cardLink: {
+    textDecoration: 'none'
   },
   leftAlign: {
     textAlign: 'left'

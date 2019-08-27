@@ -1,4 +1,5 @@
 import React, { Fragment, useContext } from 'react'
+import useWindowSize from '@rehooks/window-size'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
@@ -19,6 +20,10 @@ const isOdd = num => num % 2
 function FundingDetail({ classes, pledgesInfos, goal, goalToken, cellStyling }) {
   const { headerDetails, leftAlign } = classes
   const { prices } = useContext(FundingContext)
+  const windowSize = useWindowSize()
+  const isSmall = windowSize.innerWidth < 800
+  const largeStyle = classnames(cellStyling, headerDetails, leftAlign)
+  const smallStyle = classnames(cellStyling)
   const pledgeInfo = pledgesInfos.find(p => p.token.toUpperCase() === goalToken.toUpperCase())
   const lifetimeReceived = pledgeInfo ? pledgeInfo.lifetimeReceived : '0'
   const lifetimeHumanReadible = getAmountFromWei(goalToken, lifetimeReceived)
@@ -28,7 +33,7 @@ function FundingDetail({ classes, pledgesInfos, goal, goalToken, cellStyling }) 
   const topText = `${fundedPercent} of ${goalAmount}${tokenLabel}`
   const usdValue = convertTokenAmountUsd(goalToken, lifetimeHumanReadible, prices)
   return (
-    <div className={classnames(cellStyling, headerDetails, leftAlign)}>
+    <div className={isSmall ? smallStyle : largeStyle}>
       <Typography>{topText}</Typography>
       <Typography className={classes.usdValue}>{`${usdValue} USD`}</Typography>
     </div>
@@ -86,12 +91,44 @@ function TableRows({ profiles, classes }) {
   )
 }
 
+function TableCards({ profiles, classes }) {
+  const { cardText, cellColor, nameSpacer } = classes
+  return (
+    <Fragment>
+      {profiles.map((profile, i) => {
+        const { id, profileId, projectInfo: { title, subtitle, goal, goalToken, creator }, pledgesInfos } = profile
+        const cellStyling = isOdd(i) ? classnames(cardText) : classnames(cardText, classes.cellColor)
+        const lightText = classnames(cellStyling, classes.cardLightText)
+        const spaceClass = isOdd(i) ? nameSpacer : classnames(nameSpacer, cellColor)
+        const profileUrl = `/fund-project/${profileId}`
+        console.log({spaceClass, profileUrl})
+        return (
+          <Fragment key={id}>
+            <Typography className={classnames(cellStyling, classes.cardTitle)}>{title}</Typography>
+            <Typography className={cellStyling}>{subtitle}</Typography>
+            <Typography className={lightText}>{`By ${creator}`}</Typography>
+            <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} cellStyling={classnames(lightText, classes.cardAmount)} />
+            <Link to={profileUrl} className={classnames(classes.cardLink, cellStyling, classes.cardMore)}>
+              <Typography className={classnames(lightText)}>Read more</Typography>
+            </Link>
+          </Fragment>
+        )
+
+      })}
+    </Fragment>
+  )
+}
+
 function ListProjects() {
   const classes = useStyles()
+  const windowSize = useWindowSize()
   const { loading, error, data } = useQuery(getProjects)
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   const { profiles } = data
+  console.log({windowSize})
+  const { innerWidth } = windowSize
+  const isSmall = innerWidth < 800
   return (
     <div className={classes.main}>
       <Typography className={classnames(classes.title, classes.fullWidth)}>
@@ -103,8 +140,8 @@ function ListProjects() {
       <Typography className={classes.tableTitle}>
         All Projects
       </Typography>
-      <TableHeader classes={classes} />
-      <TableRows profiles={profiles} classes={classes} />
+      {!isSmall && <TableHeader classes={classes} />}
+      {!isSmall ? <TableRows profiles={profiles} classes={classes} /> : <TableCards profiles={profiles} classes={classes} />}
       <Divider className={classes.divider} />
       <Link to={`/create-project`} className={classes.fabLink}>
         <Fab className={classes.fab}>
