@@ -1,6 +1,22 @@
 import { gql } from 'apollo-boost'
 
+export const pledgeLifetimeReceived = gql`
+fragment PledgeLifetimeReceived on PledgesInfo {
+  lifetimeReceived
+}
+`
+export const pledgesInfosFields = gql`
+${pledgeLifetimeReceived}
+fragment PledgesInfoFields on PledgesInfo {
+  id
+  ...PledgeLifetimeReceived
+  token
+}
+`
+
 export const getProfileById = gql`
+${pledgesInfosFields}
+
 query Profile($id: ID!) {
   profile(id: $id) {
     id
@@ -12,10 +28,7 @@ query Profile($id: ID!) {
     name
     creationTime
     pledgesInfos {
-      id
-      token
-      lifetimeReceived
-      balance
+      ...PledgesInfoFields
     }
     projectInfo {
       id
@@ -36,6 +49,8 @@ query Profile($id: ID!) {
 }
 `
 export const getProjects = gql`
+${pledgesInfosFields}
+
 query Projects($type: String! = "PROJECT"){
   profiles(first: 5, where: {type: $type, projectInfo_not: null}) {
     id
@@ -55,9 +70,7 @@ query Projects($type: String! = "PROJECT"){
       goal
     }
     pledgesInfos{
-      id
-      lifetimeReceived
-      token
+     ...PledgesInfoFields
     }
   }
 }

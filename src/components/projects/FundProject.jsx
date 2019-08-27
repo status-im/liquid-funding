@@ -18,7 +18,7 @@ import { toBN } from '../../utils/conversions'
 import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
-import { getProfileById } from './queries'
+import { getProfileById, pledgeLifetimeReceived } from './queries'
 import styles from './styles/FundProject'
 import Loading from '../base/Loading'
 import BreadCrumb from '../base/BreadCrumb'
@@ -36,8 +36,17 @@ const addProjectSucessMsg = response => {
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
 const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
+  const { __typename } = pledgesInfo
   const updatedLifetimeReceived = toBN(weiAmount).add(toBN(pledgesInfo.lifetimeReceived)).toString()
-  client.writeData({ data: { [`PledgesInfo:${pledgesInfo.id}`]:  {...pledgesInfo, lifetimeReceived: updatedLifetimeReceived } } })
+  const id = `${__typename}:${pledgesInfo.id}`
+  client.writeFragment({
+    id,
+    fragment: pledgeLifetimeReceived,
+    data: {
+      lifetimeReceived: updatedLifetimeReceived,
+      __typename
+    }
+  })
 }
 const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling, client }) => {
   const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
@@ -78,7 +87,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
             openSnackBar('success', 'Funding Confirmed')
           })
           .catch(e => {
-            openSnackBar('error', 'An error has occured with the transaction')
+            openSnackBar('error', 'An error has occured')
             console.log({e})
           })
           .finally(() => {
