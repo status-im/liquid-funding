@@ -168,8 +168,7 @@ class App extends React.Component {
               }}
               open={snackbar}
               autoHideDuration={6000}
-              onClose={closeSnackBar}
-            >
+              onClose={closeSnackBar}>
               <MySnackbarContentWrapper
                 variant={snackbar && snackbar.variant}
                 message={snackbar && snackbar.message}

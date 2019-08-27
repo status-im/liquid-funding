@@ -292,7 +292,7 @@ module.exports = {
             "never"
         ],
         "react/jsx-boolean-value": 0,
-        "react/jsx-closing-bracket-location": 1,
+        "react/jsx-closing-bracket-location": 0,
         "react/jsx-curly-spacing": "off",
         "react/jsx-indent-props": [1, 2],
         "react/jsx-no-undef": 1,
@@ -300,7 +300,7 @@ module.exports = {
         "react/jsx-uses-vars": 1,
         "react/react-in-jsx-scope": 1,
         "react/prefer-es6-class": 1,
-        "react/jsx-no-bind": 1,
-        "react/prop-types": 1,
+        "react/jsx-no-bind": 0,
+        "react/prop-types": 0,
     }
 };
