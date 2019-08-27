@@ -83,10 +83,10 @@ export const lpEventsSubscription = async () => {
   })
   return events
 }
-export const getFunderProfiles = async () => await getPastEvents(GIVER_ADDED)
-export const getDelegateProfiles = async () => await getPastEvents(DELEGATE_ADDED)
-export const getProjectProfiles = async () => await getPastEvents(PROJECT_ADDED)
-export const getAllLPEvents = async fromBlock => await getPastEvents(
+export const getFunderProfiles = async () => getPastEvents(GIVER_ADDED)
+export const getDelegateProfiles = async () => getPastEvents(DELEGATE_ADDED)
+export const getProjectProfiles = async () => getPastEvents(PROJECT_ADDED)
+export const getAllLPEvents = async fromBlock => getPastEvents(
   ALL_EVENTS,
   true,
   fromBlock

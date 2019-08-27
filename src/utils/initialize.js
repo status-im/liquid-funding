@@ -28,7 +28,7 @@ export const vaultPledgingNeedsInit = async () => {
 export const standardTokenApproval = async (contract, amount = '10000000') => {
   const { methods: { approve } } = contract || SNT
   const spender = LiquidPledging._address
-  return await approve(
+  return approve(
     spender,
     web3.utils.toWei(amount, 'tether')
   ).send()
