@@ -106,6 +106,9 @@ const styles = theme => ({
     maxHeight: '40vh',
     maxWidth: '30vw'
   },
+  imgSmallViewport: {
+    maxWidth: '100%'
+  },
   chatRoomIcon: {
     justifySelf: 'auto'
   },
