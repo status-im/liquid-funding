@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import { withStyles } from '@material-ui/core/styles'
 import { withRouter } from "react-router-dom"
+import useWindowSize from '@rehooks/window-size'
 import { uploadFilesToIpfs, pinToGateway, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
@@ -69,7 +70,10 @@ const styles = theme => ({
   formButton: {
     gridColumnStart: '6',
     gridColumnEnd: '13',
-    height: '50px'
+    height: '50px',
+    [theme.breakpoints.down('md')]: {
+      marginTop: '5rem'
+    }
   },
   textField: {
     gridColumnStart: '1',
@@ -180,6 +184,8 @@ const addProjectSucessMsg = response => {
 const SubmissionSection = ({ classes, history }) => {
   const [uploads, setUploads] = useState({})
   const { account, openSnackBar, prices } = useContext(FundingContext)
+  const windowSize = useWindowSize()
+  const isSmall = windowSize.innerWidth < 800
   return (
     <Formik
       initialValues={{
@@ -238,7 +244,9 @@ const SubmissionSection = ({ classes, history }) => {
         const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
-            <div className={firstHalf}>
+            <div className={classnames(firstHalf, {
+              [classes.fullWidth]: isSmall
+            })}>
               <BreadCrumb
                 className={fullWidth}
                 trail={['Create new']}
@@ -397,8 +405,12 @@ const SubmissionSection = ({ classes, history }) => {
                 value={values.commitTime || ''}
               />
             </div>
-            <div className={secondHalf}>
-              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Publish'}</Button>
+            <div className={classnames(secondHalf, {
+              [classes.fullWidth]: isSmall
+            })}>
+              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton, {
+                [classes.fullWidth]: isSmall
+              })}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Publish'}</Button>
               <CurrencySelect
                 className={fullWidth}
                 InputProps={{
