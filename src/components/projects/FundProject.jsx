@@ -22,6 +22,7 @@ import { getProfileById, pledgeLifetimeReceived } from './queries'
 import styles from './styles/FundProject'
 import Loading from '../base/Loading'
 import BreadCrumb from '../base/BreadCrumb'
+import FundStepper from './FundStepper'
 
 
 const { addGiverAndDonate } = LiquidPledging.methods
@@ -181,6 +182,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : buttonText}</Button>
+              <FundStepper />
             </div>}
           </form>
         )
