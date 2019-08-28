@@ -61,6 +61,12 @@ const useStyles = makeStyles((theme) => ({
     gridRowStart: 4,
     gridColumnStart: 1,
   },
+  red: {
+    color: '#db0000'
+  },
+  errorBorder: {
+    border: '1px solid #db0000'
+  },
   topRight: {
     gridRowStart: 1,
     gridColumnStart: 12,
@@ -83,10 +89,12 @@ function Input({
   idFor,
   isRequired,
   endAdornment,
+  errorBorder,
   InputProps,
   inputClass,
   label,
   bottomRightLabel,
+  bottomRightError,
   bottomLeftLabel,
   placeholder,
   className,
@@ -101,7 +109,9 @@ function Input({
   const labelForm = label ? renderLabel(classnames(classes.formLabel, classes.top), idFor, label, isRequired) : null
   const topRightLabel = topRight ? renderLabel(classnames(classes.topRight), idFor, topRight) : null
   const bottomLeft = bottomLeftLabel ? renderLabel(classnames(classes.formLabel, classes.bottomLeft), idFor, bottomLeftLabel) : null
-  const bottomRight = bottomRightLabel ? renderLabel(classnames(classes.formLabel, classes.bottomRight), idFor, bottomRightLabel) : null
+  const bottomRight = bottomRightLabel ? renderLabel(classnames(classes.formLabel, classes.bottomRight, {
+    [classes.red]: bottomRightError
+  }), idFor, bottomRightLabel) : null
   return (
     <FormControl
       className={classnames(classes.container, className)}
@@ -110,6 +120,7 @@ function Input({
       { topRightLabel }
       <InputBase
         id={idFor}
+        error={errorBorder}
         inputProps={InputProps}
         endAdornment={endAdornment}
         placeholder={placeholder}
@@ -118,6 +129,7 @@ function Input({
         classes={{
           root: multiline ? classes.multi : classes.root,
           input: classnames(classes.input, inputClass),
+          error: classes.errorBorder
         }}
         onBlur={onBlur}
         value={value}
