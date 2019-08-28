@@ -36,7 +36,8 @@ const validationSchema = Yup.object().shape({
   title: Yup.string().max(20, TOO_LONG).required(REQUIRED),
   subtitle: Yup.string().max(120, TOO_LONG),
   creator: Yup.string().required(REQUIRED),
-  goal: Yup.number().required(REQUIRED).positive().integer()
+  goal: Yup.number().required(REQUIRED).positive().integer(),
+  goalToken: Yup.string().required(REQUIRED)
 });
 
 const styles = theme => ({
@@ -297,7 +298,7 @@ const SubmissionSection = ({ classes, history }) => {
                 name="creator"
                 label="Contact Person"
                 bottomLeftLabel="Name of the primary contact"
-                errorBorder={touched.title && errors.creator === REQUIRED}
+                errorBorder={touched.creator && errors.creator === REQUIRED}
                 placeholder="Contract Person"
                 onChange={handleChange}
                 onBlur={handleBlur}
