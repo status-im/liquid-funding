@@ -91,10 +91,12 @@ const styles = theme => ({
   firstHalf: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
-    gridTemplateRows: '7rem',
     gridRowGap: '2rem',
     gridColumnStart: '1',
     gridColumnEnd: '8',
+  },
+  halfsRows: {
+    gridTemplateRows: '7rem 5em auto'
   },
   chatRoom: {
     display: 'grid',
@@ -116,7 +118,6 @@ const styles = theme => ({
   secondHalf: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
-    gridTemplateRows: '7rem',
     gridRowGap: '2rem',
     gridColumnStart: '10',
     gridColumnEnd: '13',
@@ -251,12 +252,12 @@ const SubmissionSection = ({ classes, history }) => {
         status,
         isSubmitting
       }) => {
-        const { firstHalf, secondHalf, fullWidth } = classes
+        const { firstHalf, secondHalf, fullWidth, halfsRows } = classes
         const { goalToken, goal } = values
         const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
-            <div className={classnames(firstHalf, {
+            <div className={classnames(firstHalf, halfsRows, {
               [classes.fullWidth]: isSmall
             })}>
               <BreadCrumb
@@ -268,7 +269,7 @@ const SubmissionSection = ({ classes, history }) => {
                 isRequired={true}
                 idFor="Project Name"
                 name="title"
-                label="Project Name"
+                label="Name"
                 bottomRightLabel="Max 20"
                 bottomRightError={touched.title && errors.title === TOO_LONG}
                 errorBorder={touched.title && errors.title === REQUIRED}
@@ -407,7 +408,7 @@ const SubmissionSection = ({ classes, history }) => {
                 }
               />}
             </div>
-            <div className={classnames(secondHalf, {
+            <div className={classnames(secondHalf, halfsRows, {
               [classes.fullWidth]: isSmall
             })}>
               <Button type="submit" disabled={!isEmpty(errors)} color="primary" variant="contained" className={classnames(classes.formButton, {
@@ -429,6 +430,7 @@ const SubmissionSection = ({ classes, history }) => {
               <StatusTextField
                 className={fullWidth}
                 isRequired={true}
+                multiline={true}
                 idFor="goal"
                 name="goal"
                 label="Enter your funding goal"
