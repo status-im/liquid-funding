@@ -69,7 +69,10 @@ const useStyles = makeStyles((theme) => ({
   },
   topRight: {
     gridRowStart: 1,
-    gridColumnStart: 12,
+    gridColumnStart: 11,
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: '1.3rem'
+    }
   }
 }))
 
@@ -127,7 +130,7 @@ function Input({
         name={name}
         onChange={onChange}
         classes={{
-          root: multiline ? classes.multi : classes.root,
+          root: classes.root,
           input: classnames(classes.input, inputClass),
           error: classes.errorBorder
         }}
