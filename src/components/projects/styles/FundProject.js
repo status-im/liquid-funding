@@ -82,8 +82,10 @@ const styles = theme => ({
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
     gridTemplateRows: '7rem',
     gridRowGap: '2rem',
-    gridColumnStart: '1',
-    gridColumnEnd: '8',
+    gridColumn: '1 / 13',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '1 / 8'
+    }
   },
   chatRoom: {
     display: 'grid',
@@ -103,8 +105,11 @@ const styles = theme => ({
     gridColumnStart: 4
   },
   imgClass: {
-    maxHeight: '40vh',
-    maxWidth: '30vw'
+    maxWidth: '100%',
+    [theme.breakpoints.up('md')]: {
+      maxWidth: '30vw',
+      maxHeight: '40vh',
+    }
   },
   imgSmallViewport: {
     maxWidth: '100%'
@@ -119,10 +124,12 @@ const styles = theme => ({
   secondHalf: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
-    gridTemplateRows: '9rem',
-    gridColumnStart: '8',
-    gridColumnEnd: '13',
-    height: 'fit-content'
+    gridColumn: '1 / 13',
+    height: 'fit-content',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '8 / 13',
+      gridTemplateRows: '9rem'
+    }
   },
   markdown: {
     display: 'grid',
