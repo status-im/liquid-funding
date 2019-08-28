@@ -30,7 +30,6 @@ const { addProject } = LiquidPledging.methods
 const { TOO_LONG, REQUIRED } = errorStrings
 
 const hoursToSeconds = hours => hours * 60 * 60
-const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
 
 const validationSchema = Yup.object().shape({
@@ -408,18 +407,6 @@ const SubmissionSection = ({ classes, history }) => {
                   </span>
                 }
               />}
-              <StatusTextField
-                className={fullWidth}
-                isRequired={true}
-                idFor="commitTime"
-                name="commitTime"
-                label="Commit Time (Hours)"
-                bottomLeftLabel={helperText}
-                placeholder="Commit Time (hours)"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.commitTime || ''}
-              />
             </div>
             <div className={classnames(secondHalf, {
               [classes.fullWidth]: isSmall
