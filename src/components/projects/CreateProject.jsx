@@ -71,7 +71,7 @@ const styles = theme => ({
     gridColumnStart: '6',
     gridColumnEnd: '13',
     height: '50px',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       marginTop: '5rem'
     }
   },
@@ -93,14 +93,16 @@ const styles = theme => ({
     gridColumnEnd: 13,
     justifyItems: 'start',
     gridAutoFlow: 'column',
-    paddingLeft: '5px'
+    paddingLeft: '5px',
+    gridTemplateColumns: 'repeat(12, 1fr)'
   },
   chatRoomIcon: {
     justifySelf: 'auto'
   },
   chatText: {
     marginTop: '15px',
-    color: '#939BA1'
+    color: '#000000',
+    gridColumn: '3 / 13'
   },
   secondHalf: {
     display: 'grid',
@@ -258,7 +260,7 @@ const SubmissionSection = ({ classes, history }) => {
                 name="title"
                 label="Project Name"
                 bottomRightLabel="Max 20"
-                placeholder="Project Name"
+                placeholder="e.g. ‘Tribute to Talk’ or ‘Bob’"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.title || ''}
@@ -269,7 +271,6 @@ const SubmissionSection = ({ classes, history }) => {
                 name="subtitle"
                 label="Short Description"
                 bottomRightLabel="Max 120"
-                placeholder="Short Description"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.subtitle || ''}
@@ -376,7 +377,6 @@ const SubmissionSection = ({ classes, history }) => {
                 name="description"
                 label="Full description"
                 bottomLeftLabel="Markdown available"
-                placeholder="Full description"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.description || ''}
