@@ -34,7 +34,10 @@ const helperText = 'The length of time the Project has to veto when the project 
 const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().max(20, TOO_LONG).required(REQUIRED)
+  title: Yup.string().max(20, TOO_LONG).required(REQUIRED),
+  subtitle: Yup.string().max(120, TOO_LONG),
+  creator: Yup.string().required(REQUIRED),
+  goal: Yup.number().required(REQUIRED).positive().integer()
 });
 
 const styles = theme => ({
@@ -269,8 +272,8 @@ const SubmissionSection = ({ classes, history }) => {
                 name="title"
                 label="Project Name"
                 bottomRightLabel="Max 20"
-                bottomRightError={errors.title === TOO_LONG}
-                errorBorder={errors.title === REQUIRED}
+                bottomRightError={touched.title && errors.title === TOO_LONG}
+                errorBorder={touched.title && errors.title === REQUIRED}
                 placeholder="e.g. ‘Tribute to Talk’ or ‘Bob’"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -282,6 +285,7 @@ const SubmissionSection = ({ classes, history }) => {
                 name="subtitle"
                 label="Short Description"
                 bottomRightLabel="Max 120"
+                bottomRightError={errors.subtitle === TOO_LONG}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.subtitle || ''}
@@ -294,6 +298,7 @@ const SubmissionSection = ({ classes, history }) => {
                 name="creator"
                 label="Contact Person"
                 bottomLeftLabel="Name of the primary contact"
+                errorBorder={touched.title && errors.creator === REQUIRED}
                 placeholder="Contract Person"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -443,6 +448,7 @@ const SubmissionSection = ({ classes, history }) => {
                 label="Enter your funding goal"
                 placeholder="Enter your funding goal"
                 bottomLeftLabel={usdValue}
+                errorBorder={touched.goal && errors.goal === REQUIRED}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.goal || ''}
