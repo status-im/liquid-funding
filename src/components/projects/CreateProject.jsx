@@ -26,7 +26,6 @@ import { errorStrings } from '../../constants/errors'
 
 
 const { addProject } = LiquidPledging.methods
-
 const { TOO_LONG, REQUIRED } = errorStrings
 
 const hoursToSeconds = hours => hours * 60 * 60
@@ -255,7 +254,6 @@ const SubmissionSection = ({ classes, history }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
         const { goalToken, goal } = values
         const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
-        console.log({errors, touched})
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <div className={classnames(firstHalf, {

@@ -16,7 +16,7 @@ const styles = () => ({
     gridColumnEnd: 2
   },
   textField: {
-    gridColumnStart: 2,
+    gridColumnStart: 3,
     gridColumnEnd: 13
   }
 })
