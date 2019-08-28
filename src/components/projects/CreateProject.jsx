@@ -51,9 +51,6 @@ const styles = theme => ({
     gridColumnGap: '1em',
     gridRowGap: '3ch',
     fontFamily: theme.typography.fontFamily,
-    [theme.breakpoints.up('sm')]: {
-      margin: '1.75rem 4.5rem'
-    }
   },
   title: {
     display: 'grid',
@@ -119,7 +116,7 @@ const styles = theme => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
     gridRowGap: '2rem',
-    gridColumnStart: '10',
+    gridColumnStart: '9',
     gridColumnEnd: '13',
     height: 'fit-content'
   },
@@ -136,6 +133,12 @@ const styles = theme => ({
   },
   fullWidth: {
     gridColumn: '1 / 13'
+  },
+  threeFourthWidth: {
+    gridColumn: '1 / 10',
+    [theme.breakpoints.down('sm')]: {
+      gridColumn: '1 / 13'
+    }
   },
   breadCrumb: {
     color: '#939BA1'
@@ -413,9 +416,9 @@ const SubmissionSection = ({ classes, history }) => {
             })}>
               <Button type="submit" disabled={!isEmpty(errors)} color="primary" variant="contained" className={classnames(classes.formButton, {
                 [classes.fullWidth]: isSmall
-              })}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Publish'}</Button>
+              })}>{isSubmitting ? 'Awaiting confirmations' : 'Publish'}</Button>
               <CurrencySelect
-                className={fullWidth}
+                className={classes.threeFourthWidth}
                 InputProps={{
                   classes: {
                     input: classes.textInput
@@ -428,7 +431,7 @@ const SubmissionSection = ({ classes, history }) => {
                 value={values.goalToken}
               />
               <StatusTextField
-                className={fullWidth}
+                className={classnames(classes.threeFourthWidth)}
                 isRequired={true}
                 multiline={true}
                 idFor="goal"
