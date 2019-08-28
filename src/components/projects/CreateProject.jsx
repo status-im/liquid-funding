@@ -8,6 +8,8 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import { withStyles } from '@material-ui/core/styles'
 import { withRouter } from "react-router-dom"
 import useWindowSize from '@rehooks/window-size'
+import { isEmpty } from 'ramda'
+import * as Yup from 'yup'
 import { uploadFilesToIpfs, pinToGateway, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
 import {ZERO_ADDRESS} from '../../utils/address'
@@ -20,15 +22,20 @@ import { setMediaType } from '../../utils/project'
 import MediaView from '../base/MediaView'
 import { isVideo } from '../../utils/images'
 import BreadCrumb from '../base/BreadCrumb'
+import { errorStrings } from '../../constants/errors'
 
 
 const { addProject } = LiquidPledging.methods
 
+const { TOO_LONG, REQUIRED } = errorStrings
 
 const hoursToSeconds = hours => hours * 60 * 60
 const helperText = 'The length of time the Project has to veto when the project delegates to another delegate and they pledge those funds to a project'
 const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
 
+const validationSchema = Yup.object().shape({
+  title: Yup.string().max(20, TOO_LONG).required(REQUIRED)
+});
 
 const styles = theme => ({
   adornmentText: {
@@ -203,6 +210,7 @@ const SubmissionSection = ({ classes, history }) => {
         description: '',
         commitTime: 24
       }}
+      validationSchema={validationSchema}
       onSubmit={async (values, { resetForm }) => {
         const { title, commitTime } = values
         const manifest = createJSON(values)
@@ -231,8 +239,8 @@ const SubmissionSection = ({ classes, history }) => {
     >
       {({
         values,
-        errors: _errors,
-        touched: _touched,
+        errors,
+        touched,
         handleChange,
         handleBlur,
         handleSubmit,
@@ -244,6 +252,7 @@ const SubmissionSection = ({ classes, history }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
         const { goalToken, goal } = values
         const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
+        console.log({errors, touched})
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <div className={classnames(firstHalf, {
@@ -260,6 +269,8 @@ const SubmissionSection = ({ classes, history }) => {
                 name="title"
                 label="Project Name"
                 bottomRightLabel="Max 20"
+                bottomRightError={errors.title === TOO_LONG}
+                errorBorder={errors.title === REQUIRED}
                 placeholder="e.g. ‘Tribute to Talk’ or ‘Bob’"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -408,7 +419,7 @@ const SubmissionSection = ({ classes, history }) => {
             <div className={classnames(secondHalf, {
               [classes.fullWidth]: isSmall
             })}>
-              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton, {
+              <Button type="submit" disabled={!isEmpty(errors)} color="primary" variant="contained" className={classnames(classes.formButton, {
                 [classes.fullWidth]: isSmall
               })}>{isSubmitting ? 'Ethereum Submission In Progress' : 'Publish'}</Button>
               <CurrencySelect
