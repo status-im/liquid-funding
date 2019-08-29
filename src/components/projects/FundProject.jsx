@@ -80,13 +80,14 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   const createdDate = getDateCreated(projectAge)
   const percentToGoal = manifest ? formatPercent(Number(totalPledged) / Number(manifest.goal)) : formatPercent(0)
   const isCreator = projectData.creator === account
-  const buttonText = account ? 'Fund' : 'Connect & Fund'
   return (
     <Formik
       initialValues={{
         amount: '',
       }}
       onSubmit={async (values, { resetForm }) => {
+        const activeStep = stepperProgress(values, projectData, submissionState)
+        if (!activeStep) return enableEthereum()
         const { amount } = values
         const { goalToken } = manifest
         const { chainReadibleFn } = getTokenByAddress(goalToken)
@@ -127,7 +128,6 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         handleChange,
         handleBlur,
         handleSubmit,
-        isSubmitting
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
         const usdValue = manifest ? convertTokenAmountUsd(manifest.goalToken, values.amount, prices) : 0
@@ -188,7 +188,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
               <Typography className={classnames(classes.fullWidth, classes.usdText)}>
                 {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
               </Typography>
-              <div className={classnames(fullWidth, classes.amount)}>
+              {!!activeStep && <div className={classnames(fullWidth, classes.amount)}>
                 <StatusTextField
                   className={classes.amountLayout}
                   inputClass={classes.amountInput}
@@ -202,8 +202,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                   value={values.amount || ''}
                 />
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
-              </div>
-              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : buttonText}</Button>
+              </div>}
+              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{STEPS[activeStep]}</Button>
               <FundStepper steps={STEPS} activeStep={activeStep} />
             </div>}
           </form>
