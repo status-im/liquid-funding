@@ -57,6 +57,9 @@ const styles = theme => ({
     gridColumnStart: '1',
     gridColumnEnd: '13',
     gridRowGap: '2ch',
+    [theme.breakpoints.up('md')]: {
+      margin: '0rem 5rem 0rem 3rem'
+    }
   },
   edit: {
     gridColumnStart: 12,
@@ -127,7 +130,7 @@ const styles = theme => ({
     gridColumn: '1 / 13',
     height: 'fit-content',
     [theme.breakpoints.up('md')]: {
-      gridColumn: '8 / 13',
+      gridColumn: '9 / 13',
       gridTemplateRows: '9rem'
     }
   },
