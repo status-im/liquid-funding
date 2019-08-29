@@ -46,7 +46,7 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirmation']
+const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirm']
 const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Awaiting Confirmation', 'Confirmed']
 function stepperProgress(values, projectData, submissionState) {
   if (submissionState === CONFIRMED) return IS_CONFIRMED
