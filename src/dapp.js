@@ -70,7 +70,7 @@ class App extends React.Component {
 
   enableEthereum = async () => {
     try {
-      await await window.ethereum.enable()
+      await window.ethereum.enable()
       const account = await web3.eth.getCoinbase()
       this.setState({ account })
       this.web3Init()

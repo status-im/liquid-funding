@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useContext } from 'react'
 import { unnest } from 'ramda'
 import { timeSinceBlock } from '../../utils/dates'
 import { getFiles, getFilesWeb, ipfs, getFilesWebTheGraph } from '../../utils/ipfs'
+import { getAllowanceFromAddress } from '../../utils/currencies'
 import { arrayToObject } from '../../utils/array'
 import { FundingContext } from '../../context'
 import { getDelegateProfiles } from '../../actions/profiles'
@@ -110,12 +111,20 @@ const getProjectManifest = (data, assets) => {
   }
 }
 
+async function getAuthorization(data, setState) {
+  if (!data.profile) return
+  const { profile: { projectInfo: { goalToken } } } = data
+  const allowance = await getAllowanceFromAddress(goalToken)
+  setState(allowance)
+}
+
 export function useProjectData(projectId, data) {
   const [projectAge, setAge] = useState(null)
   const [creator, setCreator] = useState(null)
   const [projectAssets, setAssets] = useState(null)
   const [ipfsReady, setIpfsState] = useState(null)
   const [delegateProfiles, setDelegateProfiles] = useState(null)
+  const [authorization, setAuthorization] = useState(0)
   const { account, openSnackBar, syncWithRemote } = useContext(FundingContext)
 
   useEffect(() => {
@@ -138,10 +147,15 @@ export function useProjectData(projectId, data) {
     getProjectAssets(data, setAssets)
   }, [ipfsReady, data])
 
+  useEffect(() => {
+    if (account) getAuthorization(data, setAuthorization)
+  }, [account, data])
+
   const manifest = useMemo(() => getProjectManifest(data, projectAssets), [data, projectAssets, projectId])
 
   return {
     account,
+    authorization,
     creator,
     projectAge,
     projectAssets,
