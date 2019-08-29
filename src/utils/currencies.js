@@ -1,8 +1,10 @@
+/*global web3*/
 import { memoizeWith, identity } from 'ramda'
 import SNT from '../embarkArtifacts/contracts/SNT'
 import DAI from '../embarkArtifacts/contracts/DAI'
 import cDAI from '../embarkArtifacts/contracts/cDAI'
 import cETH from '../embarkArtifacts/contracts/cETH'
+import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
 import { toEther, toWei, compoundWhole, compoundToChain } from './conversions'
 
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
@@ -16,7 +18,8 @@ export const currencies = [
     width: '2rem',
     contract: SNT,
     humanReadibleFn: toEther,
-    chainReadibleFn: toWei
+    chainReadibleFn: toWei,
+    getAllowance: () => getLpAllowance(SNT)
   },
   {
     value: '0xf5dce57282a584d2746faf1593d3121fcac444dc',
@@ -25,7 +28,8 @@ export const currencies = [
     width: '2rem',
     contract: cDAI,
     humanReadibleFn: compoundWhole,
-    chainReadibleFn: compoundToChain
+    chainReadibleFn: compoundToChain,
+    getAllowance: () => getLpAllowance(cDAI)
   },
   {
     value: '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5',
@@ -34,7 +38,8 @@ export const currencies = [
     width: '2rem',
     contract: cETH,
     humanReadibleFn: compoundWhole,
-    chainReadibleFn: compoundToChain
+    chainReadibleFn: compoundToChain,
+    getAllowance: () => getLpAllowance(cETH)
   },
   {
     value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -51,7 +56,8 @@ export const currencies = [
     width: '2rem',
     contract: DAI,
     humanReadibleFn: toEther,
-    chainReadibleFn: toWei
+    chainReadibleFn: toWei,
+    getAllowance: () => getLpAllowance(DAI)
   }
 ]
 
@@ -70,4 +76,17 @@ export const getTokenAddress = label => {
 export const getFormattedPledgeAmount = pledge => {
   const { humanReadibleFn } = getTokenByAddress(pledge.token)
   return humanReadibleFn(pledge.amount)
+}
+
+export const getAllowanceFromAddress = tokenAddress => {
+  const token = getTokenByAddress(tokenAddress)
+  return token.getAllowance()
+}
+
+export const getLpAllowance = async contract => {
+  const { methods: { allowance } } = contract || SNT
+  const account = await web3.eth.getCoinbase()
+  const spender = LiquidPledging._address
+  const allowanceAmt = await allowance(account, spender).call()
+  return allowanceAmt
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useEffect } from 'react'
+import React, { useContext, useState, useMemo, useEffect } from 'react'
 import { Formik } from 'formik'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
@@ -27,6 +27,10 @@ import FundStepper from './FundStepper'
 
 const { addGiverAndDonate } = LiquidPledging.methods
 
+const NOT_SUBMITTED = 'Not Submitted'
+const SUBMITTED = 'Submitted'
+const CONFIRMED = 'Confirmed'
+
 const useStyles = makeStyles(styles)
 const getProjectId = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
@@ -35,6 +39,20 @@ const getProjectId = response => {
 const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
+}
+const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirmation']
+function stepperProgress(values, projectData, submissionState) {
+  console.log({values, projectData})
+  if (submissionState === CONFIRMED) return 4
+  if (submissionState === SUBMITTED) return 3
+  if (!projectData.account) return 0
+  const { manifest: { goalToken }, authorization } = projectData
+  const { amount } = values
+  const { chainReadibleFn } = getTokenByAddress(goalToken)
+  const weiAmount = amount ? chainReadibleFn(amount) : '0'
+  const isAuthorized = toBN(authorization).gte(toBN(weiAmount))
+  if (!isAuthorized) return 1
+  return 2
 }
 const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
   const { __typename } = pledgesInfo
@@ -51,6 +69,7 @@ const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
 }
 const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling, client }) => {
   const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
+  const [submissionState, setSubmissionState] = useState(NOT_SUBMITTED)
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos, projectInfo } = profileData
   const pledgesInfo = pledgesInfos[0]
@@ -80,11 +99,13 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
           .send({gas: estimatedGas + 100})
           .on('transactionHash', (hash) => {
             optimisticUpdate(client, pledgesInfo, weiAmount)
+            setSubmissionState(SUBMITTED)
             openSnackBar('success', `Submitted funding request to chain. TX Hash: ${hash}`)
           })
           .then(async res => {
             console.log({res})
             startPolling(10000)
+            setSubmissionState(CONFIRMED)
             openSnackBar('success', 'Funding Confirmed')
           })
           .catch(e => {
@@ -110,6 +131,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
         const usdValue = manifest ? convertTokenAmountUsd(manifest.goalToken, values.amount, prices) : 0
+        const activeStep = stepperProgress(values, projectData, submissionState)
 
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
@@ -182,7 +204,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>
               <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{isSubmitting ? 'Ethereum Submission In Progress' : buttonText}</Button>
-              <FundStepper />
+              <FundStepper steps={STEPS} activeStep={activeStep} />
             </div>}
           </form>
         )

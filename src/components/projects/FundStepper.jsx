@@ -145,15 +145,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function getSteps() {
-  return ['Connect', 'Authorize Amount', 'Fund', 'Confirmation'];
-}
-
-export default function CustomizedSteppers() {
+export default function CustomizedSteppers({ activeStep, steps }) {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(1);
-  console.log({setActiveStep})
-  const steps = getSteps();
 
   return (
     <div className={classes.root}>
