@@ -19,7 +19,9 @@ export const currencies = [
     contract: SNT,
     humanReadibleFn: toEther,
     chainReadibleFn: toWei,
-    getAllowance: () => getLpAllowance(SNT)
+    getAllowance: () => getLpAllowance(SNT),
+    setAllowance: (amount) => transferApproval(SNT, amount)
+
   },
   {
     value: '0xf5dce57282a584d2746faf1593d3121fcac444dc',
@@ -29,7 +31,9 @@ export const currencies = [
     contract: cDAI,
     humanReadibleFn: compoundWhole,
     chainReadibleFn: compoundToChain,
-    getAllowance: () => getLpAllowance(cDAI)
+    getAllowance: () => getLpAllowance(cDAI),
+    setAllowance: (amount) => transferApproval(cDAI, amount)
+
   },
   {
     value: '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5',
@@ -39,7 +43,8 @@ export const currencies = [
     contract: cETH,
     humanReadibleFn: compoundWhole,
     chainReadibleFn: compoundToChain,
-    getAllowance: () => getLpAllowance(cETH)
+    getAllowance: () => getLpAllowance(cETH),
+    setAllowance: (amount) => transferApproval(cETH, amount)
   },
   {
     value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -57,7 +62,9 @@ export const currencies = [
     contract: DAI,
     humanReadibleFn: toEther,
     chainReadibleFn: toWei,
-    getAllowance: () => getLpAllowance(DAI)
+    getAllowance: () => getLpAllowance(DAI),
+    setAllowance: (amount) => transferApproval(DAI, amount)
+
   }
 ]
 
@@ -83,10 +90,24 @@ export const getAllowanceFromAddress = tokenAddress => {
   return token.getAllowance()
 }
 
+export const setAllowanceFromAddress = async (tokenAddres, amount) => {
+  const token = getTokenByAddress(tokenAddres)
+  return token.setAllowance(amount)
+}
+
 export const getLpAllowance = async contract => {
   const { methods: { allowance } } = contract || SNT
   const account = await web3.eth.getCoinbase()
   const spender = LiquidPledging._address
   const allowanceAmt = await allowance(account, spender).call()
   return allowanceAmt
+}
+
+export const transferApproval = (contract, amount) => {
+  const { methods: { approve } } = contract || SNT
+  const spender = LiquidPledging._address
+  return approve(
+    spender,
+    amount
+  )
 }

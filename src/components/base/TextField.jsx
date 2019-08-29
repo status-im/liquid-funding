@@ -99,6 +99,7 @@ function Input({
   bottomRightLabel,
   bottomRightError,
   bottomLeftLabel,
+  disabled,
   placeholder,
   className,
   name,
@@ -128,6 +129,7 @@ function Input({
         endAdornment={endAdornment}
         placeholder={placeholder}
         name={name}
+        disabled={disabled}
         onChange={onChange}
         classes={{
           root: classes.root,
