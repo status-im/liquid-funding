@@ -30,6 +30,12 @@ const { addGiverAndDonate } = LiquidPledging.methods
 const NOT_SUBMITTED = 'Not Submitted'
 const SUBMITTED = 'Submitted'
 const CONFIRMED = 'Confirmed'
+const APPROVED = 'Approved'
+const NOT_CONNECTED = 0
+const NOT_APPROVED = 1
+const IS_APPROVED = 2
+const IS_SUBMITTED = 3
+const IS_CONFIRMED = 4
 
 const useStyles = makeStyles(styles)
 const getProjectId = response => {
@@ -41,18 +47,19 @@ const addProjectSucessMsg = response => {
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
 const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirmation']
+const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Awaiting Confirmation', 'Confirmed']
 function stepperProgress(values, projectData, submissionState) {
-  console.log({values, projectData})
-  if (submissionState === CONFIRMED) return 4
-  if (submissionState === SUBMITTED) return 3
-  if (!projectData.account) return 0
+  if (submissionState === CONFIRMED) return IS_CONFIRMED
+  if (submissionState === SUBMITTED) return IS_SUBMITTED
+  if (submissionState === APPROVED) return IS_APPROVED
+  if (!projectData.account) return NOT_CONNECTED
   const { manifest: { goalToken }, authorization } = projectData
   const { amount } = values
   const { chainReadibleFn } = getTokenByAddress(goalToken)
   const weiAmount = amount ? chainReadibleFn(amount) : '0'
   const isAuthorized = toBN(authorization).gte(toBN(weiAmount))
-  if (!isAuthorized) return 1
-  return 2
+  if (!isAuthorized) return NOT_APPROVED
+  return IS_APPROVED
 }
 const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
   const { __typename } = pledgesInfo
@@ -90,14 +97,24 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         if (!activeStep) return enableEthereum()
         const { amount } = values
         const { goalToken } = manifest
-        const { chainReadibleFn } = getTokenByAddress(goalToken)
+        const { chainReadibleFn, setAllowance } = getTokenByAddress(goalToken)
         const userAccount = account ? account : await enableEthereum()
         const weiAmount = chainReadibleFn(amount)
+        if (activeStep === NOT_APPROVED) {
+          const toSend = setAllowance(weiAmount)
+          return toSend
+            .send({ from: account })
+            .then(async res => {
+              console.log({res})
+              setSubmissionState(APPROVED)
+            })
+            .catch(e => console.log({e}))
+        }
+
         const args = [projectId, userAccount, goalToken, weiAmount]
         const toSend = addGiverAndDonate(...args)
-        const estimatedGas = await toSend.estimateGas()
         toSend
-          .send({gas: estimatedGas + 100})
+          .send({from: account})
           .on('transactionHash', (hash) => {
             optimisticUpdate(client, pledgesInfo, weiAmount)
             setSubmissionState(SUBMITTED)
@@ -199,11 +216,12 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                   bottomRightLabel={usdValue}
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  disabled={activeStep >= IS_SUBMITTED}
                   value={values.amount || ''}
                 />
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>}
-              <Button type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{STEPS[activeStep]}</Button>
+              <Button disabled={activeStep >= IS_SUBMITTED} type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{buttonText[activeStep]}</Button>
               <FundStepper steps={STEPS} activeStep={activeStep} />
             </div>}
           </form>
