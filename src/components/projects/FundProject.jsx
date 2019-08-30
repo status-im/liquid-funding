@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
+import * as Yup from 'yup'
 import { convertTokenAmountUsd, formatPercent } from '../../utils/prices'
 import { getAmountFromPledgesInfo } from '../../utils/pledges'
 import { useProjectData } from './hooks'
@@ -23,7 +24,12 @@ import styles from './styles/FundProject'
 import Loading from '../base/Loading'
 import BreadCrumb from '../base/BreadCrumb'
 import FundStepper from './FundStepper'
+import { errorStrings } from '../../constants/errors'
 
+const { REQUIRED, NOT_NUMBER } = errorStrings
+const schema = Yup.object().shape({
+  amount: Yup.number().typeError(NOT_NUMBER).required(REQUIRED).positive().integer()
+})
 const { addGiverAndDonate } = LiquidPledging.methods
 
 const NOT_SUBMITTED = 'Not Submitted'
@@ -91,6 +97,15 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
     <Formik
       initialValues={{
         amount: '',
+      }}
+      validate={values => {
+        return schema.validate(values)
+          .catch(function(err) {
+            let errors = {}
+            const { errors: errs, params: { path } } = err
+            errors[path] = errs[0]
+            throw errors
+          })
       }}
       onSubmit={async (values, { resetForm }) => {
         const activeStep = stepperProgress(values, projectData, submissionState)
@@ -216,7 +231,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                   bottomRightLabel={usdValue}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  errorBorder={touched.amount && errors.amount}
+                  errorText={touched.amount && errors.amount}
                   disabled={activeStep >= IS_SUBMITTED}
                   value={values.amount || ''}
                 />
