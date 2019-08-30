@@ -73,7 +73,43 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       marginLeft: '1.3rem'
     }
+  },
+  toolTip: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gridColumn: '3 / 11',
+    backgroundColor: '#FFFFFF',
+    color: '#FF2D55',
+    textAlign: 'center',
+    borderRadius: '8px',
+    padding: '5px 0',
+    zIndex: 1,
+    boxShadow: '0px 4px 12px rgba(0, 34, 51, 0.08), 0px 2px 4px rgba(0, 34, 51, 0.16)',
+    minHeight: '3rem',
+    minWidth: '9rem',
+    '&:after': {
+      content: 'close-quote',
+      position: 'absolute',
+      top: '43%',
+      left: '50%',
+      marginLeft: '-5px',
+      borderWidth: '10px',
+      borderStyle: 'solid',
+      borderColor: '#FFFFFF transparent transparent transparent'
+    }
+  },
+  toolTipNoArrow: {
+    gridColumn: '5 / 10',
+    backgroundColor: '#FFFFFF',
+    color: '#FF2D55',
+    textAlign: 'center',
+    borderRadius: '8px',
+    padding: '5px 0',
+    zIndex: 1,
+    boxShadow: '0px 4px 12px rgba(0, 34, 51, 0.08), 0px 2px 4px rgba(0, 34, 51, 0.16)'
   }
+
 }))
 
 const renderLabel = (formLabelClass, idFor, label, isRequired) => (
@@ -100,6 +136,7 @@ function Input({
   bottomRightError,
   bottomLeftLabel,
   disabled,
+  errorText,
   placeholder,
   className,
   name,
@@ -122,6 +159,7 @@ function Input({
     >
       { labelForm }
       { topRightLabel }
+      {!!errorText && <span className={classes.toolTip}>{errorText}</span>}
       <InputBase
         id={idFor}
         error={errorBorder}
