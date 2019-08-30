@@ -9,7 +9,6 @@ import Typography from '@material-ui/core/Typography'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
-import * as Yup from 'yup'
 import { convertTokenAmountUsd, formatPercent } from '../../utils/prices'
 import { getAmountFromPledgesInfo } from '../../utils/pledges'
 import { useProjectData } from './hooks'
@@ -24,15 +23,8 @@ import styles from './styles/FundProject'
 import Loading from '../base/Loading'
 import BreadCrumb from '../base/BreadCrumb'
 import FundStepper from './FundStepper'
-import { errorStrings } from '../../constants/errors'
 
-const { REQUIRED, NOT_NUMBER } = errorStrings
 const { addGiverAndDonate } = LiquidPledging.methods
-
-const validationSchema = Yup.object().shape({
-  amount: Yup.number(NOT_NUMBER).required(REQUIRED).positive().integer()
-})
-
 
 const NOT_SUBMITTED = 'Not Submitted'
 const SUBMITTED = 'Submitted'
@@ -100,7 +92,6 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
       initialValues={{
         amount: '',
       }}
-      validationSchema={validationSchema}
       onSubmit={async (values, { resetForm }) => {
         const activeStep = stepperProgress(values, projectData, submissionState)
         if (!activeStep) return enableEthereum()
