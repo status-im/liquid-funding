@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
-  theme,
   addIcon: {
     color: '#4360DF',
     fontSize: '2.5em'
@@ -21,14 +20,19 @@ const useStyles = makeStyles(theme => ({
     gridTemplateRows: '4rem 4rem 3rem 0.5fr 1fr 0.3fr'
   },
   title: {
-    fontSize: '2.5rem',
-    textAlign: 'center'
-
+    fontSize: '2rem',
+    textAlign: 'center',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '2.5rem'
+    }
   },
   subTitle: {
     color: '#4360DF',
-    fontSize: '1.5rem',
-    textAlign: 'center'
+    fontSize: '1rem',
+    textAlign: 'center',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '1.5rem'
+    }
   },
   cardText: {
     gridColumn: '1 / 49',
