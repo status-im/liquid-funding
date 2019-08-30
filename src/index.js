@@ -4,6 +4,7 @@ import DatabaseProvider from '@nozbe/watermelondb/DatabaseProvider';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import database from './db';
 import App from './dapp';
+import * as serviceWorker from './serviceWorker';
 
 import './css/fonts/Inter/inter.css'
 
@@ -35,3 +36,4 @@ createRoot(document.getElementById('app')).render(
     </MuiThemeProvider>
   </DatabaseProvider>
 );
+serviceWorker.register()
