@@ -1,7 +1,7 @@
 {
-  "name": "giveth-liquidpledging",
+  "name": "Liquid-fund",
   "version": "1.0.1",
-  "description": "Liquid Pledging Smart Contract",
+  "description": "Liquid Funding",
   "main": "index.js",
   "directories": {
     "lib": "lib",
@@ -17,7 +17,8 @@
     "start": "node scripts/start.js",
     "ropsten": "REACT_APP_NETWORK=ropsten node scripts/start.js",
     "ropsten:build": "REACT_APP_NETWORK=ropsten node --max-old-space-size=4000 scripts/build.js",
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "postbuild": "PUBLIC_URL=/ react-snap"
   },
   "repository": {
     "type": "git",
@@ -52,6 +53,7 @@
     "lerna": "^2.2.0",
     "mocha": "^3.5.0",
     "random-bytes": "^1.0.0",
+    "react-snap": "^1.23.0",
     "solcpiler": "1.0.0-beta.8",
     "web3": "1.0.0-beta.34",
     "webpack": "4.28.3",

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#000000" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -19,11 +19,41 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <style>
+     .Loading-container {
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center;
+       font-family: Inter;
+     }
+
+     .Loading-logo {
+       animation: Loading-logo-spin infinite 20s linear;
+       height: 40vmin;
+       pointer-events: none;
+       margin-bottom: 5%;
+       margin-top: 10%;
+     }
+
+     @keyframes Loading-logo-spin {
+       from {
+         transform: rotate(0deg);
+       }
+       to {
+         transform: rotate(360deg);
+       }
+     }
+    </style>
     <title>Status.im Liquid Funding</title>
   </head>
   <body class="container">
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="app"></div>
+    <div id="app">
+      <div id="preload" class="Loading-container">
+        <img class="Loading-logo" id="loading" src="%PUBLIC_URL%/images/status.png" />
+      </div>
+    </div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
