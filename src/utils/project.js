@@ -6,8 +6,7 @@ const { utils } = web3
 export const formatProjectId = id => utils.toHex(id)
 const getFile = filePath => filePath.split('/').slice(-1)[0]
 const formatMedia = content => {
-  const type = 'video/mp4'
-  const blob = new Blob([content], {type})
+  const blob = new Blob([content])
   const src = URL.createObjectURL(blob)
   return src
 }
