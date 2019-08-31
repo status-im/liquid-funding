@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { unstable_createRoot as createRoot} from 'react-dom';
 import DatabaseProvider from '@nozbe/watermelondb/DatabaseProvider';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
@@ -32,8 +32,12 @@ const theme = createMuiTheme({
 createRoot(document.getElementById('app')).render(
   <DatabaseProvider database={database}>
     <MuiThemeProvider theme={theme}>
-      <App/>
+      <StrictMode>
+        <App/>
+      </StrictMode>
     </MuiThemeProvider>
   </DatabaseProvider>
-);
+).then(() => {
+  document.getElementById('preload').remove()
+});
 serviceWorker.register()

@@ -1,6 +1,6 @@
 /*global web3*/
 /*global process*/
-import React, { Suspense } from 'react'
+import React from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from './embarkArtifacts/embarkjs'
 import LiquidPledging from './embarkArtifacts/contracts/LiquidPledging'
@@ -19,7 +19,6 @@ import { updateDelegates } from './actions/delegates'
 import { MySnackbarContentWrapper } from './components/base/SnackBars'
 import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
 import { uris } from './remote/graph'
-import Loading from './components/base/Loading'
 
 const { getNetworkType } = web3.eth.net
 
@@ -155,30 +154,28 @@ class App extends React.Component {
     }
 
     if (client) return (
-      <Suspense fallback={<Loading />}>
-        <ApolloProvider client={client}>
-          <FundingContext.Provider value={fundingContext}>
-            <Router>
-              <MainCointainer loading={loading} enableEthereum={enableEthereum} account={account} />
-            </Router>
-            {snackbar && <Snackbar
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              open={snackbar}
-              autoHideDuration={6000}
-              onClose={closeSnackBar}>
-              <MySnackbarContentWrapper
-                variant={snackbar && snackbar.variant}
-                message={snackbar && snackbar.message}
-              />
-            </Snackbar>}
-          </FundingContext.Provider>
-        </ApolloProvider>
-      </Suspense>
+      <ApolloProvider client={client}>
+        <FundingContext.Provider value={fundingContext}>
+          <Router>
+            <MainCointainer loading={loading} enableEthereum={enableEthereum} account={account} />
+          </Router>
+          {snackbar && <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            open={snackbar}
+            autoHideDuration={6000}
+            onClose={closeSnackBar}>
+            <MySnackbarContentWrapper
+              variant={snackbar && snackbar.variant}
+              message={snackbar && snackbar.message}
+            />
+          </Snackbar>}
+        </FundingContext.Provider>
+      </ApolloProvider>
     )
-    return <Loading />
+    return null
   }
 }
 
