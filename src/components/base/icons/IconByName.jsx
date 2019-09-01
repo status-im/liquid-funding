@@ -19,10 +19,13 @@ const Icon = ({ name, centered }) => {
   const Component = icons[name]
   return (
     <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       background: '#ECEFFC',
       borderRadius: '50%',
-      padding: '10px',
-      maxHeight: '45px',
+      height: '3rem',
+      width: '3rem',
       justifySelf: centered ? 'center' : 'auto'
     }} >
       <Component />
