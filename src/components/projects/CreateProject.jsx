@@ -1,3 +1,4 @@
+/*eslint complexity: ["error", 25]*/
 import React, { createRef, useState, useContext } from 'react'
 import { Formik } from 'formik'
 import classnames from 'classnames'
@@ -198,7 +199,7 @@ const addProjectSucessMsg = response => {
 }
 const SubmissionSection = ({ classes, history }) => {
   const [uploads, setUploads] = useState({})
-  const { account, openSnackBar, prices } = useContext(FundingContext)
+  const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const windowSize = useWindowSize()
   const isSmall = windowSize.innerWidth < 800
   return (
@@ -219,15 +220,18 @@ const SubmissionSection = ({ classes, history }) => {
       validationSchema={validationSchema}
       onSubmit={async (values, { resetForm }) => {
         const { title, commitTime } = values
+        let user = account;
+        if (!user) user = await enableEthereum()
         const manifest = createJSON(values)
         const contentHash = await uploadFilesToIpfs(uploads, manifest)
         uploadFilesToIpfs(uploads, manifest, true)
-        const args = [title, contentHash, account, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
+        const args = [title, contentHash, user, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
+        console.log({args})
         addProject(...args)
-          .estimateGas({ from: account })
+          .estimateGas({ from: user })
           .then(async gas => {
             addProject(...args)
-              .send({ from: account, gas: gas + 100 })
+              .send({ from: user, gas: gas + 100 })
               .then(async res => {
                 pinToGateway(contentHash)
                 console.log({res})

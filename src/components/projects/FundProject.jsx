@@ -80,6 +80,7 @@ const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
     }
   })
 }
+
 const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling, client }) => {
   const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const [submissionState, setSubmissionState] = useState(NOT_SUBMITTED)
