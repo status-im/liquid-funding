@@ -372,7 +372,7 @@ const SubmissionSection = ({ classes, history }) => {
                 onBlur={handleBlur}
                 value={values.media || ''}
               />
-              {values.media && <MediaView isVideo={isVideo(uploads.media[0])} className={fullWidth} source={URL.createObjectURL(uploads.media[0])} />}
+              {Array.isArray(values.media) && <MediaView isVideo={isVideo(uploads.media[0])} className={fullWidth} source={URL.createObjectURL(uploads.media[0])} />}
               {status && status.showPreview &&
                <div className={classnames(classes.markdown, fullWidth)}>
                  <div
