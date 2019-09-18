@@ -279,7 +279,7 @@ const SubmissionSection = ({ classes, history }) => {
                 label="Name"
                 bottomRightLabel="Max 20"
                 bottomRightError={touched.title && errors.title === TOO_LONG}
-                errorBorder={touched.title && errors.title === REQUIRED}
+                errorBorder={(touched.title && errors.title === REQUIRED) || (touched.title && errors.title === TOO_LONG)}
                 placeholder="e.g. ‘Tribute to Talk’ or ‘Bob’"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -292,6 +292,7 @@ const SubmissionSection = ({ classes, history }) => {
                 label="Short Description"
                 bottomRightLabel="Max 120"
                 bottomRightError={errors.subtitle === TOO_LONG}
+                errorBorder={errors.subtitle === TOO_LONG}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.subtitle || ''}
@@ -443,7 +444,7 @@ const SubmissionSection = ({ classes, history }) => {
                 label="Enter your funding goal"
                 placeholder="Enter your funding goal"
                 bottomLeftLabel={usdValue}
-                errorBorder={touched.goal && errors.goal === REQUIRED}
+                errorBorder={touched.goal && errors.goal}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.goal || ''}
