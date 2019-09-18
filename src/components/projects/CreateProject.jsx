@@ -442,7 +442,7 @@ const SubmissionSection = ({ classes, history }) => {
                 idFor="goal"
                 name="goal"
                 label="Enter your funding goal"
-                placeholder="Enter your funding goal"
+                placeholder="Amount e.g. 10000"
                 bottomLeftLabel={usdValue}
                 errorBorder={touched.goal && errors.goal}
                 onChange={handleChange}
