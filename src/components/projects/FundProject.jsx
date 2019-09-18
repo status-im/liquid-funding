@@ -100,6 +100,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         amount: '',
       }}
       validate={values => {
+        const activeStep = stepperProgress(values, projectData, submissionState)
+        if (!activeStep) return
         return schema.validate(values)
           .catch(function(err) {
             let errors = {}
