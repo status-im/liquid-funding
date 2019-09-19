@@ -147,6 +147,12 @@ const useStyles = makeStyles(theme => ({
   dateCreated: {
     gridColumn: '40 / 44'
   },
+  previousButton: {
+    gridColumn: '3 / 9'
+  },
+  nextButton: {
+    gridColumn: '42 / 48'
+  },
   readMore: {
     gridColumn: '44 / 48',
     fontSize: '0.94rem',

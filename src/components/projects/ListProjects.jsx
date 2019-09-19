@@ -118,15 +118,16 @@ function TableCards({ profiles, classes }) {
   )
 }
 
+const OFFSET = 5
 function ListProjects() {
   const classes = useStyles()
-  const [offset, setOffset] = useState(2)
+  const [offset, setOffset] = useState(0)
   const windowSize = useWindowSize()
   const { loading, error, data, fetchMore } = useQuery(
     getProjects,
     {
       variables: {
-        offset: 0,
+        offset,
         limit: 5
       }
     }
@@ -138,7 +139,6 @@ function ListProjects() {
   const isSmall = innerWidth < 800
   const fabStyle = isSmall ? classnames(classes.fabLink, classes.fabSmall) : classes.fabLink
   const titleStyle = isSmall ? classes.tableTitleSmall : classes.tableTitle
-  console.log({data})
   return (
     <div className={classes.main}>
       <Typography className={classnames(classes.title, classes.fullWidth)}>
@@ -153,21 +153,34 @@ function ListProjects() {
       {!isSmall && <TableHeader classes={classes} />}
       {!isSmall ? <TableRows profiles={profiles} classes={classes} /> : <TableCards profiles={profiles} classes={classes} />}
       <Divider className={classes.divider} />
-      <Button onClick={() => {
+      {!!offset && <Button onClick={() => {
         fetchMore({
           variables: {
-            offset
+            offset: offset - OFFSET
           },
           updateQuery: (prev, { fetchMoreResult }) => {
-            console.log({prev, fetchMoreResult})
             if (!fetchMoreResult) return prev;
             return Object.assign({}, prev, {
               profiles: [...fetchMoreResult.profiles]
             });
           }
         })
-        setOffset(offset+offset)
-      }}>Next</Button>
+        setOffset(offset-offset)
+      }} className={classnames(classes.previousButton, classes.blue)}>{'< Previous'}</Button>}
+      {profiles.length === OFFSET && <Button onClick={() => {
+        fetchMore({
+          variables: {
+            offset: offset + OFFSET
+          },
+          updateQuery: (prev, { fetchMoreResult }) => {
+            if (!fetchMoreResult) return prev;
+            return Object.assign({}, prev, {
+              profiles: [...fetchMoreResult.profiles]
+            });
+          }
+        })
+        setOffset(offset+OFFSET)
+      }} className={classnames(classes.nextButton, classes.blue)}>{'Next >'}</Button>}
       <Link to={`/create-project`} className={fabStyle}>
         <Fab className={classes.fab}>
           <AddIcon className={classes.addIcon}/>
