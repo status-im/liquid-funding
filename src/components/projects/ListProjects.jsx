@@ -1,9 +1,10 @@
-import React, { Fragment, useContext } from 'react'
+import React, { Fragment, useContext, useState } from 'react'
 import useWindowSize from '@rehooks/window-size'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import Fab from '@material-ui/core/Fab'
+import Button from '@material-ui/core/Button'
 import AddIcon from '@material-ui/icons/Add'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
@@ -119,8 +120,17 @@ function TableCards({ profiles, classes }) {
 
 function ListProjects() {
   const classes = useStyles()
+  const [offset, setOffset] = useState(2)
   const windowSize = useWindowSize()
-  const { loading, error, data } = useQuery(getProjects)
+  const { loading, error, data, fetchMore } = useQuery(
+    getProjects,
+    {
+      variables: {
+        offset: 0,
+        limit: 5
+      }
+    }
+  )
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   const { profiles } = data
@@ -128,6 +138,7 @@ function ListProjects() {
   const isSmall = innerWidth < 800
   const fabStyle = isSmall ? classnames(classes.fabLink, classes.fabSmall) : classes.fabLink
   const titleStyle = isSmall ? classes.tableTitleSmall : classes.tableTitle
+  console.log({data})
   return (
     <div className={classes.main}>
       <Typography className={classnames(classes.title, classes.fullWidth)}>
@@ -142,6 +153,21 @@ function ListProjects() {
       {!isSmall && <TableHeader classes={classes} />}
       {!isSmall ? <TableRows profiles={profiles} classes={classes} /> : <TableCards profiles={profiles} classes={classes} />}
       <Divider className={classes.divider} />
+      <Button onClick={() => {
+        fetchMore({
+          variables: {
+            offset
+          },
+          updateQuery: (prev, { fetchMoreResult }) => {
+            console.log({prev, fetchMoreResult})
+            if (!fetchMoreResult) return prev;
+            return Object.assign({}, prev, {
+              profiles: [...fetchMoreResult.profiles]
+            });
+          }
+        })
+        setOffset(offset+offset)
+      }}>Next</Button>
       <Link to={`/create-project`} className={fabStyle}>
         <Fab className={classes.fab}>
           <AddIcon className={classes.addIcon}/>

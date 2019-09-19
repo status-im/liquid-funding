@@ -51,8 +51,8 @@ query Profile($id: ID!) {
 export const getProjects = gql`
 ${pledgesInfosFields}
 
-query Projects($type: String! = "PROJECT"){
-  profiles(where: {type: $type, projectInfo_not: null}) {
+query Projects($type: String! = "PROJECT", $limit: Int, $offset: Int){
+  profiles(where: {type: $type, projectInfo_not: null}, first: $limit, skip: $offset) {
     id
     addr
     canceled
