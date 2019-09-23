@@ -4,9 +4,6 @@ import PropTypes from 'prop-types'
 import { Formik } from 'formik'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import LPVault from '../../embarkArtifacts/contracts/LPVault'
-import withObservables from '@nozbe/with-observables'
-import { Q } from '@nozbe/watermelondb'
-import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
 import { useProjectData, useProfileData } from './hooks'
 import { Button, Divider, Typography, Card, CardActions, CardContent, FormControlLabel, Switch } from '@material-ui/core'
@@ -301,25 +298,4 @@ function ProjectPledges({classes, match}) {
   )
 }
 
-const StyledPledges = withStyles(styles)(ProjectPledges)
-export default withDatabase(withObservables([], ({ database, match }) => ({
-  profile: database.collections.get('profiles').query(
-    Q.where('id_profile', match.params.id)
-  ).observe(),
-  projectAddedEvents: database.collections.get('lp_events').query(
-    Q.where('event', 'ProjectAdded')
-  ).observe(),
-  pledges: database.collections.get('pledges').query(
-    Q.or(
-      Q.where('intended_project', match.params.id),
-      Q.where('owner_id', match.params.id)
-    )
-  ).observe(),
-  authorizedPayments: database.collections.get('vault_events').query(
-    Q.where('event', 'AuthorizePayment')
-  ).observe(),
-  confirmedPayments: database.collections.get('vault_events').query(
-    Q.where('event', 'ConfirmPayment')
-  ).observe()
-}))(StyledPledges))
-
+export default withStyles(styles)(ProjectPledges)
