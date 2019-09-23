@@ -1,5 +1,5 @@
 /*global web3*/
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Formik } from 'formik'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
@@ -8,13 +8,18 @@ import withObservables from '@nozbe/with-observables'
 import { Q } from '@nozbe/watermelondb'
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider'
 import { withStyles } from '@material-ui/core/styles'
-import { useProjectData, useProfileData, usePledgesAuthorizations } from './hooks'
+import { useProjectData, useProfileData } from './hooks'
 import { Button, Divider, Typography, Card, CardActions, CardContent, FormControlLabel, Switch } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import Paper from '@material-ui/core/Paper'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import { getTokenLabel, getHumanAmountFormatter } from '../../utils/currencies'
+import { toDecimal } from '../../utils/conversions'
+import { formatProjectId } from '../../utils/project'
+import { getProfileWithPledges } from './queries'
+import { useQuery } from '@apollo/react-hooks'
+import Loading from '../base/Loading'
 
 const { mWithdraw, withdraw } = LiquidPledging.methods
 const { confirmPayment } = LPVault.methods
@@ -43,13 +48,12 @@ const buttonText = {
   2: 'Already paid'
 }
 
-const getCommitTime = async (pledge, setState) => {
+const getCommitTime = (pledge, profileCommitTime) => {
   const { commitTime } = pledge
-  const profile = await pledge.profile.fetch()
-  if (!profile || Number(commitTime) === 0) return 0
-  const time = Number(commitTime) + Number(profile.commitTime)
+  if (Number(commitTime) === 0) return 0
+  const time = Number(commitTime) + Number(profileCommitTime)
   const date = new Date(time * 1000)
-  setState(`${date.toLocaleDateString()} ${date.toLocaleTimeString()}`)
+  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 }
 
 const styles = theme => ({
@@ -96,15 +100,11 @@ const styles = theme => ({
   }
 })
 
-function SimplePledge({ classes, pledge, values, handleChange, pledgeType }) {
-  const [commitTime, setCommitTime] = useState(0);
+function SimplePledge({ classes, pledge, values, handleChange, pledgeType, profileCommitTime }) {
   const pledgeId = `pledge.${pledge.id}`
+  const commitTime = getCommitTime(pledge, profileCommitTime)
   const keys = Object.keys(values)
   const value = keys.find(k => values[k].id === pledgeId)
-
-  useEffect(() => {
-    getCommitTime(pledge, setCommitTime)
-  }, [pledge])
 
   const notPaid = pledgeTypes[pledgeType] !== PAID
   const notPaying = pledgeTypes[pledgeType] !== PAYING
@@ -116,7 +116,7 @@ function SimplePledge({ classes, pledge, values, handleChange, pledgeType }) {
           {amtFormatter(pledge.amount)} {getTokenLabel(pledge.token)}
         </Typography>
         <Typography variant="h5" component="h2" className={classes.subText}>
-          Pledge ID: {pledge.idPledge}
+          Pledge ID: {toDecimal(pledge.id)}
         </Typography>
         <Typography variant="h6" component="h3" className={classes.subText}>
           Pledge Status: {pledgeTypes[pledge.pledgeState]}
@@ -176,7 +176,7 @@ const getArgs = (pledgeType, filteredPledges) => {
   const { idPayment } = filteredPledges.filter(p => !!p)[0].authorization.returnValues
   return [idPayment]
 }
-const SubmissionSection = ({ classes, openSnackBar, syncWithRemote, pledges, pledgeType }) => {
+const SubmissionSection = ({ classes, openSnackBar, syncWithRemote, pledges, pledgeType, profileCommitTime }) => {
   return (
     <Formik
       onSubmit={async(values) => {
@@ -215,7 +215,7 @@ const SubmissionSection = ({ classes, openSnackBar, syncWithRemote, pledges, ple
       }) => {
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
-            {pledges.map(pledge => <PledgeInfo key={pledge.id} pledge={pledge} values={values} handleChange={handleChange} pledgeType={pledgeType} />)}
+            {pledges.map(pledge => <PledgeInfo key={pledge.id} pledge={pledge} values={values} handleChange={handleChange} pledgeType={pledgeType}  profileCommitTime={profileCommitTime} />)}
             {pledgeTypes[pledgeType] !== PAID && <Button type="submit" color="primary" variant="contained" style={{height: '50px', width: '100%'}}>{buttonText[pledgeType]}</Button>}
           </form>
         )
@@ -256,15 +256,21 @@ function CenteredTabs({ pledged, paying, paid, pledgeType, setPledgeType }) {
   );
 }
 
-function ProjectPledges({classes, match, projectAddedEvents, pledges, authorizedPayments, confirmedPayments}) {
+function ProjectPledges({classes, match}) {
   const [pledgeType, setPledgeType] = useState(0)
   const projectId = match.params.id
-  const {  manifest, delegateProfiles, openSnackBar, syncWithRemote } = useProjectData(projectId, projectAddedEvents)
+  const { loading, error, data } = useQuery(getProfileWithPledges, {
+    variables: { id: formatProjectId(projectId) }
+  });
+
+  const {  manifest, delegateProfiles, openSnackBar, syncWithRemote } = useProjectData(projectId, data)
   const delegatePledges = useProfileData(delegateProfiles)
-  const enrichedPledges = usePledgesAuthorizations(pledges, authorizedPayments, confirmedPayments).filter(p => Number(p.amount) > 0)
-  const pledged = enrichedPledges.filter(p => p.pledgeState === 0)
-  const paying = enrichedPledges.filter(p => p.pledgeState === 1)
-  const paid = enrichedPledges.filter(p => p.pledgeState === 2)
+  if (loading) return <Loading />
+  if (error) return <div>{`Error! ${error.message}`}</div>
+  const { pledges } = data.profile
+  const pledged = pledges.filter(p => p.pledgeState === 0)
+  const paying = pledges.filter(p => p.pledgeState === 1)
+  const paid = pledges.filter(p => p.pledgeState === 2)
   const selectedPledges = {
     0: pledged,
     1: paying,
@@ -289,6 +295,7 @@ function ProjectPledges({classes, match, projectAddedEvents, pledges, authorized
         syncWithRemote={syncWithRemote}
         pledges={selectedPledges[pledgeType]}
         pledgeType={pledgeType}
+        profileCommitTime={data.profile.commitTime}
       />
     </div>
   )

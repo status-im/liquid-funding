@@ -14,6 +14,18 @@ fragment PledgesInfoFields on PledgesInfo {
 }
 `
 
+export const pledgeFields = gql`
+fragment PledgeFields on Pledge {
+      id,
+      amount,
+      token,
+      commitTime,
+      pledgeState,
+      intendedProject,
+      nDelegates
+}
+`
+
 export const getProfileById = gql`
 ${pledgesInfosFields}
 
@@ -48,6 +60,46 @@ query Profile($id: ID!) {
   }
 }
 `
+
+export const getProfileWithPledges = gql`
+${pledgesInfosFields}
+${pledgeFields}
+
+query Profile($id: ID!) {
+  profile(id: $id) {
+    id
+    addr
+    commitTime
+    url
+    profileId
+    type
+    name
+    creationTime
+    pledgesInfos {
+      ...PledgesInfoFields
+    }
+    pledges {
+      ...PledgeFields
+    }
+    projectInfo {
+      id
+      title
+      subtitle
+      creator
+      repo
+      avatar
+      goal
+      goalToken
+      description
+      chatRoom
+      file
+      type
+      isPlaying
+    }
+  }
+}
+`
+
 export const getProjects = gql`
 ${pledgesInfosFields}
 
