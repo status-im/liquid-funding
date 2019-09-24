@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
+import Check from '@material-ui/icons/Check'
 import * as Yup from 'yup'
 import { convertTokenAmountUsd, formatPercent } from '../../utils/prices'
 import { getAmountFromPledgesInfo } from '../../utils/pledges'
@@ -53,7 +54,7 @@ const addProjectSucessMsg = response => {
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
 const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirm']
-const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Awaiting Confirmation', 'Confirmed']
+const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Submitted', 'Confirmed']
 function stepperProgress(values, projectData, submissionState) {
   if (submissionState === CONFIRMED) return IS_CONFIRMED
   if (submissionState === SUBMITTED) return IS_SUBMITTED
@@ -111,7 +112,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
             throw errors
           })
       }}
-      onSubmit={async (values, { resetForm }) => {
+      onSubmit={async (values) => {
         const activeStep = stepperProgress(values, projectData, submissionState)
         if (!activeStep) return enableEthereum()
         const { amount } = values
@@ -151,10 +152,9 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
           })
           .finally(() => {
             client.resetStore()
-            resetForm()
           })
 
-        console.log({amount, resetForm, getProjectId, addProjectSucessMsg, account, openSnackBar})
+        console.log({amount, getProjectId, addProjectSucessMsg, account, openSnackBar})
       }}
     >
       {({
@@ -241,9 +241,10 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 />
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>}
-              <Button disabled={activeStep >= IS_SUBMITTED} type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>
+              <Button disabled={activeStep >= IS_SUBMITTED} type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
                 <div className={classes.buttonContent}>
-                  <CircularProgress className={classes.progress} size={24} disableShrink />
+                  {activeStep === IS_CONFIRMED && <Check className={classes.check} />}
+                  {activeStep === IS_SUBMITTED && <CircularProgress className={classes.progress} size={24} disableShrink />}
                   {buttonText[activeStep]}
                 </div>
               </Button>
