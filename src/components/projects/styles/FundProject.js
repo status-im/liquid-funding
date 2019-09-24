@@ -49,6 +49,10 @@ const styles = theme => ({
     gridColumnStart: 1,
     gridColumnEnd: 13
   },
+  progress: {
+    color: 'white',
+    animationDuration: '350ms'
+  },
   submissionRoot: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
@@ -75,6 +79,12 @@ const styles = theme => ({
     height: '50px',
     marginTop: '1.5rem',
     borderRadius: '8px'
+  },
+  buttonContent: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '50%'
   },
   textField: {
     gridColumnStart: '1',

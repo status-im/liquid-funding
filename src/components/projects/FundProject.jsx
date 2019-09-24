@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
@@ -240,7 +241,12 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 />
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>}
-              <Button disabled={activeStep >= IS_SUBMITTED} type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>{buttonText[activeStep]}</Button>
+              <Button disabled={activeStep >= IS_SUBMITTED} type="submit" color="primary" variant="contained" className={classnames(classes.formButton)}>
+                <div className={classes.buttonContent}>
+                  <CircularProgress className={classes.progress} size={24} disableShrink />
+                  {buttonText[activeStep]}
+                </div>
+              </Button>
               <FundStepper steps={STEPS} activeStep={activeStep} />
             </div>}
           </form>
