@@ -35,6 +35,7 @@ const schema = Yup.object().shape({
 const { addGiverAndDonate } = LiquidPledging.methods
 
 const NOT_SUBMITTED = 'Not Submitted'
+const AUTHORIZATION_SUBMITTED = 'Authorization Submitted'
 const SUBMITTED = 'Submitted'
 const CONFIRMED = 'Confirmed'
 const APPROVED = 'Approved'
@@ -57,6 +58,7 @@ const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirm']
 const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Submitted', 'Confirmed']
 function stepperProgress(values, projectData, submissionState) {
   if (submissionState === CONFIRMED) return IS_CONFIRMED
+  if (submissionState === AUTHORIZATION_SUBMITTED) return NOT_APPROVED
   if (submissionState === SUBMITTED) return IS_SUBMITTED
   if (submissionState === APPROVED) return IS_APPROVED
   if (!projectData.account) return NOT_CONNECTED
@@ -112,7 +114,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
             throw errors
           })
       }}
-      onSubmit={async (values) => {
+      onSubmit={async (values, { resetForm }) => {
         const activeStep = stepperProgress(values, projectData, submissionState)
         if (!activeStep) return enableEthereum()
         const { amount } = values
@@ -122,13 +124,14 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         const weiAmount = chainReadibleFn(amount)
         if (activeStep === NOT_APPROVED) {
           const toSend = setAllowance(weiAmount)
+          setSubmissionState(AUTHORIZATION_SUBMITTED)
           return toSend
             .send({ from: account })
             .then(async res => {
               console.log({res})
               setSubmissionState(APPROVED)
             })
-            .catch(e => console.log({e}))
+            .catch(e => console.log({e})).finally(() => resetForm())
         }
 
         const args = [projectId, userAccount, goalToken, weiAmount]
@@ -168,6 +171,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         const { firstHalf, secondHalf, fullWidth } = classes
         const usdValue = manifest ? convertTokenAmountUsd(manifest.goalToken, values.amount, prices) : 0
         const activeStep = stepperProgress(values, projectData, submissionState)
+        const showSpinner = activeStep === IS_SUBMITTED || submissionState === AUTHORIZATION_SUBMITTED
+        const disableButton = submissionState === AUTHORIZATION_SUBMITTED || activeStep >= IS_SUBMITTED
 
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
@@ -241,10 +246,10 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 />
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>}
-              <Button disabled={activeStep >= IS_SUBMITTED} type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
+              <Button disabled={disableButton} type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
                 <div className={classes.buttonContent}>
                   {activeStep === IS_CONFIRMED && <Check className={classes.check} />}
-                  {activeStep === IS_SUBMITTED && <CircularProgress className={classes.progress} size={24} disableShrink />}
+                  {showSpinner && <CircularProgress className={classes.progress} size={24} disableShrink />}
                   {buttonText[activeStep]}
                 </div>
               </Button>
