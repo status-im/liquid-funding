@@ -19,6 +19,9 @@ const styles = theme => ({
   amountInput: {
     textAlign: 'right'
   },
+  check: {
+    color: theme.palette.primary[500]
+  },
   root: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
@@ -50,7 +53,7 @@ const styles = theme => ({
     gridColumnEnd: 13
   },
   progress: {
-    color: 'white',
+    color: theme.palette.primary[500],
     animationDuration: '350ms'
   },
   submissionRoot: {
@@ -78,7 +81,15 @@ const styles = theme => ({
     gridColumnEnd: '13',
     height: '50px',
     marginTop: '1.5rem',
-    borderRadius: '8px'
+    borderRadius: '8px',
+    backgroundColor: theme.palette.primary[500],
+    color: 'white',
+    '&:hover': {
+      backgroundColor: "#34489f",
+    }
+  },
+  disabledButton: {
+    backgroundColor: 'none'
   },
   buttonContent: {
     display: 'flex',

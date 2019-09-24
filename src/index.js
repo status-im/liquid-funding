@@ -25,6 +25,9 @@ const theme = createMuiTheme({
     },
     text: {
       grey: '#939BA1'
+    },
+    action: {
+      disabledBackground: '#FAFAFA'
     }
   }
 });
