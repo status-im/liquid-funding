@@ -32,11 +32,32 @@ const style = () => ({
     fontWeight: 'bold',
     gridColumn: '3 / 23'
   },
+  stepMain: {
+    gridColumn: '27 / 46',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center'
+  },
+  stepTitle: {
+    fontSize: '16px',
+    fontWeight: 'bold',
+    marginTop: '1em'
+  },
+  stepText: {
+    fontSize: '16px',
+    color: '#939BA1',
+    margin: '0.5em 0 2.5rem'
+  },
   text: {
     fontSize: '16px',
   },
   description: {
     gridColumn: '3 / 25'
+  },
+  subSectionTitle: {
+    gridColumn: '34 / 48',
+    alignSelf: 'center'
   }
 })
 
@@ -46,6 +67,16 @@ const BulletText = ({ text, className }) => {
     <div className={className} >
       <Icon name="check" />
       <span style={{ marginLeft: '1em' }}>{text}</span>
+    </div>
+  )
+}
+const Step = ({ number, title, text }) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.stepMain}>
+      <Icon text={number} />
+      <div className={classes.stepTitle}>{title}</div>
+      <div className={classes.stepText}>{text}</div>
     </div>
   )
 }
@@ -72,6 +103,11 @@ const About = () => {
       <div className={classes.imgContainer}>
         <img src={NewInternet} className={classes.img} />
       </div>
+      <Typography className={classnames(classes.title, classes.subSectionTitle)}>How it works</Typography>
+      <Step number="1" title="Create project" text="Propose something you want to design, build, do." />
+      <Step number="2" title="Discuss" text="Discuss your project in a public Status channel." />
+      <Step number="3" title="Receive funding" text="Withdraw funds pledged to your project." />
+      <Step number="4" title="Get started" text="Keep everyone informed on your progress." />
     </div>
   )
 }
