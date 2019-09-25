@@ -15,13 +15,13 @@ const useStyles = makeStyles({
   }
 })
 
-function BreadCrumb({ className, trail }){
+function BreadCrumb({ className, start, trail }){
   const classes = useStyles()
   const trailString = trail ? ` > ${trail.join(' > ')}` : ''
   return (
     <div className={classnames(classes.main, className)}>
       <Link className={classes.link} to={'/'}>
-        All projects
+        {start || 'All projects'}
       </Link>
       {<span>{trailString}</span>}
     </div>
