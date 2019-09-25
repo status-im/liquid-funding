@@ -25,6 +25,7 @@ import ProjectIcon from '@material-ui/icons/Work';
 import { ScaleLoader } from 'react-spinners'
 import Loading from '../components/base/Loading'
 
+const About = lazy(() => import('./About.jsx'))
 const ListProjects = lazy(() => import('./projects/ListProjects'))
 const FundsManagement = lazy(() => import('./FundsManagement'))
 const ContractAdmin = lazy(() => import('./ContractAdmin'))
@@ -268,6 +269,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
         <div className={classNames(classes.appBar)}>
           <Suspense fallback={<Loading />}>
             <Switch>
+              <Route path="/about" component={About} />
               <Route path="/(|list-projects)" component={ListProjects} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/admin" component={ContractAdmin} />
