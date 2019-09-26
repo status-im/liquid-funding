@@ -11,6 +11,7 @@ import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval } from '.
 import { getAuthorizedPayments } from './utils/events'
 import { FundingContext } from './context'
 import MainCointainer from './components/MainCointainer'
+import Footer from './components/Footer'
 import { getAndAddLpEvents } from './actions/lpEvents'
 import { getAndAddVaultEvents } from './actions/vaultEvents'
 import { addFormattedProfiles } from './actions/profiles'
@@ -158,6 +159,7 @@ class App extends React.Component {
         <FundingContext.Provider value={fundingContext}>
           <Router>
             <MainCointainer loading={loading} enableEthereum={enableEthereum} account={account} />
+            <Footer />
           </Router>
           {snackbar && <Snackbar
             anchorOrigin={{
