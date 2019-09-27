@@ -2,6 +2,10 @@ import React, { Fragment } from 'react'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
+import { useQuery } from '@apollo/react-hooks'
+import { formatProjectId } from '../utils/project'
+import { getProfileWithPledges } from './projects/queries'
+import Loading from './base/Loading'
 
 const styles = () => ({
   main: {
@@ -12,12 +16,17 @@ const styles = () => ({
   tableHeader: {
     color: 'rgba(147, 155, 161, 0.8)',
     fontSize: '0.9rem',
-    gridRow: '4 / 5'
   },
   headerStatus: {
     gridColumn: '3 / 12'
   },
+  rowStatus: {
+    gridColumn: '3 / 12'
+  },
   headerAmount: {
+    gridColumn: '12 / 30'
+  },
+  rowAmount: {
     gridColumn: '12 / 30'
   },
   headerId: {
@@ -47,11 +56,32 @@ function TableHeader() {
   )
 }
 
-function Pledges() {
+function TableRow({ pledge }) {
   const classes = useStyles()
+  return (
+    <Fragment>
+      <div className={classes.rowStatus}>{pledge.pledgeState}</div>
+      <div className={classes.rowAmount}>{pledge.amount}</div>
+    </Fragment>
+  )
+}
+
+function Pledges({ match }) {
+  const classes = useStyles()
+  const projectId = match.params.id
+  const { loading, error, data } = useQuery(getProfileWithPledges, {
+    variables: { id: formatProjectId(projectId) }
+  });
+
+  console.log({loading, error, data})
+  if (loading) return <Loading />
+  if (error) return <div>{`Error! ${error.message}`}</div>
+  const { pledges } = data.profile
+
   return (
     <div className={classes.main}>
       <TableHeader />
+      {pledges.map(p => <TableRow key={p.id} pledge={p} />)}
     </div>
   )
 }
