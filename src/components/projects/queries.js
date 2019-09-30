@@ -22,7 +22,8 @@ fragment PledgeFields on Pledge {
       commitTime,
       pledgeState,
       intendedProject,
-      nDelegates
+      nDelegates,
+      creationTime
 }
 `
 
