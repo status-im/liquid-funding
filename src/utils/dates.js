@@ -25,8 +25,9 @@ export function getDateCreated(daysSince) {
   return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`
 }
 
-export function getDateFromTimestamp(ts) {
+export function getDateFromTimestamp(ts, pretty = false) {
   const d = new Date(ts*1000);
+  if (pretty) return `${d.getDate()} ${d.toLocaleString('default', { month: 'short'})} ${d.getFullYear()}`
   return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`
 }
 

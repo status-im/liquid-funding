@@ -1,42 +1,60 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
+import Checkbox from '@material-ui/core/Checkbox'
 import { makeStyles } from '@material-ui/core/styles'
 import { useQuery } from '@apollo/react-hooks'
 import { formatProjectId } from '../utils/project'
 import { getProfileWithPledges } from './projects/queries'
+import { getTokenLabel, getHumanAmountFormatter } from '../utils/currencies'
+import { toDecimal } from '../utils/conversions'
+import { getDateFromTimestamp } from '../utils/dates'
 import Loading from './base/Loading'
 
 const styles = () => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '4rem 4rem 3rem 0.5fr 1fr 0.3fr'
+    gridTemplateRows: '4rem'
   },
   tableHeader: {
     color: 'rgba(147, 155, 161, 0.8)',
     fontSize: '0.9rem',
   },
   headerStatus: {
-    gridColumn: '3 / 12'
+    gridColumn: '6 / 12'
   },
   rowStatus: {
-    gridColumn: '3 / 12'
+    gridColumn: '6 / 12'
   },
   headerAmount: {
-    gridColumn: '12 / 30'
+    gridColumn: '12 / 18'
   },
   rowAmount: {
-    gridColumn: '12 / 30'
+    gridColumn: '12 / 18'
   },
   headerId: {
-    gridColumn: '30 / 35'
+    gridColumn: '18 / 24'
+  },
+  rowId: {
+    gridColumn: '18 / 24'
   },
   headerFunded: {
-    gridColumn: '35 / 40'
+    gridColumn: '24 / 30'
+  },
+  rowFunded: {
+    gridColumn: '24 / 30'
   },
   headerSelect: {
-    gridColumn: '40 / 44'
+    gridColumn: '31 / 35'
+  },
+  select: {
+    gridColumn: '35 / 37'
+  },
+  checkBox: {
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   }
 })
 
@@ -52,16 +70,21 @@ function TableHeader() {
       <Typography className={classnames(tableHeader, classes.headerId)}>Pledge ID</Typography>
       <Typography className={classnames(tableHeader, classes.headerFunded)}>Funded on</Typography>
       <Typography className={classnames(tableHeader, classes.headerSelect)}>Select all</Typography>
+      <Checkbox className={classnames(classes.select, classes.checkBox)} color="primary" disableRipple labelPlacement="start" label="start" />
     </Fragment>
   )
 }
 
-function TableRow({ pledge }) {
+function TableRow({ pledge, amtFormatter, tokenLabel }) {
   const classes = useStyles()
+  const { id, amount, creationTime, pledgeState } = pledge
   return (
     <Fragment>
-      <div className={classes.rowStatus}>{pledge.pledgeState}</div>
-      <div className={classes.rowAmount}>{pledge.amount}</div>
+      <Typography className={classes.rowStatus}>{pledgeState}</Typography>
+      <Typography className={classes.rowAmount}>{amtFormatter(amount)} {tokenLabel}</Typography>
+      <Typography className={classes.rowId}>{toDecimal(id)}</Typography>
+      <Typography className={classes.rowFunded}>{getDateFromTimestamp(creationTime, true)}</Typography>
+      <Checkbox className={classnames(classes.select, classes.checkBox)} color="primary" disableRipple />
     </Fragment>
   )
 }
@@ -76,12 +99,21 @@ function Pledges({ match }) {
   console.log({loading, error, data})
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
-  const { pledges } = data.profile
+  const { pledges, projectInfo: { goalToken } } = data.profile
+  const amtFormatter = getHumanAmountFormatter(goalToken)
+  const tokenLabel = getTokenLabel(goalToken)
 
   return (
     <div className={classes.main}>
       <TableHeader />
-      {pledges.map(p => <TableRow key={p.id} pledge={p} />)}
+      {pledges.map(p =>
+        <TableRow
+          key={p.id}
+          pledge={p}
+          amtFormatter={amtFormatter}
+          tokenLabel={tokenLabel}
+        />
+      )}
     </div>
   )
 }
