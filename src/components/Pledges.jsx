@@ -46,13 +46,23 @@ const styles = () => ({
     gridColumn: '24 / 30'
   },
   headerSelect: {
-    gridColumn: '31 / 35'
+    gridColumn: '31 / 34'
   },
   select: {
-    gridColumn: '35 / 37'
+    gridColumn: '34 / 36'
   },
   checkBox: {
+    paddingTop: 0,
+    alignItems: 'normal',
     '&:hover': {
+      backgroundColor: 'transparent'
+    },
+    '& svg': {
+      background: 'radial-gradient(#EEF2F5, transparent)'
+    }
+  },
+  checked: {
+    '&&:hover': {
       backgroundColor: 'transparent'
     }
   }
@@ -70,7 +80,7 @@ function TableHeader() {
       <Typography className={classnames(tableHeader, classes.headerId)}>Pledge ID</Typography>
       <Typography className={classnames(tableHeader, classes.headerFunded)}>Funded on</Typography>
       <Typography className={classnames(tableHeader, classes.headerSelect)}>Select all</Typography>
-      <Checkbox className={classnames(classes.select, classes.checkBox)} color="primary" disableRipple labelPlacement="start" label="start" />
+      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} color="primary" disableRipple labelPlacement="start" label="start" />
     </Fragment>
   )
 }
@@ -84,7 +94,7 @@ function TableRow({ pledge, amtFormatter, tokenLabel }) {
       <Typography className={classes.rowAmount}>{amtFormatter(amount)} {tokenLabel}</Typography>
       <Typography className={classes.rowId}>{toDecimal(id)}</Typography>
       <Typography className={classes.rowFunded}>{getDateFromTimestamp(creationTime, true)}</Typography>
-      <Checkbox className={classnames(classes.select, classes.checkBox)} color="primary" disableRipple />
+      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} color="primary" disableRipple />
     </Fragment>
   )
 }
