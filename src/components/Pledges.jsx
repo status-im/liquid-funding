@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -70,7 +70,7 @@ const styles = () => ({
 
 const useStyles = makeStyles(styles)
 
-function TableHeader() {
+function TableHeader({ allSelected, selectAll }) {
   const classes = useStyles()
   const { tableHeader } = classes
   return (
@@ -80,27 +80,33 @@ function TableHeader() {
       <Typography className={classnames(tableHeader, classes.headerId)}>Pledge ID</Typography>
       <Typography className={classnames(tableHeader, classes.headerFunded)}>Funded on</Typography>
       <Typography className={classnames(tableHeader, classes.headerSelect)}>Select all</Typography>
-      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} color="primary" disableRipple labelPlacement="start" label="start" />
+      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} checked={allSelected} onChange={selectAll} color="primary" disableRipple labelPlacement="start" label="start"  />
     </Fragment>
   )
 }
 
-function TableRow({ pledge, amtFormatter, tokenLabel }) {
+function TableRow({ pledge, amtFormatter, tokenLabel, selectedPledges, setSelected }) {
   const classes = useStyles()
   const { id, amount, creationTime, pledgeState } = pledge
+  const isSelected = selectedPledges ? selectedPledges.includes(id) : false
+  const handleChange = () => {
+    if (isSelected) return setSelected(selectedPledges.filter(p => p !== id))
+    setSelected([...selectedPledges, id])
+  }
   return (
     <Fragment>
       <Typography className={classes.rowStatus}>{pledgeState}</Typography>
       <Typography className={classes.rowAmount}>{amtFormatter(amount)} {tokenLabel}</Typography>
       <Typography className={classes.rowId}>{toDecimal(id)}</Typography>
       <Typography className={classes.rowFunded}>{getDateFromTimestamp(creationTime, true)}</Typography>
-      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} color="primary" disableRipple />
+      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} color="primary" disableRipple checked={isSelected} onChange={handleChange} />
     </Fragment>
   )
 }
 
 function Pledges({ match }) {
   const classes = useStyles()
+  const [selectedPledges, setSelected] = useState([])
   const projectId = match.params.id
   const { loading, error, data } = useQuery(getProfileWithPledges, {
     variables: { id: formatProjectId(projectId) }
@@ -112,18 +118,25 @@ function Pledges({ match }) {
   const { pledges, projectInfo: { goalToken } } = data.profile
   const amtFormatter = getHumanAmountFormatter(goalToken)
   const tokenLabel = getTokenLabel(goalToken)
+  const allSelected = selectedPledges.length === pledges.length
+  const selectAll = () => {
+    if (allSelected) return setSelected([])
+    setSelected(pledges.map(p => p.id))
+  }
 
   return (
     <div className={classes.main}>
-      <TableHeader />
-      {pledges.map(p =>
+      <TableHeader allSelected={allSelected} selectAll={selectAll} />
+      {pledges.map(p => (
         <TableRow
           key={p.id}
           pledge={p}
           amtFormatter={amtFormatter}
           tokenLabel={tokenLabel}
+          selectedPledges={selectedPledges}
+          setSelected={setSelected}
         />
-      )}
+      ))}
     </div>
   )
 }
