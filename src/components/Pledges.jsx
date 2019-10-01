@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import Checkbox from '@material-ui/core/Checkbox'
+import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import { useQuery } from '@apollo/react-hooks'
 import { formatProjectId } from '../utils/project'
@@ -11,7 +12,7 @@ import { toDecimal } from '../utils/conversions'
 import { getDateFromTimestamp } from '../utils/dates'
 import Loading from './base/Loading'
 
-const styles = () => ({
+const styles = theme => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
@@ -65,6 +66,21 @@ const styles = () => ({
     '&&:hover': {
       backgroundColor: 'transparent'
     }
+  },
+  formButton: {
+    gridColumnStart: '27',
+    gridColumnEnd: '36',
+    height: '50px',
+    marginTop: '1.5rem',
+    borderRadius: '8px',
+    backgroundColor: theme.palette.primary[500],
+    color: 'white',
+    '&:hover': {
+      backgroundColor: "#34489f",
+    }
+  },
+  disabledButton: {
+    backgroundColor: 'none'
   }
 })
 
@@ -137,6 +153,9 @@ function Pledges({ match }) {
           setSelected={setSelected}
         />
       ))}
+      <Button  type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
+        Submit for withdrawl
+      </Button>
     </div>
   )
 }
