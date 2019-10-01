@@ -12,6 +12,15 @@ import { toDecimal } from '../utils/conversions'
 import { getDateFromTimestamp } from '../utils/dates'
 import Loading from './base/Loading'
 
+const PLEDGED = 'Pledged'
+const PAYING = 'Paying'
+const PAID = 'Paid'
+const pledgeTypes = {
+  0: PLEDGED,
+  1: PAYING,
+  2: PAID
+}
+
 const styles = theme => ({
   main: {
     display: 'grid',
@@ -111,7 +120,7 @@ function TableRow({ pledge, amtFormatter, tokenLabel, selectedPledges, setSelect
   }
   return (
     <Fragment>
-      <Typography className={classes.rowStatus}>{pledgeState}</Typography>
+      <Typography className={classes.rowStatus}>{pledgeTypes[pledgeState]}</Typography>
       <Typography className={classes.rowAmount}>{amtFormatter(amount)} {tokenLabel}</Typography>
       <Typography className={classes.rowId}>{toDecimal(id)}</Typography>
       <Typography className={classes.rowFunded}>{getDateFromTimestamp(creationTime, true)}</Typography>
