@@ -10,7 +10,12 @@ import { getProfileWithPledges } from './projects/queries'
 import { getTokenLabel, getHumanAmountFormatter } from '../utils/currencies'
 import { toDecimal } from '../utils/conversions'
 import { getDateFromTimestamp } from '../utils/dates'
+import { encodePledges } from '../utils/pledges'
 import Loading from './base/Loading'
+import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
+import LPVault from '../embarkArtifacts/contracts/LPVault'
+const { mWithdraw } = LiquidPledging.methods
+const { multiConfirm } = LPVault.methods
 
 const PLEDGED = 'Pledged'
 const PAYING = 'Paying'
@@ -105,7 +110,7 @@ function TableHeader({ allSelected, selectAll }) {
       <Typography className={classnames(tableHeader, classes.headerId)}>Pledge ID</Typography>
       <Typography className={classnames(tableHeader, classes.headerFunded)}>Funded on</Typography>
       <Typography className={classnames(tableHeader, classes.headerSelect)}>Select all</Typography>
-      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} checked={allSelected} onChange={selectAll} color="primary" disableRipple labelPlacement="start" label="start"  />
+      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} checked={allSelected} onChange={selectAll} color="primary" disableRipple />
     </Fragment>
   )
 }
@@ -149,6 +154,25 @@ function Pledges({ match }) {
     setSelected(pledges.map(p => p.id))
   }
 
+  const withdrawPledges = () => {
+    const formattedPledges = selectedPledges.map(id => ({
+      id,
+      amount: pledges.find(p => p.id === id).amount
+    }))
+    const pledgeState = selectedPledges[0].pledgeState
+    const sendFn = pledgeTypes[pledgeState] === PAYING ? multiConfirm : mWithdraw
+    const withdrawArgs = encodePledges(formattedPledges)
+    console.log({formattedPledges, withdrawArgs})
+    sendFn(withdrawArgs)
+      .send()
+      .then(async res => {
+        console.log({res})
+      })
+      .catch(e => {
+        console.log({e})
+      })
+  }
+
   return (
     <div className={classes.main}>
       <TableHeader allSelected={allSelected} selectAll={selectAll} />
@@ -162,7 +186,7 @@ function Pledges({ match }) {
           setSelected={setSelected}
         />
       ))}
-      <Button  type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
+      <Button onClick={withdrawPledges} type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
         Submit for withdrawl
       </Button>
     </div>
