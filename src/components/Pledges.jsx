@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -14,6 +14,7 @@ import { encodePledges } from '../utils/pledges'
 import Loading from './base/Loading'
 import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
 import LPVault from '../embarkArtifacts/contracts/LPVault'
+import { FundingContext } from '../context'
 const { mWithdraw } = LiquidPledging.methods
 const { multiConfirm } = LPVault.methods
 
@@ -137,15 +138,19 @@ function TableRow({ pledge, amtFormatter, tokenLabel, selectedPledges, setSelect
 function Pledges({ match }) {
   const classes = useStyles()
   const [selectedPledges, setSelected] = useState([])
+  const { openSnackBar } = useContext(FundingContext)
   const projectId = match.params.id
-  const { loading, error, data } = useQuery(getProfileWithPledges, {
+  const { loading, error, data, startPolling, stopPolling } = useQuery(getProfileWithPledges, {
     variables: { id: formatProjectId(projectId) }
   });
+  useEffect(() => {
+    stopPolling()
+  }, [data])
 
-  console.log({loading, error, data})
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   const { pledges, projectInfo: { goalToken } } = data.profile
+
   const amtFormatter = getHumanAmountFormatter(goalToken)
   const tokenLabel = getTokenLabel(goalToken)
   const allSelected = selectedPledges.length === pledges.length
@@ -162,13 +167,18 @@ function Pledges({ match }) {
     const pledgeState = selectedPledges[0].pledgeState
     const sendFn = pledgeTypes[pledgeState] === PAYING ? multiConfirm : mWithdraw
     const withdrawArgs = encodePledges(formattedPledges)
-    console.log({formattedPledges, withdrawArgs})
     sendFn(withdrawArgs)
       .send()
+      .on('transactionHash', (hash) => {
+        openSnackBar('success', `Submitted withdraw request to chain. TX Hash: ${hash}`)
+      })
       .then(async res => {
         console.log({res})
+        startPolling(1000)
+        openSnackBar('success', 'Funding Confirmed')
       })
       .catch(e => {
+        openSnackBar('error', 'An error has occured')
         console.log({e})
       })
   }
