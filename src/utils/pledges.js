@@ -3,6 +3,7 @@ import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
 import { getTokenLabel, getTokenByAddress } from './currencies'
 
 const { getPledgeDelegate, numberOfPledges, getPledge } = LiquidPledging.methods
+const { utils } = web3
 const getPledgeDelegates = (idPledge, numDelegates) => {
   const delegates = []
   const num = Number(numDelegates)
@@ -102,3 +103,12 @@ export function getAmountFromPledgesInfo(info){
 }
 
 export const getAmountFromWei = (token, lifetimeReceived) => getAmountFromPledgesInfo({token, lifetimeReceived})
+
+export const encodePledges = pledges => pledges.map(p => {
+  // .substring is to remove the 0x prefix on the toHex result
+  return (
+    '0x' +
+      utils.padLeft(utils.toHex(p.amount).substring(2), 48) +
+      utils.padLeft(utils.toHex(p.id).substring(2), 16)
+  );
+});

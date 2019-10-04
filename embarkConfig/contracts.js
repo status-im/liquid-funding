@@ -183,6 +183,7 @@ module.exports = {
     afterDeploy: async (dependencies) => {
       await dependencies.contracts.LiquidPledging.methods.initialize(dependencies.contracts.LPVault.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
       await dependencies.contracts.LPVault.methods.initialize(dependencies.contracts.LiquidPledging.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+      await dependencies.contracts.LPVault.methods.setAutopay(true).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
     },
     dappConnection: ["$WEB3"]
   },

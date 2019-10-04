@@ -165,7 +165,7 @@ const getSendFn = (pledgeType, filteredPledges) => {
 }
 const getArgs = (pledgeType, filteredPledges) => {
   if (pledgeTypes[pledgeType] === PLEDGED) {
-    const formattedPledges = filteredPledges.map(pledge => ({ amount: pledge.amount, id: pledge.idPledge }))
+    const formattedPledges = filteredPledges.map(pledge => ({ amount: pledge.amount, id: pledge.id }))
     if (filteredPledges.length > 1) return [encodePledges(formattedPledges)]
     const withdrawArgs = [formattedPledges[0].id, formattedPledges[0].amount]
     return withdrawArgs
