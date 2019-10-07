@@ -10,7 +10,7 @@ import { getDelegatePledgesByProfile } from '../../actions/delegates'
 
 const callOrderFns = [getFilesWeb, getFilesWebTheGraph, getFiles]
 async function getProjectAge(data, setState){
-  if (data.profile) {
+  if (data && data.profile) {
     setState(timeSinceBlock(data.profile.creationTime, 'days'))
   } else {
     setState(timeSinceBlock(false, 'days'))
@@ -18,7 +18,7 @@ async function getProjectAge(data, setState){
 }
 
 async function getProjectCreator(data, setState){
-  if (!data.profile) return
+  if (!data || !data.profile) return
   const { addr } = data.profile
   setState(addr)
 }
@@ -37,7 +37,7 @@ async function tryIpfsGets(CID, setState, index=0){
 }
 
 async function getProjectAssets(data, setState, debug=false){
-  if (!data.profile) return
+  if (!data || !data.profile) return
   const { profile: { url } } = data
   const CID = url.split('/').slice(-1)[0]
   if (debug) console.log({CID, data, ipfs})
@@ -112,7 +112,7 @@ const getProjectManifest = (data, assets) => {
 }
 
 async function getAuthorization(data, setState) {
-  if (!data.profile) return
+  if (!data || !data.profile) return
   const { profile: { projectInfo: { goalToken } } } = data
   const allowance = await getAllowanceFromAddress(goalToken)
   setState(allowance)
