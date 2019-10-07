@@ -4,13 +4,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
-import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
 import Icon from '../base/icons/IconByName'
-import Check from '@material-ui/icons/Check'
 import * as Yup from 'yup'
 import { convertTokenAmountUsd, formatPercent } from '../../utils/prices'
 import { getAmountFromPledgesInfo } from '../../utils/pledges'
@@ -26,6 +23,7 @@ import styles from './styles/FundProject'
 import Loading from '../base/Loading'
 import BreadCrumb from '../base/BreadCrumb'
 import FundStepper from './FundStepper'
+import StatusButton from '../base/Button'
 import { errorStrings } from '../../constants/errors'
 
 const { REQUIRED, NOT_NUMBER } = errorStrings
@@ -246,13 +244,12 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 />
                 <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
               </div>}
-              <Button disabled={disableButton} type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
-                <div className={classes.buttonContent}>
-                  {activeStep === IS_CONFIRMED && <Check className={classes.check} />}
-                  {showSpinner && <CircularProgress className={classes.progress} size={24} disableShrink />}
-                  {buttonText[activeStep]}
-                </div>
-              </Button>
+              <StatusButton
+                disabled={disableButton}
+                buttonText={buttonText[activeStep]}
+                confirmed={activeStep === IS_CONFIRMED}
+                loading={showSpinner}
+              />
               <FundStepper steps={STEPS} activeStep={activeStep} />
             </div>}
           </form>
