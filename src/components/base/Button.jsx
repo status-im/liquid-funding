@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import classnames from 'classnames'
 import { makeStyles } from '@material-ui/styles'
 import Button from '@material-ui/core/Button'
 import Check from '@material-ui/icons/Check'
@@ -11,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   formButton: {
     gridColumnStart: '1',
     gridColumnEnd: '13',
-    height: '50px',
+    minHeight: '50px',
     marginTop: '1.5rem',
     borderRadius: '8px',
     backgroundColor: theme.palette.primary[500],
@@ -27,7 +28,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    width: '50%'
+    width: '100%',
+    fontSize: '1.4vw'
   },
   progress: {
     color: theme.palette.primary[500],
@@ -36,12 +38,12 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function StatusButton(props) {
-  const { disabled, buttonText, confirmed, loading } = props
+  const { className, disabled, buttonText, confirmed, loading, onClick } = props
   const classes = useStyles()
   const { check, formButton, disabledButton, buttonContent, progress } = classes
   return (
     <Fragment>
-      <Button disabled={disabled} type="submit" variant="contained" className={formButton} classes={{ disabled: disabledButton }}>
+      <Button className={classnames(formButton, className)} disabled={disabled} type="submit" variant="contained" classes={{ disabled: disabledButton }} onClick={onClick}>
         <div className={buttonContent}>
           {confirmed && <Check className={check} />}
           {loading && <CircularProgress className={progress} size={24} disableShrink />}

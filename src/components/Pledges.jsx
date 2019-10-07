@@ -2,7 +2,6 @@ import React, { Fragment, useState, useContext, useEffect } from 'react'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import Checkbox from '@material-ui/core/Checkbox'
-import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import { useQuery } from '@apollo/react-hooks'
 import { formatProjectId } from '../utils/project'
@@ -12,6 +11,7 @@ import { toDecimal } from '../utils/conversions'
 import { getDateFromTimestamp } from '../utils/dates'
 import { encodePledges } from '../utils/pledges'
 import Loading from './base/Loading'
+import StatusButton from './base/Button'
 import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
 import LPVault from '../embarkArtifacts/contracts/LPVault'
 import { FundingContext } from '../context'
@@ -27,7 +27,7 @@ const pledgeTypes = {
   2: PAID
 }
 
-const styles = theme => ({
+const styles = () => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
@@ -83,16 +83,8 @@ const styles = theme => ({
     }
   },
   formButton: {
-    gridColumnStart: '27',
+    gridColumnStart: '24',
     gridColumnEnd: '36',
-    height: '50px',
-    marginTop: '1.5rem',
-    borderRadius: '8px',
-    backgroundColor: theme.palette.primary[500],
-    color: 'white',
-    '&:hover': {
-      backgroundColor: "#34489f",
-    }
   },
   disabledButton: {
     backgroundColor: 'none'
@@ -138,6 +130,8 @@ function TableRow({ pledge, amtFormatter, tokenLabel, selectedPledges, setSelect
 function Pledges({ match }) {
   const classes = useStyles()
   const [selectedPledges, setSelected] = useState([])
+  const [submitted, setSubmitted] = useState(false)
+  const [confirmed, setConfirmed] = useState(false)
   const { openSnackBar } = useContext(FundingContext)
   const projectId = match.params.id
   const { loading, error, data, startPolling, stopPolling } = useQuery(getProfileWithPledges, {
@@ -171,14 +165,18 @@ function Pledges({ match }) {
       .send()
       .on('transactionHash', (hash) => {
         openSnackBar('success', `Submitted withdraw request to chain. TX Hash: ${hash}`)
+        setSubmitted(true)
       })
       .then(async res => {
         console.log({res})
         startPolling(1000)
         openSnackBar('success', 'Funding Confirmed')
+        setSubmitted(false)
+        setConfirmed(true)
       })
       .catch(e => {
         openSnackBar('error', 'An error has occured')
+        setSubmitted(false)
         console.log({e})
       })
   }
@@ -196,9 +194,14 @@ function Pledges({ match }) {
           setSelected={setSelected}
         />
       ))}
-      <Button onClick={withdrawPledges} type="submit" variant="contained" className={classnames(classes.formButton)} classes={{ disabled: classes.disabledButton }}>
-        Submit for withdrawl
-      </Button>
+      <StatusButton
+        className={classes.formButton}
+        onClick={withdrawPledges}
+        buttonText="Submit for withdrawal"
+        confirmed={confirmed}
+        loading={submitted}
+        disabled={submitted || confirmed}
+      />
     </div>
   )
 }
