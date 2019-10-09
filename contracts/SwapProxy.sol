@@ -29,6 +29,7 @@ contract SwapProxy {
     KyberNetworkProxy public kyberProxy;
     LiquidPledging public liquidPledging;
     address public vault;
+    uint public maxSlippage;
 
     /**
      * @param _liquidPledging LiquidPledging contract address
@@ -36,7 +37,7 @@ contract SwapProxy {
      * @param _ETH Kyber ETH address
      * @param _vault address that receives swap fees
      */
-    constructor(address _liquidPledging, address _kyberProxy, address _ETH, address _vault) public {
+    constructor(address _liquidPledging, address _kyberProxy, address _ETH, address _vault, uint _maxSlippage) public {
       if (_vault == address(0)){
         _vault = address(this);
       }
@@ -44,6 +45,7 @@ contract SwapProxy {
       kyberProxy = KyberNetworkProxy(_kyberProxy);
       ETH = _ETH;
       vault = _vault;
+      maxSlippage = _maxSlippage;
     }
 
     /**
@@ -72,17 +74,44 @@ contract SwapProxy {
      * @param token token to convert from ETH
      */
     function fundWithETH(uint64 idReceiver, address token) public payable {
-        require(msg.value > 0, "Not enough ETH");
+      require(msg.value > 0, "Not enough ETH");
 
-        (uint expectedRate, uint slippageRate) = kyberProxy.getExpectedRate(ETH, token, msg.value);
-        require(expectedRate > 0, "expected rate can not be 0");
-        uint slippagePercent = (slippageRate * 100) / expectedRate;
-        require(slippagePercent < 15, "slippage exceeds 15%, try a smaller amount");
-        uint maxDestinationAmount = (slippageRate / (10**18)) * msg.value;
-        uint amount = kyberProxy.trade.value(msg.value)(ETH, msg.value, token, address(this), maxDestinationAmount, slippageRate, vault);
-        require(amount > 0, "Not enough tokens for funding");
+      (uint expectedRate, uint slippageRate) = kyberProxy.getExpectedRate(ETH, token, msg.value);
+      require(expectedRate > 0, "expected rate can not be 0");
+      uint slippagePercent = (slippageRate * 100) / expectedRate;
+      require(slippagePercent <= maxSlippage, "slippage exceeds maximum, try a smaller amount");
+      uint maxDestinationAmount = (slippageRate / (10**18)) * msg.value;
+      uint amount = kyberProxy.trade.value(msg.value)(ETH, msg.value, token, address(this), maxDestinationAmount, slippageRate, vault);
+      require(amount > 0, "Not enough tokens for funding");
 
-        ERC20Token(token).approve(address(LiquidPledging), sntBalance);
-        liquidPledging.addGiverAndDonate(idReceiver, token, amount);
+      ERC20Token(token).approve(address(LiquidPledging), amount);
+      liquidPledging.addGiverAndDonate(idReceiver, token, amount);
     }
+
+    /**
+     * @notice Funds a project in desired token using an ERC20 Token
+     * @param idReceiver receiver of donation
+     * @param token token to convert from
+     * @param amount being sent
+     * @param receiverToken token being converted to
+     */
+    function fundWithToken(uint64 idReceiver, address token, uint amount, address receiverToken) public {
+      require(ERC20Token(token).transferFrom(msg.sender, address(this), amount));
+      (uint expectedRate, uint slippageRate) = kyberProxy.getExpectedRate(ETH, token, msg.value);
+
+      (uint expectedRate, uint slippageRate) = kyberProxy.getExpectedRate(token, receiverToken, amount);
+      require(expectedRate > 0, "expected rate can not be 0");
+      uint slippagePercent = (slippageRate * 100) / expectedRate;
+      require(slippagePercent <= maxSlippage, "slippage exceeds maximum, try a smaller amount");
+      require(ERC20Token(token).approve(address(kyberProxy), 0), "Could not reset approval");
+      require(ERC20Token(token).approve(address(kyberProxy), amount), "Could not approve amount");
+
+      uint maxDestinationAmount = (slippageRate / (10**18)) * amount;
+      uint receiverAmount = kyberProxy.trade(token, amount, receiverToken, address(this), maxDestinationAmount, slippageRate, vault);
+      require(receiverAmount > 0, "Not enough tokens for funding");
+
+      ERC20Token(token).approve(address(LiquidPledging), receiverAmount);
+      liquidPledging.addGiverAndDonate(idReceiver, receiverToken, receiverAmount);
+    }
+
 }
