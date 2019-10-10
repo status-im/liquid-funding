@@ -36,8 +36,10 @@ contract SwapProxy {
      * @param _kyberProxy Kyber Network Proxy address
      * @param _ETH Kyber ETH address
      * @param _vault address that receives swap fees
+     * @param _maxSlippage most slippage as a percentage
      */
-    constructor(address _liquidPledging, address _kyberProxy, address _ETH, address _vault, uint _maxSlippage) public {
+    function SwapProxy(address _liquidPledging, address _kyberProxy, address _ETH, address _vault, uint _maxSlippage) public {
+      require(_maxSlippage < 100);
       if (_vault == address(0)){
         _vault = address(this);
       }
@@ -74,17 +76,19 @@ contract SwapProxy {
      * @param token token to convert from ETH
      */
     function fundWithETH(uint64 idReceiver, address token) public payable {
-      require(msg.value > 0, "Not enough ETH");
+      require(msg.value > 0);
 
-      (uint expectedRate, uint slippageRate) = kyberProxy.getExpectedRate(ETH, token, msg.value);
-      require(expectedRate > 0, "expected rate can not be 0");
+      uint expectedRate;
+      uint slippageRate;
+      (expectedRate, slippageRate) = kyberProxy.getExpectedRate(ETH, token, msg.value);
+      require(expectedRate > 0);
       uint slippagePercent = (slippageRate * 100) / expectedRate;
-      require(slippagePercent <= maxSlippage, "slippage exceeds maximum, try a smaller amount");
+      require(slippagePercent <= maxSlippage);
       uint maxDestinationAmount = (slippageRate / (10**18)) * msg.value;
       uint amount = kyberProxy.trade.value(msg.value)(ETH, msg.value, token, address(this), maxDestinationAmount, slippageRate, vault);
-      require(amount > 0, "Not enough tokens for funding");
+      require(amount > 0);
 
-      ERC20Token(token).approve(address(LiquidPledging), amount);
+      ERC20Token(token).approve(address(liquidPledging), amount);
       liquidPledging.addGiverAndDonate(idReceiver, token, amount);
     }
 
@@ -97,20 +101,21 @@ contract SwapProxy {
      */
     function fundWithToken(uint64 idReceiver, address token, uint amount, address receiverToken) public {
       require(ERC20Token(token).transferFrom(msg.sender, address(this), amount));
-      (uint expectedRate, uint slippageRate) = kyberProxy.getExpectedRate(ETH, token, msg.value);
 
-      (uint expectedRate, uint slippageRate) = kyberProxy.getExpectedRate(token, receiverToken, amount);
-      require(expectedRate > 0, "expected rate can not be 0");
+      uint expectedRate;
+      uint slippageRate;
+      (expectedRate, slippageRate) = kyberProxy.getExpectedRate(token, receiverToken, amount);
+      require(expectedRate > 0);
       uint slippagePercent = (slippageRate * 100) / expectedRate;
-      require(slippagePercent <= maxSlippage, "slippage exceeds maximum, try a smaller amount");
-      require(ERC20Token(token).approve(address(kyberProxy), 0), "Could not reset approval");
-      require(ERC20Token(token).approve(address(kyberProxy), amount), "Could not approve amount");
+      require(slippagePercent <= maxSlippage);
+      require(ERC20Token(token).approve(address(kyberProxy), 0));
+      require(ERC20Token(token).approve(address(kyberProxy), amount));
 
       uint maxDestinationAmount = (slippageRate / (10**18)) * amount;
       uint receiverAmount = kyberProxy.trade(token, amount, receiverToken, address(this), maxDestinationAmount, slippageRate, vault);
-      require(receiverAmount > 0, "Not enough tokens for funding");
+      require(receiverAmount > 0);
 
-      ERC20Token(token).approve(address(LiquidPledging), receiverAmount);
+      ERC20Token(token).approve(address(liquidPledging), receiverAmount);
       liquidPledging.addGiverAndDonate(idReceiver, receiverToken, receiverAmount);
     }
 
