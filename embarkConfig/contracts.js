@@ -178,6 +178,15 @@ module.exports = {
       StandardToken: {},
       SNT: {
         address: "0x8aA3672a99C489E5Dc5dfDb40e607bE49970cbF7"
+      },
+      SwapProxy: {
+        args: [
+          '$LiquidPledging',
+          "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
+          "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "0",
+          20
+        ]
       }
     },
     afterDeploy: async (dependencies) => {
