@@ -1,6 +1,8 @@
 pragma solidity ^0.4.18;
 
 import "./LiquidPledging.sol";
+import "./common/SafeToken.sol";
+import "./common/Ownable.sol";
 
 
 //   On mainnet extract the values from here: https://developer.kyber.network/docs/Environments-Mainnet/
@@ -13,23 +15,12 @@ contract KyberNetworkProxy {
     function swapEtherToToken(address token, uint minConversionRate) public payable returns(uint);
 }
 
-interface ERC20Token {
-    function transfer(address _to, uint256 _value) external returns (bool success);
-    function approve(address _spender, uint256 _value) external returns (bool success);
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
-    function balanceOf(address _owner) external view returns (uint256 balance);
-    function allowance(address _owner, address _spender) external view returns (uint256 remaining);
-    function totalSupply() external view returns (uint256 supply);
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-}
-
-contract SwapProxy {
+contract SwapProxy is Ownable, SafeToken {
     address public ETH;
-    KyberNetworkProxy public kyberProxy;
-    LiquidPledging public liquidPledging;
     address public vault;
     uint public maxSlippage;
+    KyberNetworkProxy public kyberProxy;
+    LiquidPledging public liquidPledging;
 
     /**
      * @param _liquidPledging LiquidPledging contract address
@@ -88,7 +79,7 @@ contract SwapProxy {
       uint amount = kyberProxy.trade.value(msg.value)(ETH, msg.value, token, address(this), maxDestinationAmount, slippageRate, vault);
       require(amount > 0);
 
-      ERC20Token(token).approve(address(liquidPledging), amount);
+      require(EIP20Interface(token).approve(address(liquidPledging), amount));
       liquidPledging.addGiverAndDonate(idReceiver, token, amount);
     }
 
@@ -100,7 +91,8 @@ contract SwapProxy {
      * @param receiverToken token being converted to
      */
     function fundWithToken(uint64 idReceiver, address token, uint amount, address receiverToken) public {
-      require(ERC20Token(token).transferFrom(msg.sender, address(this), amount));
+      Error err = doTransferIn(token, msg.sender, amount);
+      require(err == Error.NO_ERROR);
 
       uint expectedRate;
       uint slippageRate;
@@ -108,15 +100,20 @@ contract SwapProxy {
       require(expectedRate > 0);
       uint slippagePercent = (slippageRate * 100) / expectedRate;
       require(slippagePercent <= maxSlippage);
-      require(ERC20Token(token).approve(address(kyberProxy), 0));
-      require(ERC20Token(token).approve(address(kyberProxy), amount));
+      require(EIP20Interface(token).approve(address(kyberProxy), 0));
+      require(EIP20Interface(token).approve(address(kyberProxy), amount));
 
       uint maxDestinationAmount = (slippageRate / (10**18)) * amount;
       uint receiverAmount = kyberProxy.trade(token, amount, receiverToken, address(this), maxDestinationAmount, slippageRate, vault);
       require(receiverAmount > 0);
-
-      ERC20Token(token).approve(address(liquidPledging), receiverAmount);
+      require(EIP20Interface(token).approve(address(liquidPledging), receiverAmount));
       liquidPledging.addGiverAndDonate(idReceiver, receiverToken, receiverAmount);
     }
 
+    function transferOut(address asset, address to, uint amount) public onlyOwner {
+      Error err = doTransferOut(asset, to, amount);
+      require(err == Error.NO_ERROR);
+    }
+
+    function() payable external {}
 }
