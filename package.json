@@ -98,7 +98,6 @@
     "dotenv": "6.0.0",
     "dotenv-expand": "4.2.0",
     "embark": "^4.1.0-beta.0",
-    "embarkjs-connector-web3": "^4.0.0",
     "eslint": "5.12.0",
     "eslint-config-react-app": "^3.0.8",
     "eslint-loader": "2.1.1",
