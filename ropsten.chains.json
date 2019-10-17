@@ -16,6 +16,10 @@
       "0xa9bac214a330fe3f2048f91b805d227afa147021ef497936a65911400cc3bdd5": {
         "name": "SNT",
         "address": "0x8aA3672a99C489E5Dc5dfDb40e607bE49970cbF7"
+      },
+      "0xb573e81b6da869674bb2d8448581ed758b9dbf7e72b0879087d49620167778d4": {
+        "name": "SwapProxy",
+        "address": "0x46A30Bf6D0E438E7EeaabD6c4B5fEBf481267722"
       }
     }
   }

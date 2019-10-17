@@ -2,10 +2,10 @@ pragma solidity ^0.4.18;
 
 import "./LiquidPledging.sol";
 import "./common/SafeToken.sol";
-import "./common/Ownable.sol";
+import "./common/Pausable.sol";
 import "./IKyberSwap.sol";
 
-contract SwapProxy is Ownable, SafeToken {
+contract SwapProxy is Pausable, SafeToken {
     address public ETH;
     address public vault;
     uint public maxSlippage;
@@ -56,7 +56,7 @@ contract SwapProxy is Ownable, SafeToken {
      * @param idReceiver receiver of donation
      * @param token token to convert from ETH
      */
-    function fundWithETH(uint64 idReceiver, address token) public payable {
+    function fundWithETH(uint64 idReceiver, address token) public payable whenNotPaused {
       require(msg.value > 0);
 
       uint expectedRate;
@@ -80,7 +80,7 @@ contract SwapProxy is Ownable, SafeToken {
      * @param amount being sent
      * @param receiverToken token being converted to
      */
-    function fundWithToken(uint64 idReceiver, address token, uint amount, address receiverToken) public {
+    function fundWithToken(uint64 idReceiver, address token, uint amount, address receiverToken) public whenNotPaused {
       Error err = doTransferIn(token, msg.sender, amount);
       require(err == Error.NO_ERROR);
 
