@@ -173,6 +173,10 @@ module.exports = {
     },
     strategy: 'explicit',
     contracts: {
+      DAI: {
+        instanceOf: "StandardToken",
+        address: "0xaD6D458402F60fD3Bd25163575031ACDce07538D"
+      },
       LPVault: {},
       LiquidPledging: {},
       StandardToken: {},

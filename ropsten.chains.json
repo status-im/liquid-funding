@@ -20,6 +20,10 @@
       "0xb573e81b6da869674bb2d8448581ed758b9dbf7e72b0879087d49620167778d4": {
         "name": "SwapProxy",
         "address": "0x46A30Bf6D0E438E7EeaabD6c4B5fEBf481267722"
+      },
+      "0xd9d749fb529af69819711faec78815efe4334ea74c7785ece18e3f276d845934": {
+        "name": "DAI",
+        "address": "0xaD6D458402F60fD3Bd25163575031ACDce07538D"
       }
     }
   }

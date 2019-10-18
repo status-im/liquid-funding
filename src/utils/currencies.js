@@ -55,7 +55,7 @@ export const currencies = [
     chainReadibleFn: toWei
   },
   {
-    value: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
+    value: DAI._address,
     label: 'DAI',
     img: `${TOKEN_API}/0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359.png`,
     width: '2rem',
