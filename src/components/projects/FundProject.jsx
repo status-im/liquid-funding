@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
+import SwapProxy from '../../embarkArtifacts/contracts/SwapProxy'
 import Typography from '@material-ui/core/Typography'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
@@ -89,6 +90,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos, projectInfo } = profileData
   const pledgesInfo = pledgesInfos[0]
+  console.log({projectInfo})
   const tokenLabel = getTokenLabel(projectInfo.goalToken)
   const totalPledged = getAmountFromPledgesInfo(pledgesInfo)
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
@@ -96,6 +98,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   const createdDate = getDateCreated(projectAge)
   const percentToGoal = manifest ? formatPercent(Number(totalPledged) / Number(manifest.goal)) : formatPercent(0)
   const isCreator = projectData.creator === account
+  console.log({SwapProxy})
   return (
     <Formik
       initialValues={{

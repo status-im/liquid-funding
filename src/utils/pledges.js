@@ -1,6 +1,7 @@
 /*global web3, BigInt*/
 import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
 import { getTokenLabel, getTokenByAddress } from './currencies'
+import { toEther } from './conversions'
 
 const { getPledgeDelegate, numberOfPledges, getPledge } = LiquidPledging.methods
 const { utils } = web3
@@ -98,7 +99,9 @@ export function getAmountsPledged(pledges){
 export function getAmountFromPledgesInfo(info){
   if (!info) return 0
   const { token, lifetimeReceived } = info
-  const { humanReadibleFn } = getTokenByAddress(token)
+  const res = getTokenByAddress(token)
+  if (!res) return toEther(lifetimeReceived)
+  const { humanReadibleFn } = res
   return humanReadibleFn(lifetimeReceived)
 }
 

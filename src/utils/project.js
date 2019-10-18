@@ -25,8 +25,9 @@ export function getNumberOfBackers(pledges){
   return length(uniqBy(p => p.owner, pledges))
 }
 
+const hasManifest = assets => !!assets.find(isManifest)
 export const getMediaType = assets => {
-  if (!assets) return false
+  if (!assets || !hasManifest(assets)) return false
   const { media } = getProjectManifest(assets)
   if (media.type.toLowerCase().includes('video')) return true
 }
@@ -37,7 +38,7 @@ export function setMediaType(url) {
 }
 
 export const getMediaSrc = assets => {
-  if (!assets) return null
+  if (!assets || !hasManifest(assets)) return null
   const { media } = getProjectManifest(assets)
   const validMedia = media.type.includes('video') || media.type.includes('image')
   if (validMedia) {
