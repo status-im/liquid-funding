@@ -45,9 +45,10 @@ contract SwapProxy is Pausable, SafeToken {
       }
 
       uint minConversionRate;
-      (minConversionRate, ) = kyberProxy.getExpectedRate(srcToken, destToken, srcQty);
-
-      return minConversionRate;
+      uint slippageRate;
+      (minConversionRate, slippageRate) = kyberProxy.getExpectedRate(srcToken, destToken, srcQty);
+      require(minConversionRate > 0);
+      return slippageRate;
     }
 
     /**
@@ -58,17 +59,15 @@ contract SwapProxy is Pausable, SafeToken {
      */
     function fundWithETH(uint64 idReceiver, address token) public payable whenNotPaused {
       require(msg.value > 0);
-
       uint expectedRate;
       uint slippageRate;
       (expectedRate, slippageRate) = kyberProxy.getExpectedRate(ETH, token, msg.value);
       require(expectedRate > 0);
-      uint slippagePercent = (slippageRate * 100) / expectedRate;
+      uint slippagePercent = 100 - ((slippageRate * 100) / expectedRate);
       require(slippagePercent <= maxSlippage);
       uint maxDestinationAmount = (slippageRate / (10**18)) * msg.value;
       uint amount = kyberProxy.trade.value(msg.value)(ETH, msg.value, token, address(this), maxDestinationAmount, slippageRate, vault);
       require(amount > 0);
-
       require(EIP20Interface(token).approve(address(liquidPledging), amount));
       liquidPledging.addGiverAndDonate(idReceiver, token, amount);
     }
