@@ -31,6 +31,43 @@ contract SwapProxy is Pausable, SafeToken {
       maxSlippage = _maxSlippage;
     }
 
+    event SlippageUpdated(uint maxSlippage);
+    /**
+     * @param _maxSlippage most slippage as a percentage
+     */
+    function updateSlippage(uint _maxSlippage) public onlyOwner {
+      require(_maxSlippage < 100);
+      maxSlippage = _maxSlippage;
+      SlippageUpdated(_maxSlippage);
+    }
+
+    event VaultUpdated(address vault);
+    /**
+     * @param _vault address that receives swap fees
+     */
+    function updateVault(address _vault) public onlyOwner {
+      vault = _vault;
+      VaultUpdated(_vault);
+    }
+
+    event KyberUpdated(address kyber);
+    /**
+     * @param _kyberProxy Kyber Network Proxy address
+     */
+    function updateKyber(address _kyberProxy) public onlyOwner {
+      kyberProxy = KyberNetworkProxy(_kyberProxy);
+      KyberUpdated(_kyberProxy);
+    }
+
+    event LiquidPledgingUpdated(address liquidPledging);
+    /**
+     * @param _liquidPledging LiquidPledging Network Proxy address
+     */
+    function updateLiquidPledging(address _liquidPledging) public onlyOwner {
+      liquidPledging = LiquidPledging(_liquidPledging);
+      LiquidPledgingUpdated(_liquidPledging);
+    }
+
     /**
      * @notice Gets the conversion rate for the destToken given the srcQty.
      * @param srcToken source token contract address
@@ -51,6 +88,8 @@ contract SwapProxy is Pausable, SafeToken {
       return slippageRate;
     }
 
+    event Swap(address sender, address srcToken, address destToken, uint srcAmount, uint destAmount);
+
     /**
      * @notice Funds a project in desired token using ETH
      * @dev Requires a msg.value
@@ -70,7 +109,9 @@ contract SwapProxy is Pausable, SafeToken {
       require(amount > 0);
       require(EIP20Interface(token).approve(address(liquidPledging), amount));
       liquidPledging.addGiverAndDonate(idReceiver, token, amount);
+      Swap(msg.sender, ETH, token, msg.value, amount);
     }
+
 
     /**
      * @notice Funds a project in desired token using an ERC20 Token
@@ -87,7 +128,7 @@ contract SwapProxy is Pausable, SafeToken {
       uint slippageRate;
       (expectedRate, slippageRate) = kyberProxy.getExpectedRate(token, receiverToken, amount);
       require(expectedRate > 0);
-      uint slippagePercent = (slippageRate * 100) / expectedRate;
+      uint slippagePercent = 100 - (slippageRate * 100) / expectedRate;
       require(slippagePercent <= maxSlippage);
       require(EIP20Interface(token).approve(address(kyberProxy), 0));
       require(EIP20Interface(token).approve(address(kyberProxy), amount));
@@ -97,6 +138,7 @@ contract SwapProxy is Pausable, SafeToken {
       require(receiverAmount > 0);
       require(EIP20Interface(token).approve(address(liquidPledging), receiverAmount));
       liquidPledging.addGiverAndDonate(idReceiver, receiverToken, receiverAmount);
+      Swap(msg.sender, token, receiverToken, amount, receiverAmount);
     }
 
     function transferOut(address asset, address to, uint amount) public onlyOwner {
