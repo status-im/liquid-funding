@@ -184,7 +184,7 @@ module.exports = {
         address: "0x8aA3672a99C489E5Dc5dfDb40e607bE49970cbF7"
       },
       SwapProxy: {
-        address: "0x46A30Bf6D0E438E7EeaabD6c4B5fEBf481267722",
+        address: "0x1B468F2a4CDaC05E5B2f432DA24F049201B74Aa2",
         args: [
           '$LiquidPledging',
           "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
