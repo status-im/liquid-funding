@@ -21,6 +21,7 @@ import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
 import { getProfileById, pledgeLifetimeReceived } from './queries'
 import styles from './styles/FundProject'
+import CurrencySelect from '../base/CurrencySelect'
 import Loading from '../base/Loading'
 import BreadCrumb from '../base/BreadCrumb'
 import FundStepper from './FundStepper'
@@ -29,9 +30,10 @@ import { errorStrings } from '../../constants/errors'
 
 const { REQUIRED, NOT_NUMBER } = errorStrings
 const schema = Yup.object().shape({
-  amount: Yup.number().typeError(NOT_NUMBER).required(REQUIRED).positive().integer()
+  amount: Yup.number().typeError(NOT_NUMBER).required(REQUIRED).positive()
 })
 const { addGiverAndDonate } = LiquidPledging.methods
+const { fundWithETH, fundWithToken } = SwapProxy.methods
 
 const NOT_SUBMITTED = 'Not Submitted'
 const AUTHORIZATION_SUBMITTED = 'Authorization Submitted'
@@ -43,6 +45,7 @@ const NOT_APPROVED = 1
 const IS_APPROVED = 2
 const IS_SUBMITTED = 3
 const IS_CONFIRMED = 4
+const IS_ETH = 'ETH'
 
 const useStyles = makeStyles(styles)
 const getProjectId = response => {
@@ -56,13 +59,13 @@ const addProjectSucessMsg = response => {
 const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirm']
 const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Submitted', 'Confirmed']
 function stepperProgress(values, projectData, submissionState) {
+  const { amount, fundToken } = values
   if (submissionState === CONFIRMED) return IS_CONFIRMED
   if (submissionState === AUTHORIZATION_SUBMITTED) return NOT_APPROVED
   if (submissionState === SUBMITTED) return IS_SUBMITTED
-  if (submissionState === APPROVED) return IS_APPROVED
+  if (submissionState === APPROVED || fundToken === IS_ETH) return IS_APPROVED
   if (!projectData.account) return NOT_CONNECTED
   const { manifest: { goalToken }, authorization } = projectData
-  const { amount } = values
   const { chainReadibleFn } = getTokenByAddress(goalToken)
   const sanitizedAmount = amount.replace(/\D/g,'')
   const weiAmount = sanitizedAmount ? chainReadibleFn(sanitizedAmount) : '0'
@@ -70,6 +73,20 @@ function stepperProgress(values, projectData, submissionState) {
   if (!isAuthorized) return NOT_APPROVED
   return IS_APPROVED
 }
+
+function generateSend(projectId, goalToken, fundToken, amount, account) {
+  if (fundToken === IS_ETH) {
+    return fundWithETH(projectId, goalToken)
+      .send({from: account, value: amount})
+  }
+  if (fundToken === goalToken) {
+    return addGiverAndDonate(projectId, goalToken, amount)
+      .send({from: account})
+  }
+  return fundWithToken(projectId, fundToken, amount, goalToken)
+    .send({from: account})
+}
+
 const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
   const { __typename } = pledgesInfo
   const updatedLifetimeReceived = toBN(weiAmount).add(toBN(pledgesInfo.lifetimeReceived)).toString()
@@ -90,7 +107,6 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos, projectInfo } = profileData
   const pledgesInfo = pledgesInfos[0]
-  console.log({projectInfo})
   const tokenLabel = getTokenLabel(projectInfo.goalToken)
   const totalPledged = getAmountFromPledgesInfo(pledgesInfo)
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
@@ -98,7 +114,6 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   const createdDate = getDateCreated(projectAge)
   const percentToGoal = manifest ? formatPercent(Number(totalPledged) / Number(manifest.goal)) : formatPercent(0)
   const isCreator = projectData.creator === account
-  console.log({SwapProxy})
   return (
     <Formik
       initialValues={{
@@ -118,13 +133,13 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
       onSubmit={async (values, { resetForm }) => {
         const activeStep = stepperProgress(values, projectData, submissionState)
         if (!activeStep) return enableEthereum()
-        const { amount } = values
+        const { amount, fundToken } = values
         const { goalToken } = manifest
         const { chainReadibleFn, setAllowance } = getTokenByAddress(goalToken)
         const userAccount = account ? account : await enableEthereum()
         const weiAmount = chainReadibleFn(amount)
         if (activeStep === NOT_APPROVED) {
-          const toSend = setAllowance(weiAmount)
+          const toSend = goalToken === fundToken ? setAllowance(weiAmount, LiquidPledging) : setAllowance(weiAmount)
           setSubmissionState(AUTHORIZATION_SUBMITTED)
           return toSend
             .send({ from: account })
@@ -135,10 +150,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
             .catch(e => console.log({e})).finally(() => resetForm())
         }
 
-        const args = [projectId, userAccount, goalToken, weiAmount]
-        const toSend = addGiverAndDonate(...args)
-        toSend
-          .send({from: account})
+        const send = generateSend(projectId, goalToken, fundToken, weiAmount, userAccount)
+        send
           .on('transactionHash', (hash) => {
             optimisticUpdate(client, pledgesInfo, weiAmount)
             setSubmissionState(SUBMITTED)
@@ -231,6 +244,19 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
               </Typography>
               {!!activeStep && <div className={classnames(fullWidth, classes.amount)}>
+                <CurrencySelect
+                  className={classes.amountLayout}
+                  InputProps={{
+                    classes: {
+                      input: classes.textInput
+                    }
+                  }}
+                  id="fundToken"
+                  label="Token"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.fundToken}
+                />
                 <StatusTextField
                   className={classes.amountLayout}
                   inputClass={classes.amountInput}

@@ -4,7 +4,7 @@ import SNT from '../embarkArtifacts/contracts/SNT'
 import DAI from '../embarkArtifacts/contracts/DAI'
 import cDAI from '../embarkArtifacts/contracts/cDAI'
 import cETH from '../embarkArtifacts/contracts/cETH'
-import LiquidPledging from '../embarkArtifacts/contracts/LiquidPledging'
+import SwapProxy from '../embarkArtifacts/contracts/SwapProxy'
 import { toEther, toWei, compoundWhole, compoundToChain } from './conversions'
 
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
@@ -47,8 +47,8 @@ export const currencies = [
     setAllowance: (amount) => transferApproval(cETH, amount)
   },
   {
-    value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    label: 'WETH',
+    value: 'ETH',
+    label: 'ETH',
     img: `${TOKEN_COIN_API}/60.png`,
     width: '2rem',
     humanReadibleFn: toEther,
@@ -63,7 +63,7 @@ export const currencies = [
     humanReadibleFn: toEther,
     chainReadibleFn: toWei,
     getAllowance: () => getLpAllowance(DAI),
-    setAllowance: (amount) => transferApproval(DAI, amount)
+    setAllowance: (amount, spender = SwapProxy) => transferApproval(DAI, amount, spender)
 
   }
 ]
@@ -98,16 +98,16 @@ export const setAllowanceFromAddress = async (tokenAddres, amount) => {
 export const getLpAllowance = async contract => {
   const { methods: { allowance } } = contract || SNT
   const account = await web3.eth.getCoinbase()
-  const spender = LiquidPledging._address
+  const spender = SwapProxy._address
   const allowanceAmt = await allowance(account, spender).call()
   return allowanceAmt
 }
 
-export const transferApproval = (contract, amount) => {
+export const transferApproval = (contract, amount, spender = SwapProxy) => {
   const { methods: { approve } } = contract || SNT
-  const spender = LiquidPledging._address
+  const spenderAddress = spender._address
   return approve(
-    spender,
+    spenderAddress,
     amount
   )
 }
