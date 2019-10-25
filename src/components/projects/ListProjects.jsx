@@ -20,19 +20,24 @@ import { FundingContext } from '../../context'
 const isOdd = num => num % 2
 function FundingDetail({ classes, pledgesInfos, goal, goalToken, cellStyling }) {
   const { headerDetails, leftAlign } = classes
-  const { prices } = useContext(FundingContext)
+  const { currencies, prices } = useContext(FundingContext)
   const windowSize = useWindowSize()
   const isSmall = windowSize.innerWidth < 800
   const largeStyle = classnames(cellStyling, headerDetails, leftAlign)
   const smallStyle = classnames(cellStyling)
+  if (!currencies) return (
+    <div className={isSmall ? smallStyle : largeStyle}>
+      <Typography>Loading...</Typography>
+    </div>
+  )
   const pledgeInfo = pledgesInfos.find(p => p.token.toUpperCase() === goalToken.toUpperCase())
   const lifetimeReceived = pledgeInfo ? pledgeInfo.lifetimeReceived : '0'
-  const lifetimeHumanReadible = getAmountFromWei(goalToken, lifetimeReceived)
+  const lifetimeHumanReadible = getAmountFromWei(goalToken, lifetimeReceived, currencies)
   const fundedPercent = percentToGoal(lifetimeHumanReadible, goal)
   const goalAmount = Number(goal).toLocaleString()
-  const tokenLabel = getTokenLabel(goalToken)
+  const tokenLabel = getTokenLabel(goalToken, currencies)
   const topText = `${fundedPercent} of ${goalAmount}${tokenLabel}`
-  const usdValue = convertTokenAmountUsd(goalToken, lifetimeHumanReadible, prices)
+  const usdValue = convertTokenAmountUsd(goalToken, lifetimeHumanReadible, prices, currencies)
   return (
     <div className={isSmall ? smallStyle : largeStyle}>
       <Typography>{topText}</Typography>
