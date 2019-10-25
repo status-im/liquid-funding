@@ -105,7 +105,7 @@ export function getAmountFromPledgesInfo(info, currencies){
   return humanReadibleFn(lifetimeReceived)
 }
 
-export const getAmountFromWei = (token, lifetimeReceived) => getAmountFromPledgesInfo({token, lifetimeReceived})
+export const getAmountFromWei = (token, lifetimeReceived, currencies) => getAmountFromPledgesInfo({token, lifetimeReceived}, currencies)
 
 export const encodePledges = pledges => pledges.map(p => {
   // .substring is to remove the 0x prefix on the toHex result
