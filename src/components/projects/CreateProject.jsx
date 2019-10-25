@@ -199,7 +199,7 @@ const addProjectSucessMsg = response => {
 }
 const SubmissionSection = ({ classes, history }) => {
   const [uploads, setUploads] = useState({})
-  const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
+  const { account, currencies, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const windowSize = useWindowSize()
   const isSmall = windowSize.innerWidth < 800
   return (
@@ -261,7 +261,7 @@ const SubmissionSection = ({ classes, history }) => {
       }) => {
         const { firstHalf, secondHalf, fullWidth, halfsRows } = classes
         const { goalToken, goal } = values
-        const usdValue = convertTokenAmountUsd(goalToken, goal, prices)
+        const usdValue = convertTokenAmountUsd(goalToken, goal, prices, currencies)
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <div className={classnames(firstHalf, halfsRows, {
