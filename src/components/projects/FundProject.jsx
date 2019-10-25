@@ -75,7 +75,6 @@ function stepperProgress(values, projectData, submissionState, currencies) {
 }
 
 function generateSend(projectId, goalToken, fundToken, amount, account) {
-  console.log({projectId, goalToken, fundToken, amount, account})
   if (fundToken === IS_ETH) {
     return fundWithETH(projectId, goalToken)
       .send({from: account, value: amount})
