@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
-import { currencies, TOKEN_ICON_API } from '../../utils/currencies'
+import { TOKEN_ICON_API } from '../../utils/currencies'
 import { toEther } from '../../utils/conversions'
 import { getLpAllowance, standardTokenApproval } from '../../utils/initialize'
 import { FundingContext } from '../../context'
@@ -36,6 +36,7 @@ function CurrencySelect({
   const { account } = context
   const [balances, setBalances] = useState({})
   const [allowances, setAllowances] = useState({})
+  const { currencies } = context
 
   const updateBalancesAllowances = () => {
     const latestBalances = {}
@@ -69,8 +70,8 @@ function CurrencySelect({
   }
 
   useEffect(() => {
-    if (account && showBalances) updateBalancesAllowances()
-  }, [account])
+    if (account && showBalances && currencies) updateBalancesAllowances()
+  }, [account, currencies])
 
   return (
     <TextField
@@ -86,7 +87,7 @@ function CurrencySelect({
       onBlur={onBlur}
       value={value || ''}
     >
-      {currencies.map((option, idx) => (
+      {!!currencies && currencies.map((option, idx) => (
         <MenuItem style={{display: 'flex', alignItems: 'center'}} key={option.value} value={option.value}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             {option.icon || <img

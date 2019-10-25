@@ -111,10 +111,10 @@ const getProjectManifest = (data, assets) => {
   }
 }
 
-async function getAuthorization(data, setState) {
+async function getAuthorization(data, setState, currencies) {
   if (!data || !data.profile) return
   const { profile: { projectInfo: { goalToken } } } = data
-  const allowance = await getAllowanceFromAddress(goalToken)
+  const allowance = await getAllowanceFromAddress(goalToken, currencies)
   setState(allowance)
 }
 
@@ -125,7 +125,7 @@ export function useProjectData(projectId, data) {
   const [ipfsReady, setIpfsState] = useState(null)
   const [delegateProfiles, setDelegateProfiles] = useState(null)
   const [authorization, setAuthorization] = useState(0)
-  const { account, openSnackBar, syncWithRemote } = useContext(FundingContext)
+  const { account, currencies, openSnackBar, syncWithRemote } = useContext(FundingContext)
 
   useEffect(() => {
     ipfs.on('ready', () => { setIpfsState(true) })
@@ -148,8 +148,8 @@ export function useProjectData(projectId, data) {
   }, [ipfsReady, data])
 
   useEffect(() => {
-    if (account) getAuthorization(data, setAuthorization)
-  }, [account, data])
+    if (account && currencies) getAuthorization(data, setAuthorization, currencies)
+  }, [account, data, currencies])
 
   const manifest = useMemo(() => getProjectManifest(data, projectAssets), [data, projectAssets, projectId])
 
