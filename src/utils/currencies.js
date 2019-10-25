@@ -19,16 +19,10 @@ export const currencies = [
     chainReadibleFn: toWei
   },
   {
-    value: SNT._address,
-    label: 'SNT',
-    img: `${TOKEN_API}/0x744d70fdbe2ba4cf95131626614a1763df805b9e.png`,
-    width: '2rem',
-    contract: SNT,
-    humanReadibleFn: toEther,
-    chainReadibleFn: toWei,
-    getAllowance: () => getLpAllowance(SNT),
-    setAllowance: (amount) => transferApproval(SNT, amount)
-
+    value: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+    label: 'WBTC',
+    img: `${TOKEN_API}/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png`,
+    width: `2rem`,
   },
   {
     value: '0xf5dce57282a584d2746faf1593d3121fcac444dc',

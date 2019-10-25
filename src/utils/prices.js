@@ -40,9 +40,9 @@ const formatter = new Intl.NumberFormat('en-US', {
 })
 
 export const convertTokenAmountUsd = (token, amount, prices, currencies) => {
-  if (!currencies) return null
+  if (!currencies) return 0
   const tokenLabel = getTokenLabel(token, currencies)
-  if (!amount || !token || !prices[tokenLabel]) return null
+  if (!amount || !token || !prices[tokenLabel]) return 0
   const rate = prices[tokenLabel]['USD']
   const formatted = formatter.format(rate * amount)
   return formatted
