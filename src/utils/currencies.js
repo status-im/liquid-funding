@@ -1,7 +1,6 @@
 /*global web3*/
-import { memoizeWith, identity } from 'ramda'
+/*global BigInt*/
 import SNT from '../embarkArtifacts/contracts/SNT'
-import DAI from '../embarkArtifacts/contracts/DAI'
 import cDAI from '../embarkArtifacts/contracts/cDAI'
 import cETH from '../embarkArtifacts/contracts/cETH'
 import SwapProxy from '../embarkArtifacts/contracts/SwapProxy'
@@ -11,6 +10,14 @@ export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tok
 export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/coins'
 export const TOKEN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/tokens'
 export const currencies = [
+  {
+    value: 'ETH',
+    label: 'ETH',
+    img: `${TOKEN_COIN_API}/60.png`,
+    width: '2rem',
+    humanReadibleFn: toEther,
+    chainReadibleFn: toWei
+  },
   {
     value: SNT._address,
     label: 'SNT',
@@ -45,33 +52,13 @@ export const currencies = [
     chainReadibleFn: compoundToChain,
     getAllowance: () => getLpAllowance(cETH),
     setAllowance: (amount) => transferApproval(cETH, amount)
-  },
-  {
-    value: 'ETH',
-    label: 'ETH',
-    img: `${TOKEN_COIN_API}/60.png`,
-    width: '2rem',
-    humanReadibleFn: toEther,
-    chainReadibleFn: toWei
-  },
-  {
-    value: DAI._address,
-    label: 'DAI',
-    img: `${TOKEN_API}/0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359.png`,
-    width: '2rem',
-    contract: DAI,
-    humanReadibleFn: toEther,
-    chainReadibleFn: toWei,
-    getAllowance: () => getLpAllowance(DAI),
-    setAllowance: (amount, spender = SwapProxy) => transferApproval(DAI, amount, spender)
-
   }
 ]
 
-export const getTokenByAddress = memoizeWith(identity, value => currencies.find(currency => currency.value.toLowerCase() === value.toLowerCase()))
+export const getTokenByAddress = (value, currencies = currencies) => currencies.find(currency => currency.value.toLowerCase() === value.toLowerCase())
 export const getHumanAmountFormatter = tokenAddress => getTokenByAddress(tokenAddress).humanReadibleFn
-export const getTokenLabel = value => {
-  const token = getTokenByAddress(value)
+export const getTokenLabel = (value, currencies = currencies) => {
+  const token = getTokenByAddress(value, currencies)
   return token ? token.label : null
 }
 
@@ -85,8 +72,8 @@ export const getFormattedPledgeAmount = pledge => {
   return humanReadibleFn(pledge.amount)
 }
 
-export const getAllowanceFromAddress = tokenAddress => {
-  const token = getTokenByAddress(tokenAddress)
+export const getAllowanceFromAddress = (tokenAddress, currencies = currencies) => {
+  const token = getTokenByAddress(tokenAddress, currencies)
   return token.getAllowance()
 }
 
@@ -95,10 +82,9 @@ export const setAllowanceFromAddress = async (tokenAddres, amount) => {
   return token.setAllowance(amount)
 }
 
-export const getLpAllowance = async contract => {
+export const getLpAllowance = async (contract, spender = SwapProxy._address) => {
   const { methods: { allowance } } = contract || SNT
   const account = await web3.eth.getCoinbase()
-  const spender = SwapProxy._address
   const allowanceAmt = await allowance(account, spender).call()
   return allowanceAmt
 }
@@ -111,3 +97,13 @@ export const transferApproval = (contract, amount, spender = SwapProxy) => {
     amount
   )
 }
+
+export const generateSetApprovalFn = contract =>
+  (amount, spender = SwapProxy) => transferApproval(contract, amount, spender)
+
+export const generateHumanReadibleFn = decimals =>
+  num => (BigInt(num) / BigInt(10**decimals)).toString()
+
+export const generateChainReadibleFn = decimals =>
+  num => (num * (10**decimals)).toString()
+

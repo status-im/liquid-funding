@@ -27,8 +27,8 @@ const getCompoundRates = async prices => {
     })
   return values
 }
-export const getPrices = async () => {
-  const prices = await cc.priceMulti(['ETH', 'SNT', 'DAI'], ['USD'])
+export const getPrices = async (currencies = ['ETH', 'SNT', 'DAI']) => {
+  const prices = await cc.priceMulti(currencies, ['USD'])
   const compound = await getCompoundRates(prices)
   return { ...prices, ...compound, WETH: {...prices['ETH'] } }
 }
@@ -39,8 +39,9 @@ const formatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2
 })
 
-export const convertTokenAmountUsd = (token, amount, prices) => {
-  const tokenLabel = getTokenLabel(token)
+export const convertTokenAmountUsd = (token, amount, prices, currencies) => {
+  if (!currencies) return null
+  const tokenLabel = getTokenLabel(token, currencies)
   if (!amount || !token || !prices[tokenLabel]) return null
   const rate = prices[tokenLabel]['USD']
   const formatted = formatter.format(rate * amount)

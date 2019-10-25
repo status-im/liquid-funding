@@ -96,10 +96,10 @@ export function getAmountsPledged(pledges){
     .map(entry => ([getTokenLabel(entry[0]), entry[1]]))
 }
 
-export function getAmountFromPledgesInfo(info){
+export function getAmountFromPledgesInfo(info, currencies){
   if (!info) return 0
   const { token, lifetimeReceived } = info
-  const res = getTokenByAddress(token)
+  const res = getTokenByAddress(token, currencies)
   if (!res) return toEther(lifetimeReceived)
   const { humanReadibleFn } = res
   return humanReadibleFn(lifetimeReceived)

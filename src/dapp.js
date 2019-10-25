@@ -19,7 +19,9 @@ import { updateStalePledges, getAndAddPledges } from './actions/pledges'
 import { updateDelegates } from './actions/delegates'
 import { MySnackbarContentWrapper } from './components/base/SnackBars'
 import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
+import { currencies } from './utils/currencies'
 import { uris } from './remote/graph'
+import { getKyberCurrencies } from './remote/kyber'
 
 const { getNetworkType } = web3.eth.net
 
@@ -33,9 +35,8 @@ class App extends React.Component {
 
   componentDidMount(){
     const network = process.env.REACT_APP_NETWORK || 'ropsten'
+    this.setCurrencies(network)
     this.setGraphClient(network)
-    this.getAndSetPrices()
-
     if (window.ethereum) {
       const { selectedAddress: account } = window.ethereum
       if (account) this.setState({ account })
@@ -43,6 +44,12 @@ class App extends React.Component {
       console.log('window.ethreum not found :', {window})
     }
 
+  }
+
+  setCurrencies = async network => {
+    const kyberCurrencies = await getKyberCurrencies(network)
+    this.currencies = [...currencies, ...kyberCurrencies]
+    this.getAndSetPrices()
   }
 
   setGraphClient = network => {
@@ -81,7 +88,8 @@ class App extends React.Component {
   }
 
   getAndSetPrices = async () => {
-    const prices = await getPrices()
+    const currencies = this.currencies.map(c => c.label)
+    const prices = await getPrices(currencies)
     this.setState({ prices })
   }
 
@@ -136,11 +144,12 @@ class App extends React.Component {
 
   render() {
     const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices } = this.state
-    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, syncWithRemote, updateUsdPrice, client, enableEthereum } = this
+    const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, currencies, syncWithRemote, updateUsdPrice, client, enableEthereum } = this
     const fundingContext = {
       appendPledges,
       appendFundProfile,
       account,
+      currencies,
       enableEthereum,
       transferPledgeAmounts,
       authorizedPayments,

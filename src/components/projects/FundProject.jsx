@@ -58,7 +58,7 @@ const addProjectSucessMsg = response => {
 }
 const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirm']
 const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Submitted', 'Confirmed']
-function stepperProgress(values, projectData, submissionState) {
+function stepperProgress(values, projectData, submissionState, currencies) {
   const { amount, fundToken } = values
   if (submissionState === CONFIRMED) return IS_CONFIRMED
   if (submissionState === AUTHORIZATION_SUBMITTED) return NOT_APPROVED
@@ -66,20 +66,21 @@ function stepperProgress(values, projectData, submissionState) {
   if (submissionState === APPROVED || fundToken === IS_ETH) return IS_APPROVED
   if (!projectData.account) return NOT_CONNECTED
   const { manifest: { goalToken }, authorization } = projectData
-  const { chainReadibleFn } = getTokenByAddress(goalToken)
+  const { chainReadibleFn } = getTokenByAddress(goalToken, currencies)
   const sanitizedAmount = amount.replace(/\D/g,'')
   const weiAmount = sanitizedAmount ? chainReadibleFn(sanitizedAmount) : '0'
-  const isAuthorized = toBN(authorization).gte(toBN(weiAmount))
+  const isAuthorized = Number(authorization) >= Number(weiAmount)
   if (!isAuthorized) return NOT_APPROVED
   return IS_APPROVED
 }
 
 function generateSend(projectId, goalToken, fundToken, amount, account) {
+  console.log({projectId, goalToken, fundToken, amount, account})
   if (fundToken === IS_ETH) {
     return fundWithETH(projectId, goalToken)
       .send({from: account, value: amount})
   }
-  if (fundToken === goalToken) {
+  if (fundToken.toLowerCase() === goalToken.toLowerCase()) {
     return addGiverAndDonate(projectId, goalToken, amount)
       .send({from: account})
   }
@@ -102,13 +103,13 @@ const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
 }
 
 const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling, client }) => {
-  const { account, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
+  const { account, currencies, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const [submissionState, setSubmissionState] = useState(NOT_SUBMITTED)
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos, projectInfo } = profileData
   const pledgesInfo = pledgesInfos[0]
-  const tokenLabel = getTokenLabel(projectInfo.goalToken)
-  const totalPledged = getAmountFromPledgesInfo(pledgesInfo)
+  const tokenLabel = currencies ? getTokenLabel(projectInfo.goalToken, currencies) : ''
+  const totalPledged = currencies ? getAmountFromPledgesInfo(pledgesInfo, currencies) : 0
   const isVideo = useMemo(() => getMediaType(projectAssets), [projectAssets, projectId])
   const mediaUrl = useMemo(() => getMediaSrc(projectAssets), [projectAssets, projectId])
   const createdDate = getDateCreated(projectAge)
@@ -120,7 +121,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         amount: '',
       }}
       validate={values => {
-        const activeStep = stepperProgress(values, projectData, submissionState)
+        const activeStep = stepperProgress(values, projectData, submissionState, currencies)
         if (!activeStep) return
         return schema.validate(values)
           .catch(function(err) {
@@ -131,11 +132,11 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
           })
       }}
       onSubmit={async (values, { resetForm }) => {
-        const activeStep = stepperProgress(values, projectData, submissionState)
+        const activeStep = stepperProgress(values, projectData, submissionState, currencies)
         if (!activeStep) return enableEthereum()
         const { amount, fundToken } = values
         const { goalToken } = manifest
-        const { chainReadibleFn, setAllowance } = getTokenByAddress(goalToken)
+        const { chainReadibleFn, setAllowance } = getTokenByAddress(goalToken, currencies)
         const userAccount = account ? account : await enableEthereum()
         const weiAmount = chainReadibleFn(amount)
         if (activeStep === NOT_APPROVED) {
@@ -183,8 +184,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         handleSubmit,
       }) => {
         const { firstHalf, secondHalf, fullWidth } = classes
-        const usdValue = manifest ? convertTokenAmountUsd(manifest.goalToken, values.amount, prices) : 0
-        const activeStep = stepperProgress(values, projectData, submissionState)
+        const usdValue = manifest ? convertTokenAmountUsd(values.fundToken || manifest.goalToken, values.amount, prices, currencies) : 0
+        const activeStep = stepperProgress(values, projectData, submissionState, currencies)
         const showSpinner = activeStep === IS_SUBMITTED || submissionState === AUTHORIZATION_SUBMITTED
         const disableButton = submissionState === AUTHORIZATION_SUBMITTED || activeStep >= IS_SUBMITTED
 
@@ -241,7 +242,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 {`${percentToGoal} of ${Number(manifest.goal).toLocaleString()} goal`}
               </Typography>
               <Typography className={classnames(classes.fullWidth, classes.usdText)}>
-                {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices)} USD`}
+                {`${totalPledged ? convertTokenAmountUsd(manifest.goalToken, totalPledged, prices, currencies) : '$0'} of ${convertTokenAmountUsd(manifest.goalToken, manifest.goal, prices, currencies)} USD`}
               </Typography>
               {!!activeStep && <div className={classnames(fullWidth, classes.amount)}>
                 <CurrencySelect
@@ -271,7 +272,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                   disabled={activeStep >= IS_SUBMITTED}
                   value={values.amount || ''}
                 />
-                <div className={classes.amountText}>{getTokenLabel(manifest.goalToken)}</div>
+                <div className={classes.amountText}>{getTokenLabel(values.fundToken || manifest.goalToken, currencies)}</div>
               </div>}
               <StatusButton
                 disabled={disableButton}
@@ -292,6 +293,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
 function FundProject({ match, history }) {
   const projectId = match.params.id
   const classes = useStyles()
+  const { currencies } = useContext(FundingContext)
   const { loading, error, data, stopPolling, startPolling, client } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
   });
@@ -301,7 +303,7 @@ function FundProject({ match, history }) {
     stopPolling()
   }, [data])
 
-  if (loading) return <Loading />
+  if (loading || !currencies) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
 
