@@ -1,5 +1,4 @@
 /*global web3*/
-/*global BigInt*/
 import SNT from '../embarkArtifacts/contracts/SNT'
 import cDAI from '../embarkArtifacts/contracts/cDAI'
 import cETH from '../embarkArtifacts/contracts/cETH'
@@ -96,7 +95,7 @@ export const generateSetApprovalFn = contract =>
   (amount, spender = SwapProxy) => transferApproval(contract, amount, spender)
 
 export const generateHumanReadibleFn = decimals =>
-  num => (BigInt(num) / BigInt(10**decimals)).toString()
+  num => (num / (10**decimals)).toString()
 
 export const generateChainReadibleFn = decimals =>
   num => (num * (10**decimals)).toString()
