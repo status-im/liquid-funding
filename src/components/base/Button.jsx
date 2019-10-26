@@ -29,7 +29,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     width: '100%',
-    fontSize: '1.4vw'
+    fontSize: '5.4vw',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '1.4vw'
+    }
   },
   progress: {
     color: theme.palette.primary[500],

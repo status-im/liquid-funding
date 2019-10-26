@@ -148,10 +148,16 @@ const useStyles = makeStyles(theme => ({
     gridColumn: '40 / 44'
   },
   previousButton: {
-    gridColumn: '3 / 9'
+    gridColumn: '1 / 20',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '3 / 9'
+    }
   },
   nextButton: {
-    gridColumn: '42 / 48'
+    gridColumn: '35 / 48',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '42 / 48'
+    }
   },
   readMore: {
     gridColumn: '44 / 48',

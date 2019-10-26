@@ -41,6 +41,6 @@ createRoot(document.getElementById('app')).render(
     </MuiThemeProvider>
   </DatabaseProvider>
 ).then(() => {
-  document.getElementById('preload').remove()
+  document.getElementById('loading').remove()
 });
 serviceWorker.register()
