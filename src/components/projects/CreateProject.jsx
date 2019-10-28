@@ -19,7 +19,7 @@ import StatusTextField from '../base/TextField'
 import IconTextField from '../base/IconTextField'
 import Icon from '../base/icons/IconByName'
 import { convertTokenAmountUsd } from '../../utils/prices'
-import { setMediaType } from '../../utils/project'
+import { generateChatRoom, setMediaType } from '../../utils/project'
 import MediaView from '../base/MediaView'
 import { isVideo } from '../../utils/images'
 import BreadCrumb from '../base/BreadCrumb'
@@ -30,7 +30,6 @@ const { addProject } = LiquidPledging.methods
 const { TOO_LONG, REQUIRED } = errorStrings
 
 const hoursToSeconds = hours => hours * 60 * 60
-const generateChatRoom = title => `#status-${title.replace(/\s/g, '')}`
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().max(20, TOO_LONG).required(REQUIRED),

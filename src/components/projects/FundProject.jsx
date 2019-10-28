@@ -216,7 +216,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
               <div className={classes.chatRoom}>
                 <Icon name="oneOnOneChat" />
                 <a className={classes.chatLink} href={`https://get.status.im/chat/public/${manifest.chatRoom.replace('#', '')}`}>
-                  <div className={classes.chatText}>{`Join ${manifest.chatRoom}`}</div>
+                  <div className={classes.chatText}>{`Join ${manifest.chatRoom.toLowerCase()}`}</div>
                 </a>
               </div>
               <div className={classes.chatRoom}>
