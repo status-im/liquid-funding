@@ -3,6 +3,8 @@ import { uniqBy, length } from 'ramda'
 
 const { utils } = web3
 
+export const generateChatRoom = title => `#status-${title.replace(/\s/g, '').toLowerCase()}`
+
 export const formatProjectId = id => utils.toHex(id)
 const getFile = filePath => filePath.split('/').slice(-1)[0]
 const formatMedia = content => {
