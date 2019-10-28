@@ -133,7 +133,8 @@ function ListProjects() {
     {
       variables: {
         offset,
-        limit: 5
+        limit: 5,
+        orderDirection: 'desc'
       }
     }
   )
