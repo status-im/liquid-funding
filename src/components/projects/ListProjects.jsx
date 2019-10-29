@@ -171,7 +171,7 @@ function ListProjects() {
             });
           }
         })
-        setOffset(offset-offset)
+        setOffset(offset-OFFSET)
       }} className={classnames(classes.previousButton, classes.blue)}>{'< Previous'}</Button>}
       {profiles.length === OFFSET && <Button onClick={() => {
         fetchMore({
