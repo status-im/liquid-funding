@@ -15,7 +15,8 @@ export const currencies = [
     img: `${TOKEN_COIN_API}/60.png`,
     width: '2rem',
     humanReadibleFn: toEther,
-    chainReadibleFn: toWei
+    chainReadibleFn: toWei,
+    getAllowance: () => 2**255
   },
   {
     value: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
@@ -100,5 +101,5 @@ export const generateHumanReadibleFn = decimals =>
 export const generateChainReadibleFn = decimals =>
   num => (num * (10**decimals)).toString()
 
-const order = ['ETH', 'SNT'].reverse()
+const order = ['ETH', 'SNT', 'DAI'].reverse()
 export const currencyOrder = (a, b) => order.indexOf(b.label) - order.indexOf(a.label)
