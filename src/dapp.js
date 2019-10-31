@@ -19,7 +19,7 @@ import { updateStalePledges, getAndAddPledges } from './actions/pledges'
 import { updateDelegates } from './actions/delegates'
 import { MySnackbarContentWrapper } from './components/base/SnackBars'
 import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
-import { currencies } from './utils/currencies'
+import { currencies, currencyOrder } from './utils/currencies'
 import { uris } from './remote/graph'
 import { getKyberCurrencies } from './remote/kyber'
 
@@ -48,7 +48,7 @@ class App extends React.Component {
 
   setCurrencies = async network => {
     const kyberCurrencies = await getKyberCurrencies(network)
-    this.currencies = [...currencies, ...kyberCurrencies]
+    this.currencies = [...currencies, ...kyberCurrencies].sort(currencyOrder)
     this.getAndSetPrices()
   }
 
