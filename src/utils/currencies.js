@@ -100,3 +100,5 @@ export const generateHumanReadibleFn = decimals =>
 export const generateChainReadibleFn = decimals =>
   num => (num * (10**decimals)).toString()
 
+const order = ['ETH', 'SNT'].reverse()
+export const currencyOrder = (a, b) => order.indexOf(b.label) - order.indexOf(a.label)
