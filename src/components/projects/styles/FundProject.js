@@ -145,6 +145,9 @@ const styles = theme => ({
     marginTop: '15px',
     color: '#4360DF'
   },
+  link:{
+    textDecoration: 'none'
+  },
   secondHalf: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, [col] 1fr)',
@@ -186,6 +189,10 @@ const styles = theme => ({
   },
   preview: {
     fontSize: '20px'
+  },
+  pledgesLink: {
+    gridColumn: '5 / 10',
+    textAlign: 'center',
   },
   contact: {
     gridColumnStart: '1',

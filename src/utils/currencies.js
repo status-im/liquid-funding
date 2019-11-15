@@ -50,7 +50,7 @@ export const currencies = [
 ]
 
 export const getTokenByAddress = (value, currencies = currencies) => currencies.find(currency => currency.value.toLowerCase() === value.toLowerCase())
-export const getHumanAmountFormatter = tokenAddress => getTokenByAddress(tokenAddress).humanReadibleFn
+export const getHumanAmountFormatter = (tokenAddress, currencies = currencies) => getTokenByAddress(tokenAddress, currencies).humanReadibleFn
 export const getTokenLabel = (value, currencies = currencies) => {
   const token = getTokenByAddress(value, currencies)
   return token ? token.label : null

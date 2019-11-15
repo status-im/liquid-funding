@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import SwapProxy from '../../embarkArtifacts/contracts/SwapProxy'
+import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import { FundingContext } from '../../context'
 import TextDisplay from '../base/TextDisplay'
@@ -317,6 +318,12 @@ function FundProject({ match, history }) {
         profileData={data.profile}
         startPolling={startPolling}
       />
+      {!!Number(data.profile.pledgesInfos[0].lifetimeReceived) && <div className={classes.pledgesLink}>
+        <Typography>This project received pledges. You have funds available to withdraw.</Typography>
+        <Link to={`/pledges/${projectId}`} className={classes.link}>
+          <StatusButton buttonText="View Pledges" />
+        </Link>
+      </div>}
     </div>
   )
 }
