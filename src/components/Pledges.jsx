@@ -132,7 +132,7 @@ function Pledges({ match }) {
   const [selectedPledges, setSelected] = useState([])
   const [submitted, setSubmitted] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
-  const { openSnackBar } = useContext(FundingContext)
+  const { openSnackBar, currencies } = useContext(FundingContext)
   const projectId = match.params.id
   const { loading, error, data, startPolling, stopPolling } = useQuery(getProfileWithPledges, {
     variables: { id: formatProjectId(projectId) }
@@ -145,8 +145,8 @@ function Pledges({ match }) {
   if (error) return <div>{`Error! ${error.message}`}</div>
   const { pledges, projectInfo: { goalToken } } = data.profile
 
-  const amtFormatter = getHumanAmountFormatter(goalToken)
-  const tokenLabel = getTokenLabel(goalToken)
+  const amtFormatter = getHumanAmountFormatter(goalToken, currencies)
+  const tokenLabel = getTokenLabel(goalToken, currencies)
   const allSelected = selectedPledges.length === pledges.length
   const selectAll = () => {
     if (allSelected) return setSelected([])
