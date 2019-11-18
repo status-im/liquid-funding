@@ -2,6 +2,7 @@ import React, { useContext, useState, useMemo, useEffect } from 'react'
 import { Formik } from 'formik'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import idx from 'idx'
 import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import SwapProxy from '../../embarkArtifacts/contracts/SwapProxy'
@@ -318,7 +319,7 @@ function FundProject({ match, history }) {
         profileData={data.profile}
         startPolling={startPolling}
       />
-      {!!Number(data.profile.pledgesInfos[0].lifetimeReceived) && <div className={classes.pledgesLink}>
+      {!!Number(idx(data, _ => _.profile.pledgesInfos[0].lifetimeReceived)) && <div className={classes.pledgesLink}>
         <Typography>This project received pledges. You have funds available to withdraw.</Typography>
         <Link to={`/pledges/${projectId}`} className={classes.link}>
           <StatusButton buttonText="View Pledges" />
