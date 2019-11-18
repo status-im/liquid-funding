@@ -24,6 +24,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import ProjectIcon from '@material-ui/icons/Work';
 import { ScaleLoader } from 'react-spinners'
 import Loading from '../components/base/Loading'
+import assemble from '../images/assemble.png'
 
 const About = lazy(() => import('./About.jsx'))
 const ListProjects = lazy(() => import('./projects/ListProjects'))
@@ -71,6 +72,9 @@ const useStyles = makeStyles(theme => ({
   appBarBg: {
     backgroundColor: '#FAFAFA'
   },
+  assemble:{
+    marginRight: '0.4em'
+  },
   accountText: {
     color: '#939BA1'
   },
@@ -89,6 +93,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end'
+  },
+  flex: {
+    display: 'flex'
   },
   menuButton: {
     marginLeft: 12,
@@ -221,7 +228,10 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
             {!loading && <MenuIcon/>}
           </IconButton>}
           {(!isHome || !popoverPosition) && <Typography variant="h6" noWrap>
-            <Link to="/" className={classNames(classes.link, classes.menuText)}>Liquid Funding</Link>
+            <Link to="/" className={classNames(classes.flex, classes.link, classes.menuText)}>
+              <img src={assemble} className={classes.assemble} />
+              assemble
+            </Link>
           </Typography>}
           <Typography component={'span'} className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
             {!!account && <div className={classes.connectedText}>
