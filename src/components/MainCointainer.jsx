@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
     color: '#939BA1'
   },
   connect: {
-    color: '#4360DF',
+    color: theme.palette.primary[500],
     fontSize: '15px',
     marginLeft: 'auto',
     marginRight: '3rem',

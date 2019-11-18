@@ -88,7 +88,7 @@ function TableRows({ profiles, classes }) {
             <Typography className={classnames(classes.headerContact, cellStyling, classes.cellDescription)}>{creator}</Typography>
             <Typography className={classnames(classes.dateCreated, cellStyling, classes.cellDescription)}>{creationDate}</Typography>
             <Link to={profileUrl} className={classnames(classes.readMore, cellStyling)}>
-              <Typography className={classnames(classes.blue, classes.px15)}>Read more</Typography>
+              <Typography className={classnames(classes.green, classes.px15)}>Read more</Typography>
             </Link>
           </Fragment>
         )
@@ -172,7 +172,7 @@ function ListProjects() {
           }
         })
         setOffset(offset-OFFSET)
-      }} className={classnames(classes.previousButton, classes.blue)}>{'< Previous'}</Button>}
+      }} className={classnames(classes.previousButton, classes.green)}>{'< Previous'}</Button>}
       {profiles.length === OFFSET && <Button onClick={() => {
         fetchMore({
           variables: {
@@ -186,12 +186,12 @@ function ListProjects() {
           }
         })
         setOffset(offset+OFFSET)
-      }} className={classnames(classes.nextButton, classes.blue)}>{'Next >'}</Button>}
+      }} className={classnames(classes.nextButton, classes.green)}>{'Next >'}</Button>}
       <Link to={`/create-project`} className={fabStyle}>
         <Fab className={classes.fab}>
           <AddIcon className={classes.addIcon}/>
         </Fab>
-        <Typography className={classes.fabText}>Add your own project</Typography>
+        <Typography className={classes.fabText}>Assemble a project</Typography>
       </Link>
     </div>
   )
