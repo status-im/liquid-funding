@@ -11,7 +11,11 @@ export default createMuiTheme({
     }
   },
   palette: {
-    primary: { 500: '#1AA56E' },
+    primary: {
+      500: '#1AA56E',
+      hov: '#137C53',
+      A500: '#1AA56E33'
+    },
     common: {
       grey: '#F5F7F8'
     },
