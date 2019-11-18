@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary[500],
     color: 'white',
     '&:hover': {
-      backgroundColor: "#34489f",
+      backgroundColor: theme.palette.primary['hov'],
     }
   },
   disabledButton: {
