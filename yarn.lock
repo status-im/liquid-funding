@@ -3285,6 +3285,11 @@ babel-plugin-emotion@^9.2.11:
     source-map "^0.5.7"
     touch "^2.0.1"
 
+babel-plugin-idx@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-idx/-/babel-plugin-idx-2.4.0.tgz#5d144eb337fb22c4bf1ff75cb2e1c051a76a0323"
+  integrity sha512-+rEYZgSCLh0suJDlgZ64isSLhDW7Qxu6AnUMGhl/mW1kyYvfwqLqsDmgj3e5QXH0oX7A4Hq2x0BgqdU8tiuo5A==
+
 babel-plugin-istanbul@^4.1.6:
   version "4.1.6"
   resolved "https://registry.yarnpkg.com/babel-plugin-istanbul/-/babel-plugin-istanbul-4.1.6.tgz#36c59b2192efce81c5b378321b74175add1c9a45"
@@ -7589,11 +7594,6 @@ embark@^4.1.0-beta.0:
     window-size "1.1.1"
     ws "7.1.2"
 
-embarkjs-connector-web3@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/embarkjs-connector-web3/-/embarkjs-connector-web3-4.0.0.tgz#d474b23649668730082c7f6fa74b6a8c2cd0a447"
-  integrity sha512-mqLDRGawEfyqXgoSb2NgTwhlbAHwDrk7eyHrtEvywWgKfEPer+S+5IN+KGXi85d7QxcNKJSZ+BHve8wvWX0FfQ==
-
 embarkjs-ens@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/embarkjs-ens/-/embarkjs-ens-4.1.1.tgz#ab4a75a6eed31985fc5f9fb94c764d94013f0037"
@@ -10612,6 +10612,11 @@ idna-uts46-hx@^2.3.1:
   integrity sha512-PWoF9Keq6laYdIRwwCdhTPl60xRqAloYNMQLiyUnG42VjT53oW07BXIRM+NK7eQjzXjAk2gUvX9caRxlnF9TAA==
   dependencies:
     punycode "2.1.0"
+
+idx@^2.5.6:
+  version "2.5.6"
+  resolved "https://registry.yarnpkg.com/idx/-/idx-2.5.6.tgz#1f824595070100ae9ad585c86db08dc74f83a59d"
+  integrity sha512-WFXLF7JgPytbMgelpRY46nHz5tyDcedJ76pLV+RJWdb8h33bxFq4bdZau38DhNSzk5eVniBf1K3jwfK+Lb5nYA==
 
 ieee754@^1.1.4, ieee754@^1.1.8:
   version "1.1.13"
