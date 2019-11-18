@@ -1,9 +1,9 @@
 {
-  "short_name": "Liquid Funding",
-  "name": "Liquid Funding by Status.im",
+  "short_name": "Assemble",
+  "name": "Assemble",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "assemble.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
