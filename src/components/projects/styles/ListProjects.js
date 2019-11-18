@@ -2,11 +2,14 @@ import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
   addIcon: {
-    color: '#4360DF',
+    color: theme.palette.primary[500],
     fontSize: '2.5em'
   },
   blue: {
     color: '#4360DF'
+  },
+  green: {
+    color: theme.palette.primary[500]
   },
   px15: {
     fontSize: '0.9375rem'
@@ -88,11 +91,12 @@ const useStyles = makeStyles(theme => ({
   },
   fab: {
     gridColumn: '3 / 5',
-    background: '#EEF2F5',
+    background: '#1AA56E1A',
     boxShadow: 'none',
     marginRight: '1em'
   },
   fabText: {
+    color: theme.palette.primary[500],
     fontWeight: 500,
     fontSize: '1.2rem'
   },
@@ -162,7 +166,11 @@ const useStyles = makeStyles(theme => ({
   readMore: {
     gridColumn: '44 / 48',
     fontSize: '0.94rem',
-    textDecoration: 'none'
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+      color: theme.palette.primary[500]
+    }
   },
   usdValue: {
     color: '#939BA1'
