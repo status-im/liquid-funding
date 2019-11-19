@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '4rem 4rem 3rem 0.5fr 1fr 0.3fr'
+    gridTemplateRows: '4rem 4rem auto 0.5fr 1fr 0.3fr'
   },
   title: {
     fontSize: '2rem',
