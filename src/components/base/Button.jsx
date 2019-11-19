@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     fontSize: '5.4vw',
     [theme.breakpoints.up('md')]: {
-      fontSize: '1.4vw'
+      fontSize: '14px'
     }
   },
   progress: {

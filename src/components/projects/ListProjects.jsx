@@ -16,6 +16,7 @@ import { getTokenLabel } from '../../utils/currencies'
 import { getAmountFromWei } from '../../utils/pledges'
 import { getDateFromTimestamp } from '../../utils/dates'
 import { FundingContext } from '../../context'
+import ProjectsHeader from './ProjectsHeader'
 
 const isOdd = num => num % 2
 function FundingDetail({ classes, pledgesInfos, goal, goalToken, cellStyling }) {
@@ -147,15 +148,7 @@ function ListProjects() {
   const titleStyle = isSmall ? classes.tableTitleSmall : classes.tableTitle
   return (
     <div className={classes.main}>
-      <Typography className={classnames(classes.title, classes.fullWidth)}>
-        Liquid Funding
-      </Typography>
-      <Typography className={classnames(classes.subTitle, classes.fullWidth)}>
-        Fund. Build. Together.
-      </Typography>
-      <Typography className={titleStyle}>
-        All Projects
-      </Typography>
+      <ProjectsHeader className={titleStyle} />
       {!isSmall && <TableHeader classes={classes} />}
       {!isSmall ? <TableRows profiles={profiles} classes={classes} /> : <TableCards profiles={profiles} classes={classes} />}
       <Divider className={classes.divider} />

@@ -17,7 +17,8 @@ export default createMuiTheme({
       A500: '#1AA56E33'
     },
     common: {
-      grey: '#F5F7F8'
+      grey: '#F5F7F8',
+      darkGrey: '#939BA1'
     },
     text: {
       grey: '#939BA1'
