@@ -128,7 +128,7 @@ const useStyles = makeStyles(theme => ({
   tableHeader: {
     color: 'rgba(147, 155, 161, 0.8)',
     fontSize: '0.9rem',
-    gridRow: '4 / 5'
+    gridRow: '5 / 6'
   },
   headerName: {
     gridColumn: '3 / 12'

@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent'
 import classnames from 'classnames'
 import StatusButton from '../base/Button'
 import Icon from '../base/icons/IconByName'
+import AssembleFlow from '../image/AssembleFlow'
 
 const useStyles = makeStyles(({
   palette: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles(({
     fontSize: '20px'
   },
   creatorsCard: {
-    gridColumn: '11 / 24',
+    gridColumn: '14 / 24',
     boxShadow: '0px 15px 29px rgba(0, 34, 51, 0.08)',
     borderRadius: '8px',
     background: '#FFFFFF',
@@ -37,11 +38,15 @@ const useStyles = makeStyles(({
     gridTemplateRows: '3.5rem 1.5rem auto 2rem'
   },
   fundersCard: {
-    gridColumn: '26 / 39',
+    gridColumn: '26 / 36',
     boxShadow: '0px 15px 29px rgba(0, 34, 51, 0.08)',
     borderRadius: '8px',
     background: '#FFFFFF',
     padding: '1rem'
+  },
+  flowImage: {
+    gridColumn: '13 / 48',
+    paddingLeft: '1em'
   },
   cardMainFont: {
     fontSize: '24px'
@@ -127,6 +132,9 @@ function ProjectsHeader() {
       <Typography className={classes.subTitle}>Assemble helps you to bring your web3 projects to life</Typography>
       <CreatorsCard />
       <FundersCard />
+      <div className={classes.flowImage}>
+        <AssembleFlow />
+      </div>
     </Fragment>
   )
 }
