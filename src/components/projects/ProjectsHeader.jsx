@@ -6,6 +6,7 @@ import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import classnames from 'classnames'
 import StatusButton from '../base/Button'
+import Icon from '../base/icons/IconByName'
 
 const useStyles = makeStyles(({
   palette: {
@@ -30,6 +31,10 @@ const useStyles = makeStyles(({
     borderRadius: '8px',
     background: '#FFFFFF',
     padding: '1rem'
+  },
+  cardContent: {
+    display: 'grid',
+    gridTemplateRows: '3.5rem 1.5rem auto 2rem'
   },
   fundersCard: {
     gridColumn: '26 / 39',
@@ -60,7 +65,8 @@ function CreatorsCard() {
 
   return (
     <Card className={classes.creatorsCard}>
-      <CardContent>
+      <CardContent className={classes.cardContent}>
+        <Icon name="lightening" />
         <Typography className={classes.cardMainFont}>
           Platform for
         </Typography>
@@ -88,7 +94,8 @@ function FundersCard() {
 
   return (
     <Card className={classes.fundersCard}>
-      <CardContent>
+      <CardContent className={classes.cardContent}>
+        <Icon name="wallet" />
         <Typography className={classes.cardMainFont}>
           Platform for
         </Typography>
