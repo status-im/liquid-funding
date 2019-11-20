@@ -45,8 +45,7 @@ const useStyles = makeStyles(({
     padding: '1rem'
   },
   flowImage: {
-    gridColumn: '13 / 48',
-    paddingLeft: '1em'
+    gridColumn: '14 / 36'
   },
   cardMainFont: {
     fontSize: '24px'
@@ -61,6 +60,13 @@ const useStyles = makeStyles(({
   },
   primary: {
     color: primary[500]
+  },
+  listedProjects: {
+    gridColumn: '1 / 49',
+    textAlign: 'center',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    marginTop: '3rem'
   }
 
 }))
@@ -135,6 +141,7 @@ function ProjectsHeader() {
       <div className={classes.flowImage}>
         <AssembleFlow />
       </div>
+      <Typography className={classes.listedProjects}>Listed Projects</Typography>
     </Fragment>
   )
 }

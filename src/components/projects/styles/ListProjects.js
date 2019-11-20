@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '4rem 4rem auto 0.5fr 1fr 0.3fr'
+    gridTemplateRows: '4rem 4rem auto auto 6rem'
   },
   title: {
     fontSize: '2rem',
@@ -128,7 +128,7 @@ const useStyles = makeStyles(theme => ({
   tableHeader: {
     color: 'rgba(147, 155, 161, 0.8)',
     fontSize: '0.9rem',
-    gridRow: '5 / 6'
+    gridRow: '6 / 7'
   },
   headerName: {
     gridColumn: '3 / 12'
