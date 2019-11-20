@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     width: '100%',
-    fontSize: '5.4vw',
+    fontSize: '14px',
     [theme.breakpoints.up('md')]: {
       fontSize: '14px'
     }

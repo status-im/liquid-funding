@@ -114,7 +114,7 @@ function TableCards({ profiles, classes }) {
             <Typography className={lightText}>{`By ${creator}`}</Typography>
             <FundingDetail classes={classes} pledgesInfos={pledgesInfos} goal={goal} goalToken={goalToken} cellStyling={classnames(lightText, classes.cardAmount)} />
             <Link to={profileUrl} className={classnames(classes.cardLink, cellStyling, classes.cardMore, classes.paddingNone)}>
-              <Typography className={classnames(lightText, classes.paddingNone)}>Read more</Typography>
+              <Typography className={classnames(classes.paddingNone, classes.green)}>Read more</Typography>
             </Link>
           </Fragment>
         )
