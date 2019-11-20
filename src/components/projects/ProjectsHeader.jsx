@@ -10,6 +10,9 @@ import Icon from '../base/icons/IconByName'
 import AssembleFlow from '../image/AssembleFlow'
 
 const useStyles = makeStyles(({
+  breakpoints: {
+    up
+  },
   palette: {
     primary,
     common: { darkGrey }
@@ -27,18 +30,26 @@ const useStyles = makeStyles(({
     fontSize: '20px'
   },
   creatorsCard: {
-    gridColumn: '14 / 24',
+    [up('md')]: {
+      gridColumn: '14 / 24',
+      marginBottom: 0
+    },
+    gridColumn: '1 / 49',
     boxShadow: '0px 15px 29px rgba(0, 34, 51, 0.08)',
     borderRadius: '8px',
     background: '#FFFFFF',
-    padding: '1rem'
+    padding: '1rem',
+    marginBottom: '1rem'
   },
   cardContent: {
     display: 'grid',
     gridTemplateRows: '3.5rem 1.5rem auto 2rem'
   },
   fundersCard: {
-    gridColumn: '26 / 36',
+    [up('md')]: {
+      gridColumn: '26 / 36',
+    },
+    gridColumn: '1 / 49',
     boxShadow: '0px 15px 29px rgba(0, 34, 51, 0.08)',
     borderRadius: '8px',
     background: '#FFFFFF',
