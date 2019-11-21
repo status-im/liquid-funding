@@ -14,7 +14,8 @@ const styles = theme => ({
   amountText: {
     gridColumnStart: 6,
     alignSelf: 'center',
-    color: '#939BA1'
+    color: '#939BA1',
+    paddingTop: '100%'
   },
   amountInput: {
     textAlign: 'right'
@@ -143,7 +144,7 @@ const styles = theme => ({
   },
   chatText: {
     marginTop: '15px',
-    color: '#4360DF'
+    color: theme.palette.primary[500]
   },
   link:{
     textDecoration: 'none'
