@@ -11,7 +11,7 @@ import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import StepConnector from '@material-ui/core/StepConnector';
 
-const QontoConnector = withStyles({
+const QontoConnector = withStyles(theme => ({
   alternativeLabel: {
     top: 10,
     left: 'calc(-50% + 16px)',
@@ -19,12 +19,12 @@ const QontoConnector = withStyles({
   },
   active: {
     '& $line': {
-      borderColor: '#4360DF',
+      borderColor: theme.palette.primary[500],
     },
   },
   completed: {
     '& $line': {
-      borderColor: '#4360DF',
+      borderColor: theme.palette.primary[500],
     },
   },
   line: {
@@ -32,9 +32,9 @@ const QontoConnector = withStyles({
     borderTopWidth: 3,
     borderRadius: 1,
   },
-})(StepConnector);
+}))(StepConnector);
 
-const useQontoStepIconStyles = makeStyles({
+const useQontoStepIconStyles = makeStyles(theme => ({
   root: {
     color: '#eaeaf0',
     display: 'flex',
@@ -42,7 +42,7 @@ const useQontoStepIconStyles = makeStyles({
     alignItems: 'center',
   },
   active: {
-    color: '#4360DF',
+    color: theme.palette.primary[500],
   },
   circle: {
     width: 8,
@@ -51,11 +51,11 @@ const useQontoStepIconStyles = makeStyles({
     backgroundColor: 'currentColor',
   },
   completed: {
-    color: '#4360DF',
+    color: theme.palette.primary[500],
     zIndex: 1,
     fontSize: 18,
   },
-});
+}));
 
 function QontoStepIcon(props) {
   const classes = useQontoStepIconStyles();
