@@ -12,6 +12,7 @@ export default createMuiTheme({
   },
   palette: {
     primary: {
+      100: '#1AA56E1A',
       500: '#1AA56E',
       hov: '#137C53',
       A500: '#1AA56E33'
