@@ -25,6 +25,8 @@ import ProjectIcon from '@material-ui/icons/Work';
 import { ScaleLoader } from 'react-spinners'
 import Loading from '../components/base/Loading'
 import assemble from '../images/assemble.png'
+import alert from './image/alert.png'
+import subtract from './image/Subtract.png'
 
 const About = lazy(() => import('./About.jsx'))
 const ListProjects = lazy(() => import('./projects/ListProjects'))
@@ -75,6 +77,10 @@ const useStyles = makeStyles(theme => ({
   assemble:{
     marginRight: '0.4em'
   },
+  alert: {
+    height: '50%',
+    gridColumn: '11 / 12'
+  },
   accountText: {
     color: '#939BA1'
   },
@@ -108,6 +114,21 @@ const useStyles = makeStyles(theme => ({
   hide: {
     display: 'none',
   },
+  disclaimer: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    zIndex: 999,
+    width: '100%',
+    background: '#F5F7F8',
+    height: '3rem',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(48, [col] 1fr)',
+    alignItems: 'center'
+  },
+  disclaimerText: {
+    gridColumn: '13 / 43'
+  },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
@@ -140,6 +161,16 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     textDecoration: 'none'
+  },
+  top: {
+    top: '3rem'
+  },
+  marginTop: {
+    marginTop: '3rem'
+  },
+  subtract: {
+    height: '40%',
+    gridColumn: '45 / 47'
   }
 }))
 
@@ -161,6 +192,7 @@ MenuItem.propTypes = {
 
 function PersistentDrawerLeft({ loading, account, children, enableEthereum, location: { pathname, search } }) {
   const [open, setOpen] = useState(false)
+  const [showDisclaimer, setDisclaimer] = useState(false)
   const [queryParams, setQueryParams] = useState({})
   const [logs, setLogs] = useState([])
   const position = useWindowScrollPosition()
@@ -185,6 +217,12 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
     setQueryParams({ queryParams })
   }, [search])
 
+  useEffect(() => {
+    const ack = sessionStorage.getItem('disclaimer')
+    if (ack) setDisclaimer(false)
+    else setDisclaimer(true)
+  }, [])
+
   const enableLogs = () => {
     Hook(window.console, log => {
       setLogs(({ logs }) => ({ logs: [Decode(log), ...logs] }))
@@ -199,6 +237,11 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
     setOpen({ open: false })
   };
 
+  const closeDisclaimer = () => {
+    sessionStorage.setItem('disclaimer', true);
+    setDisclaimer(false)
+  }
+
   const classes = useStyles()
   const isHome = pathname === "/"
   const popoverPosition = position.y < 100
@@ -206,11 +249,17 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
   return (
     <div className={classes.root}>
       <CssBaseline />
+      {showDisclaimer && <div className={classes.disclaimer}>
+        <img src={alert} className={classes.alert} />
+        <span className={classes.disclaimerText}>Use at your own risk. This dapp has not been audited. We recommend to limit funding amounts at this stage.</span>
+        <img src={subtract} className={classes.subtract} onClick={closeDisclaimer} />
+      </div>}
       <AppBar
         position="fixed"
         className={classNames(classes.appBar, classes.appBarBg, {
           [classes.appBarShift]: open,
-          [classes.appBarTop]: popoverPosition
+          [classes.appBarTop]: popoverPosition,
+          [classes.top]: showDisclaimer
         })}
       >
         <Toolbar disableGutters={!open}>
@@ -218,7 +267,9 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
             color="inherit"
             aria-label="Open drawer"
             onClick={handleDrawerOpen}
-            className={classNames(classes.menuButton, open && !loading && classes.hide)}>
+            className={classNames(classes.menuButton, {
+              [classes.hide]: open && !loading
+            })}>
             {loading && <ScaleLoader
               sizeUnit={'px'}
               height={20}
@@ -277,7 +328,9 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
         })}
       >
         <div className={classes.drawerHeader} />
-        <div className={classNames(classes.appBar)}>
+        <div className={classNames(classes.appBar, {
+          [classes.marginTop]: showDisclaimer
+        })}>
           <Suspense fallback={<Loading />}>
             <Switch>
               <Route path="/about" component={About} />
