@@ -63,7 +63,10 @@ const useStyles = makeStyles(({
     padding: '1rem'
   },
   flowImage: {
-    gridColumn: '14 / 36'
+    [up('md')]: {
+      gridColumn: '14 / 36'
+    },
+    gridColumn: '1 / 49'
   },
   cardMainFont: {
     fontSize: '24px'

@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '12rem 5rem auto auto 6rem',
+    gridTemplateRows: '12rem 5rem auto auto',
     [theme.breakpoints.up('md')]: {
       gridTemplateRows: '4rem 4rem auto auto 6rem'
     }
