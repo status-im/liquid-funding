@@ -78,8 +78,12 @@ const useStyles = makeStyles(theme => ({
     marginRight: '0.4em'
   },
   alert: {
-    height: '50%',
-    gridColumn: '11 / 12'
+    [theme.breakpoints.up('md')]: {
+      height: '50%',
+      gridColumn: '11 / 12'
+    },
+    height: '33%',
+    gridColumn: '3 / 10'
   },
   accountText: {
     color: '#939BA1'
@@ -121,13 +125,19 @@ const useStyles = makeStyles(theme => ({
     zIndex: 999,
     width: '100%',
     background: '#F5F7F8',
-    height: '3rem',
+    height: '10rem',
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    alignItems: 'center'
+    alignItems: 'center',
+    [theme.breakpoints.up('md')]: {
+      height: '3rem'
+    }
   },
   disclaimerText: {
-    gridColumn: '13 / 43'
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '13 / 43'
+    },
+    gridColumn: '12 / 38'
   },
   drawer: {
     width: drawerWidth,
@@ -163,14 +173,24 @@ const useStyles = makeStyles(theme => ({
     textDecoration: 'none'
   },
   top: {
-    top: '3rem'
+    [theme.breakpoints.up('md')]: {
+      top: '3rem'
+    },
+    top: '10rem'
   },
   marginTop: {
-    marginTop: '3rem'
+    [theme.breakpoints.up('md')]: {
+      marginTop: '3rem'
+    },
+    marginTop: '10rem'
   },
   subtract: {
-    height: '40%',
-    gridColumn: '45 / 47'
+    [theme.breakpoints.up('md')]: {
+      height: '40%',
+      gridColumn: '45 / 47'
+    },
+    height: '20%',
+    gridColumn: '40 / 47'
   }
 }))
 
