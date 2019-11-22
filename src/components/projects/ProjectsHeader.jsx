@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -8,6 +9,12 @@ import classnames from 'classnames'
 import StatusButton from '../base/Button'
 import Icon from '../base/icons/IconByName'
 import AssembleFlow from '../image/AssembleFlow'
+
+const scrollToRef = (ref) => window.scroll({
+  top: ref.current.offsetTop,
+  left: 0,
+  behavior: 'smooth'
+})
 
 const useStyles = makeStyles(({
   breakpoints: {
@@ -78,8 +85,10 @@ const useStyles = makeStyles(({
     fontSize: '20px',
     fontWeight: 'bold',
     marginTop: '3rem'
+  },
+  link: {
+    textDecoration: 'none'
   }
-
 }))
 
 function CreatorsCard() {
@@ -103,16 +112,19 @@ function CreatorsCard() {
         </Typography>
       </CardContent>
       <CardActions>
-        <StatusButton
-          buttonText="Assemble a project →"
-        />
+        <Link to={`/create-project`} className={classes.link}>
+          <StatusButton
+            buttonText="Assemble a project →"
+          />
+        </Link>
       </CardActions>
     </Card>
   );
 }
 
-function FundersCard() {
+function FundersCard({ listedRef }) {
   const classes = useStyles();
+  const executeScroll = () => scrollToRef(listedRef)
 
   return (
     <Card className={classes.fundersCard}>
@@ -134,6 +146,7 @@ function FundersCard() {
       <CardActions>
         <StatusButton
           buttonText="Explore projects →"
+          onClick={executeScroll}
         />
       </CardActions>
     </Card>
@@ -142,17 +155,18 @@ function FundersCard() {
 
 function ProjectsHeader() {
   const classes = useStyles()
+  const listedRef = useRef(null)
 
   return (
     <Fragment>
       <Typography className={classes.title}>Open and Transparent Funding</Typography>
       <Typography className={classes.subTitle}>Assemble helps you to bring your web3 projects to life</Typography>
       <CreatorsCard />
-      <FundersCard />
+      <FundersCard listedRef={listedRef} />
       <div className={classes.flowImage}>
         <AssembleFlow />
       </div>
-      <Typography className={classes.listedProjects}>Listed Projects</Typography>
+      <Typography ref={listedRef} className={classes.listedProjects}>Listed Projects</Typography>
     </Fragment>
   )
 }
