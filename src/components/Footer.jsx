@@ -10,13 +10,18 @@ import classNames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import { Divider} from '@material-ui/core'
 
-const style = () => ({
+const style = ({
+  breakpoints: { up }
+}) => ({
   main: {
     display: 'grid',
     gridTemplateColumns: 'repeat(48, [col] 1fr)',
-    gridTemplateRows: '4rem 3rem repeat(4, 2rem) 4rem',
+    gridTemplateRows: 'repeat(4, 4rem) repeat(4, 2rem)',
     height: '12rem',
     marginTop: '5rem',
+    [up('md')]: {
+      gridTemplateRows: '4rem 3rem repeat(4, 2rem) 4rem'
+    }
   },
   assemble: {
     width: '2.5em',
@@ -46,10 +51,16 @@ const style = () => ({
     gridColumn: '6 / 42'
   },
   middle: {
-    gridColumn: '18 / 21',
+    gridColumn: '6 / 10',
+    [up('md')]: {
+      gridColumn: '18 / 21',
+    }
   },
   midRight: {
-    gridColumn: '25 / 32'
+    gridColumn: '34 / 42',
+    [up('md')]: {
+      gridColumn: '25 / 32'
+    }
   },
   end: {
     gridColumn: '34 / 42',
@@ -61,9 +72,13 @@ const style = () => ({
     height: '2.2rem'
   },
   header: {
+    [up('md')]: {
+      gridRow: 2
+    },
     fontSize: '17px',
     fontWeight: 'bold',
-    color: '#172348'
+    color: '#172348',
+    gridRow: 4
   },
   text: {
     color: '#5C667D',
