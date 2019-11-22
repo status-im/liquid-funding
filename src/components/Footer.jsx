@@ -5,7 +5,6 @@ import assemble from '../images/assemble-high-res.png'
 import github from './image/github-logo.png'
 import statusGrey from './image/status-grey.png'
 import statusLogoText from './image/status-logo-text.png'
-import twitter from './image/twitter-logo-button.png'
 import classNames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import { Divider} from '@material-ui/core'
@@ -20,7 +19,7 @@ const style = ({
     height: '12rem',
     marginTop: '5rem',
     [up('md')]: {
-      gridTemplateRows: '4rem 3rem repeat(4, 2rem) 4rem'
+      gridTemplateRows: '4rem 3rem repeat(5, 2rem) 4rem'
     }
   },
   assemble: {
@@ -89,7 +88,7 @@ const style = ({
 const useStyle = makeStyles(style)
 const Footer = () => {
   const classes = useStyle()
-  const { middle, midRight, text, header } = classes
+  const { middle, midRight, text, header, link } = classes
   return (
     <div className={classes.main}>
       <Divider className={classes.divider} />
@@ -103,16 +102,44 @@ const Footer = () => {
         We are part of
         <img src={statusLogoText} className={classes.statusLogoText} />
       </Typography>
-      <img src={github} className={classes.github} />
-      <img src={statusGrey} className={classes.statusGrey} />
-      <img src={twitter} className={classes.twitter} />
+      <a href="https://github.com/status-im/liquid-funding" className={classNames(link, classes.github)}>
+        <img src={github} className={classes.github} />
+      </a>
+      <a href="https://status.im" className={classNames(link, classes.statusGrey)}>
+        <img src={statusGrey} className={classes.statusGrey} />
+      </a>
       <Typography className={classNames(middle, text)}>Assemble</Typography>
-      <Typography className={classNames(midRight, text)}>Status</Typography>
+      <Typography className={classNames(midRight, text)}>
+        <a href="https://status.im" className={classNames(text, link)}>
+           Status
+        </a>
+      </Typography>
       <Typography className={classNames(middle, text)}>fund</Typography>
-      <Typography className={classNames(midRight, text)}>Keycard</Typography>
-      <Typography className={classNames(midRight, text)}>Embark</Typography>
-      <Typography className={classNames(midRight, text)}>Teller</Typography>
-      <Typography className={classNames(midRight, text)}>Nimbus</Typography>
+      <Typography className={classNames(midRight, text)}>
+        <a href="https://keycard.tech/" className={classNames(text, link)}>
+           Keycard
+        </a>
+      </Typography>
+      <Typography className={classNames(midRight, text)}>
+        <a href="https://dap.ps/" className={classNames(text, link)}>
+          dap.ps
+        </a>
+      </Typography>
+      <Typography className={classNames(midRight, text)}>
+        <a href="https://embark.status.im/" className={classNames(text, link)}>
+          Embark
+        </a>
+      </Typography>
+      <Typography className={classNames(midRight, text)}>
+        <a href="https://nimbus.team" className={classNames(text, link)}>
+          Nimbus
+        </a>
+      </Typography>
+      <Typography className={classNames(midRight, text)}>
+        <a href="https://vac.dev" className={classNames(text, link)}>
+          Vac
+        </a>
+      </Typography>
     </div>
   )
 }
