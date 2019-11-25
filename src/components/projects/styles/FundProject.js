@@ -15,7 +15,6 @@ const styles = theme => ({
     gridColumnStart: 6,
     alignSelf: 'center',
     color: '#939BA1',
-    paddingTop: '100%'
   },
   amountInput: {
     textAlign: 'right'
