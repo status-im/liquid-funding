@@ -70,7 +70,7 @@ const styles = theme => ({
   },
   edit: {
     gridColumnStart: 12,
-    color: '#4360DF',
+    color: theme.palette.primary[500],
     fontSize: '15px'
   },
   formControl: {
