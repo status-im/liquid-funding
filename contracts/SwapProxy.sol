@@ -108,7 +108,8 @@ contract SwapProxy is Pausable, SafeToken {
       uint amount = kyberProxy.trade.value(msg.value)(ETH, msg.value, token, address(this), maxDestinationAmount, slippageRate, vault);
       require(amount > 0);
       require(EIP20Interface(token).approve(address(liquidPledging), amount));
-      liquidPledging.addGiverAndDonate(idReceiver, token, amount);
+      liquidPledging.addGiverAndDonate(idReceiver, msg.sender, token, amount);
+
       Swap(msg.sender, ETH, token, msg.value, amount);
     }
 
@@ -137,7 +138,7 @@ contract SwapProxy is Pausable, SafeToken {
       uint receiverAmount = kyberProxy.trade(token, amount, receiverToken, address(this), maxDestinationAmount, slippageRate, vault);
       require(receiverAmount > 0);
       require(EIP20Interface(token).approve(address(liquidPledging), receiverAmount));
-      liquidPledging.addGiverAndDonate(idReceiver, receiverToken, receiverAmount);
+      liquidPledging.addGiverAndDonate(idReceiver, msg.sender, receiverToken, receiverAmount);
       Swap(msg.sender, token, receiverToken, amount, receiverAmount);
     }
 
