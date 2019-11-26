@@ -37,13 +37,17 @@ class App extends React.Component {
     const network = process.env.REACT_APP_NETWORK || 'ropsten'
     this.setCurrencies(network)
     this.setGraphClient(network)
+    this.grabAddress()
+  }
+
+  grabAddress = () => {
     if (window.ethereum) {
+      this.accountListener()
       const { selectedAddress: account } = window.ethereum
       if (account) this.setState({ account })
     } else {
       console.log('window.ethreum not found :', {window})
     }
-
   }
 
   setCurrencies = async network => {
@@ -73,6 +77,18 @@ class App extends React.Component {
     await updateStalePledges()
     await updateDelegates()
     this.setState({ loading: false })
+  }
+
+  accountListener = () => {
+    let self = this
+    try {
+      window.ethereum.on('accountsChanged', function (accounts) {
+        const [account] = accounts
+        self.setState({ account })
+      })
+    } catch (error) {
+      console.error('accountsChanged listener : ', {error})
+    }
   }
 
   enableEthereum = async () => {
