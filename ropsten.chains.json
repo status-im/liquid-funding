@@ -17,25 +17,13 @@
         "name": "SNT",
         "address": "0x8aA3672a99C489E5Dc5dfDb40e607bE49970cbF7"
       },
-      "0xb573e81b6da869674bb2d8448581ed758b9dbf7e72b0879087d49620167778d4": {
-        "name": "SwapProxy",
-        "address": "0x46A30Bf6D0E438E7EeaabD6c4B5fEBf481267722"
-      },
       "0xd9d749fb529af69819711faec78815efe4334ea74c7785ece18e3f276d845934": {
         "name": "DAI",
         "address": "0xaD6D458402F60fD3Bd25163575031ACDce07538D"
       },
-      "0xafe7338679d28b8279653439aa74f34791475ba797295e37336eecf436127480": {
+      "0x865e8f15b33ce8aef72c3bd4b22521aafce49bdbe57b4bed9eeea949e729c59d": {
         "name": "SwapProxy",
-        "address": "0x2B45165e26f5d32fB75abE2fc7f8E7e5D506223b"
-      },
-      "0x2c4bdca5cbf721642f976ca0e83a902c8b88d9e7fd49f721263f145b908d08ef": {
-        "name": "SwapProxy",
-        "address": "0x2B45165e26f5d32fB75abE2fc7f8E7e5D506223b"
-      },
-      "0x17446ffed738afc7e8cab4b9f8b44f8fcabe07029419220d52b9fe9318f37b95": {
-        "name": "SwapProxy",
-        "address": "0x1B468F2a4CDaC05E5B2f432DA24F049201B74Aa2"
+        "address": "0x73d3731F9c21e21785Ec5677CC39AB4880CAaFe9"
       }
     }
   }
