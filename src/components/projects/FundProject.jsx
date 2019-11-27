@@ -296,7 +296,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
 function FundProject({ match, history }) {
   const projectId = match.params.id
   const classes = useStyles()
-  const { currencies } = useContext(FundingContext)
+  const { account, currencies } = useContext(FundingContext)
   const { loading, error, data, stopPolling, startPolling, client } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
   });
@@ -309,6 +309,7 @@ function FundProject({ match, history }) {
   if (loading || !currencies) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
+  const isCreator = projectData.creator === account
 
   return (
     <div className={classes.root}>
@@ -321,7 +322,7 @@ function FundProject({ match, history }) {
         profileData={data.profile}
         startPolling={startPolling}
       />
-      {!!Number(idx(data, _ => _.profile.pledgesInfos[0].lifetimeReceived)) && <div className={classes.pledgesLink}>
+      {!!Number(idx(data, _ => _.profile.pledgesInfos[0].lifetimeReceived)) && isCreator && <div className={classes.pledgesLink}>
         <Typography>This project received pledges. You have funds available to withdraw.</Typography>
         <Link to={`/pledges/${projectId}`} className={classes.link}>
           <StatusButton buttonText="View Pledges" />
