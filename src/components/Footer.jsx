@@ -64,8 +64,14 @@ const style = ({
   end: {
     gridColumn: '34 / 42',
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-evenly'
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'baseline',
+    [up('md')]: {
+      alignItems: 'center',
+      justifyContent: 'space-evenly',
+      flexDirection: 'row',
+    }
   },
   statusLogoText: {
     height: '2.2rem'
@@ -82,7 +88,7 @@ const style = ({
   text: {
     color: '#5C667D',
     fontSize: '17px'
-  },
+  }
 })
 
 const useStyle = makeStyles(style)
@@ -98,8 +104,8 @@ const Footer = () => {
       </Link>
       <Typography className={classNames(header, middle)}>Assemble</Typography>
       <Typography className={classNames(header, midRight)}>Status Network</Typography>
-      <Typography className={classNames(classes.end, text)}>
-        We are part of
+      <Typography className={classNames(classes.end, text, classes.logoText)}>
+        <span>We are part of</span>
         <img src={statusLogoText} className={classes.statusLogoText} />
       </Typography>
       <a href="https://github.com/status-im/liquid-funding" className={classNames(link, classes.github)}>
