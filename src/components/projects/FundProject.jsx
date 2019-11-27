@@ -235,7 +235,9 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
               />
             </div>}
             {manifest && <div className={classnames(secondHalf)}>
-              <div className={classes.edit}>{isCreator ? 'Edit' : ''}</div>
+              <Link to={`/update-project/${projectId}`} className={classes.link}>
+                <div className={classes.edit}>{isCreator ? 'Edit' : ''}</div>
+              </Link>
               <Typography className={classes.projectTitle} component="h2" gutterBottom>
                 {`${totalPledged.toLocaleString()} ${tokenLabel}`} pledged
               </Typography>
