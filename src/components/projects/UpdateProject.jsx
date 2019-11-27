@@ -14,7 +14,6 @@ import { isEmpty } from 'ramda'
 import * as Yup from 'yup'
 import { uploadFilesToIpfs, pinToGateway, formatMedia, isWeb } from '../../utils/ipfs'
 import { FundingContext } from '../../context'
-import {ZERO_ADDRESS} from '../../utils/address'
 import CurrencySelect from '../base/CurrencySelect'
 import StatusTextField from '../base/TextField'
 import IconTextField from '../base/IconTextField'
@@ -28,7 +27,7 @@ import BreadCrumb from '../base/BreadCrumb'
 import { errorStrings } from '../../constants/errors'
 import { getProfileById } from './queries'
 import Loading from '../base/Loading'
-const { addProject } = LiquidPledging.methods
+const { updateProject } = LiquidPledging.methods
 const { TOO_LONG, REQUIRED } = errorStrings
 
 const hoursToSeconds = hours => hours * 60 * 60
@@ -198,7 +197,7 @@ const addProjectSucessMsg = response => {
   const { events: { ProjectAdded: { returnValues: { idProject } } } } = response
   return `Project created with ID of ${idProject}, will redirect to your new project page in a few seconds`
 }
-const SubmissionSection = ({ classes, history, projectData }) => {
+const SubmissionSection = ({ classes, history, projectData, projectId }) => {
   const [uploads, setUploads] = useState({})
   const { account, currencies, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const windowSize = useWindowSize()
@@ -227,12 +226,12 @@ const SubmissionSection = ({ classes, history, projectData }) => {
         const manifest = createJSON(values)
         const contentHash = await uploadFilesToIpfs(uploads, manifest)
         uploadFilesToIpfs(uploads, manifest, true)
-        const args = [title, contentHash, user, 0, hoursToSeconds(commitTime), ZERO_ADDRESS]
+        const args = [projectId, user, title, contentHash, hoursToSeconds(commitTime)]
         console.log({args})
-        addProject(...args)
+        updateProject(...args)
           .estimateGas({ from: user })
           .then(async gas => {
-            addProject(...args)
+            updateProject(...args)
               .send({ from: user, gas: gas + 100 })
               .then(async res => {
                 pinToGateway(contentHash)
@@ -488,11 +487,15 @@ function UpdateProject({ match, classes, history }) {
   const projectData = useProjectData(projectId, data)
   if (loading) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
-  console.log({projectData})
 
   return (
     <div className={classes.root}>
-      <SubmissionSection classes={classes} history={history} projectData={projectData} />
+      <SubmissionSection
+        classes={classes}
+        history={history}
+        projectData={projectData}
+        projectId={projectId}
+      />
     </div>
   )
 }
