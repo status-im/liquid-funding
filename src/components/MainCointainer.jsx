@@ -40,6 +40,7 @@ const BackProject = lazy(() => import('./projects/BackProject'))
 const Pledges = lazy(() => import('./Pledges'))
 const ProjectPledges = lazy(() => import('./projects/ProjectPledges'))
 const CreateProject = lazy(() => import('./projects/CreateProject'))
+const UpdateProject = lazy(() => import('./projects/UpdateProject'))
 const CreateDelegate = lazy(() => import('./projects/CreateDelegate'))
 const TransferGraph = lazy(() => import('./TransfersGraph'))
 
@@ -363,6 +364,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
               <Route path="/(profile|delegate|project)/:id" component={Project} />
               <Route path="/(fund-project)/:id" component={FundProject} />
               <Route path="/create-project/" component={CreateProject} />
+              <Route path="/update-project/:id" component={UpdateProject} />
               <Route path="/create-delegate/" component={CreateDelegate} />
               <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
               <Route path="/project-pledges/:id" component={ProjectPledges} />
