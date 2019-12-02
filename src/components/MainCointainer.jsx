@@ -235,7 +235,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
   useEffect(() => {
     const queryParams = queryString.parse(search)
     if (queryParams.logs) enableLogs()
-    setQueryParams({ queryParams })
+    setQueryParams({ ...queryParams })
   }, [search])
 
   useEffect(() => {
@@ -246,7 +246,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
 
   const enableLogs = () => {
     Hook(window.console, log => {
-      setLogs(({ logs }) => ({ logs: [Decode(log), ...logs] }))
+      setLogs(logs => ([Decode(log), ...logs]))
     })
   }
 
@@ -369,7 +369,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
               <Route path="/(back-delegate|back-project)/:id" component={BackProject} />
               <Route path="/project-pledges/:id" component={ProjectPledges} />
               <Route path="/pledges/:id" component={Pledges} />
-              <Route path="/console" render={() => <Console logs={logs} variant="dark" />} />
+              <Route path="/console" render={() => <Console logs={logs} variant="light" />} />
             </Switch>
           </Suspense>
           {children}
