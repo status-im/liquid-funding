@@ -1,13 +1,12 @@
 import IPFS from 'ipfs'
 import ipfsClient from 'ipfs-http-client'
-import fileReaderPullStream from 'pull-file-reader'
 import { Buffer } from 'buffer'
 import { Matcher } from '@areknawo/rex'
 import { getImageType } from './images'
 
 const ipfsMatcher = new Matcher().begin().find('ipfs/')
 export const ipfs = new IPFS()
-const ipfsHttp = ipfsClient('test-ipfs.status.im', '2053', { protocol: 'https' })
+const ipfsHttp = ipfsClient({ host: 'test-ipfs.status.im', port: '2053', protocol: 'https' })
 const ipfsHttpTheGraph = ipfsClient({ host: 'api.thegraph.com', 'api-path': '/ipfs/api/v0/', protocol: 'https', port: '443' })
 
 window.ipfsHttp = ipfsHttp
@@ -41,7 +40,7 @@ export const formatFileList = files => {
 
 export const formatForIpfs = file => {
   const { name, type: _type } = file
-  const content = fileReaderPullStream(file)
+  const content = file
   return {
     path:  `/root/${name}`,
     content
@@ -85,8 +84,13 @@ export const uploadFilesToIpfs = async (files, manifest, gateway = false) => {
 }
 
 export const uploadToIpfs = async files => {
-  const res = await ipfs.add(files, { progress: (prog) => console.log(`received: ${prog}`) })
-  return `ipfs/${res[0].hash}`
+  const res = await ipfs.add(
+    files,
+    {
+      progress: (prog) => console.log(`received: ${prog}`)
+    }
+  )
+  return `ipfs/${res.slice(-1)[0].hash}`
 }
 
 export const uploadToIpfsGateway = async files => {
