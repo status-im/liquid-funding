@@ -236,7 +236,7 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
     const queryParams = queryString.parse(search)
     if (queryParams.logs) enableLogs()
     setQueryParams({ ...queryParams })
-  }, [search])
+  }, [])
 
   useEffect(() => {
     const ack = sessionStorage.getItem('disclaimer')
@@ -251,11 +251,11 @@ function PersistentDrawerLeft({ loading, account, children, enableEthereum, loca
   }
 
   const handleDrawerOpen = () => {
-    setOpen({ open: true })
+    setOpen(true)
   };
 
   const handleDrawerClose = () => {
-    setOpen({ open: false })
+    setOpen(false)
   };
 
   const closeDisclaimer = () => {
