@@ -8,7 +8,7 @@ import { FundingContext } from '../../context'
 import { getDelegateProfiles } from '../../actions/profiles'
 import { getDelegatePledgesByProfile } from '../../actions/delegates'
 
-const callOrderFns = [getFilesWeb, getFilesWebTheGraph, getFiles]
+const callOrderFns = [getFiles, getFilesWeb, getFilesWebTheGraph]
 async function getProjectAge(data, setState){
   if (data && data.profile) {
     setState(timeSinceBlock(data.profile.creationTime, 'days'))
