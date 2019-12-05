@@ -24,10 +24,15 @@ import MediaView from '../base/MediaView'
 import { isVideo } from '../../utils/images'
 import BreadCrumb from '../base/BreadCrumb'
 import { errorStrings } from '../../constants/errors'
+import StatusButton from '../base/Button'
 
 
 const { addProject } = LiquidPledging.methods
 const { TOO_LONG, REQUIRED } = errorStrings
+
+const NOT_SUBMITTED = 'Not Submitted'
+const SUBMITTED = 'Submitted'
+const CONFIRMED = 'Confirmed'
 
 const hoursToSeconds = hours => hours * 60 * 60
 
@@ -69,6 +74,9 @@ const styles = theme => ({
     gridColumnStart: '1',
     gridColumnEnd: '13',
     gridRowGap: '2ch',
+  },
+  columnStart: {
+    gridColumnStart: '1',
   },
   formControl: {
     gridColumnStart: '6'
@@ -198,6 +206,7 @@ const addProjectSucessMsg = response => {
 }
 const SubmissionSection = ({ classes, history }) => {
   const [uploads, setUploads] = useState({})
+  const [submissionState, setSubmissionState] = useState(NOT_SUBMITTED)
   const { account, currencies, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const windowSize = useWindowSize()
   const isSmall = windowSize.innerWidth < 800
@@ -231,9 +240,14 @@ const SubmissionSection = ({ classes, history }) => {
           .then(async gas => {
             addProject(...args)
               .send({ from: user, gas: gas + 100 })
+              .on('transactionHash', (hash) => {
+                setSubmissionState(SUBMITTED)
+                openSnackBar('success', `Submitted request to chain. TX Hash: ${hash}`)
+              })
               .then(async res => {
                 pinToGateway(contentHash)
                 console.log({res})
+                setSubmissionState(CONFIRMED)
                 openSnackBar('success', addProjectSucessMsg(res))
                 setTimeout(() => {
                   history.push(`/fund-project/${getProjectId(res)}`)
@@ -261,6 +275,9 @@ const SubmissionSection = ({ classes, history }) => {
         const { firstHalf, secondHalf, fullWidth, halfsRows } = classes
         const { goalToken, goal } = values
         const usdValue = convertTokenAmountUsd(goalToken, goal, prices, currencies)
+        const showSpinner = submissionState === SUBMITTED
+        const disableButton = showSpinner || !isEmpty(errors)
+        const buttonText = showSpinner ? 'Awaiting confirmation' : 'Publish'
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
             <div className={classnames(firstHalf, halfsRows, {
@@ -418,9 +435,19 @@ const SubmissionSection = ({ classes, history }) => {
             <div className={classnames(secondHalf, halfsRows, {
               [classes.fullWidth]: isSmall
             })}>
-              <Button type="submit" disabled={!isEmpty(errors)} color="primary" variant="contained" className={classnames(classes.formButton, {
+              <StatusButton
+                className={classnames(classes.formButton, {
+                  [classes.fullWidth]: isSmall
+                })}
+                disabled={disableButton}
+                buttonText={buttonText}
+                confirmed={submissionState === CONFIRMED}
+                loading={showSpinner}
+              />
+              {false && <Button type="submit" disabled={!isEmpty(errors)} color="primary" variant="contained" className={classnames(classes.formButton, {
+                [classes.columnStart]: showSpinner,
                 [classes.fullWidth]: isSmall
-              })}>{isSubmitting ? 'Awaiting confirmations' : 'Publish'}</Button>
+              })}>{isSubmitting ? 'Awaiting confirmations' : 'Publish'}</Button>}
               <CurrencySelect
                 className={classes.threeFourthWidth}
                 InputProps={{
