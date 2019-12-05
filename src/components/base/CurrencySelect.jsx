@@ -18,7 +18,18 @@ CurrencySelect.propTypes = {
   showBalances: PropTypes.bool,
   enableToggles: PropTypes.bool,
   className: PropTypes.string,
-  InputProps: PropTypes.object
+  InputProps: PropTypes.object,
+  publishing: PropTypes.bool
+}
+
+const orderCurrencies = (currencies, publishing) => {
+  if (publishing) {
+    const temp = [...currencies]
+    let weth = currencies.findIndex(e => e.label === 'WETH')
+    temp[0] = temp[weth]
+    return temp.filter(e => e !== undefined)
+  }
+  return currencies
 }
 
 function CurrencySelect({
@@ -30,7 +41,8 @@ function CurrencySelect({
   showBalances,
   enableToggles,
   className,
-  InputProps
+  InputProps,
+  publishing
 }) {
   const context = useContext(FundingContext)
   const { account } = context
@@ -87,7 +99,7 @@ function CurrencySelect({
       onBlur={onBlur}
       value={value || ''}
     >
-      {!!currencies && currencies.map((option, idx) => (
+      {!!currencies && orderCurrencies(currencies, publishing).map((option, idx) => (
         <MenuItem style={{display: 'flex', alignItems: 'center'}} key={option.value} value={option.value}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             {option.icon || <img

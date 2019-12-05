@@ -433,6 +433,7 @@ const SubmissionSection = ({ classes, history }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.goalToken}
+                publishing
               />
               <StatusTextField
                 className={classnames(classes.threeFourthWidth)}
