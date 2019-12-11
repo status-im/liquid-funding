@@ -227,6 +227,18 @@ module.exports = {
     ],
     strategy: 'explicit',
     tracking: './livenet.chains.json',
+    deployment: {
+      accounts: [
+        {
+          privateKeyFile: secret.privateKeyFile,
+          password: secret.password
+        }
+      ],
+      host: "mainnet.infura.io/v3/a2687d7078ff46d3b5f3f58cb97d3e44",
+      port: false,
+      protocol: 'https',
+      type: "rpc"
+    },
     contracts: {
       LPVault: {},
       LiquidPledging: {
@@ -246,11 +258,22 @@ module.exports = {
       },
       SNT: {
         address: '0x744d70FDBE2Ba4CF95131626614a1763DF805B9E'
+      },
+      SwapProxy: {
+        address: "0xacfe5d28d867b85403150c80db03acb15e54560e",
+        args: [
+          '$LiquidPledging',
+          "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
+          "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "0x0000000000000000000000000000000000000000",
+          20
+        ]
       }
     },
     afterDeploy: async (dependencies) => {
       await dependencies.contracts.LiquidPledging.methods.initialize(dependencies.contracts.LPVault.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
       await dependencies.contracts.LPVault.methods.initialize(dependencies.contracts.LiquidPledging.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+      await dependencies.contracts.LPVault.methods.setAutopay(true).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
     }
   },
 
