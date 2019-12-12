@@ -260,7 +260,7 @@ module.exports = {
         address: '0x744d70FDBE2Ba4CF95131626614a1763DF805B9E'
       },
       SwapProxy: {
-        address: "0xacfe5d28d867b85403150c80db03acb15e54560e",
+        address: "0x397cF7eC9534acb28EAAbCAa03f3f4b542E4d436",
         args: [
           '$LiquidPledging',
           "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
@@ -271,9 +271,9 @@ module.exports = {
       }
     },
     afterDeploy: async (dependencies) => {
-      await dependencies.contracts.LiquidPledging.methods.initialize(dependencies.contracts.LPVault.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
-      await dependencies.contracts.LPVault.methods.initialize(dependencies.contracts.LiquidPledging.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
-      await dependencies.contracts.LPVault.methods.setAutopay(true).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+      // await dependencies.contracts.LiquidPledging.methods.initialize(dependencies.contracts.LPVault.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+      // await dependencies.contracts.LPVault.methods.initialize(dependencies.contracts.LiquidPledging.options.address).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
+      // await dependencies.contracts.LPVault.methods.setAutopay(true).send({from: dependencies.web3.eth.defaultAccount, gas: 1000000});
     }
   },
 
