@@ -137,10 +137,11 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         if (!activeStep) return enableEthereum()
         const { amount, fundToken } = values
         const { goalToken } = manifest
-        const { chainReadibleFn, setAllowance } = getTokenByAddress(goalToken, currencies)
+        const { chainReadibleFn } = getTokenByAddress(goalToken, currencies)
         const userAccount = account ? account : await enableEthereum()
         const weiAmount = chainReadibleFn(amount)
         if (activeStep === NOT_APPROVED) {
+          const { setAllowance } = getTokenByAddress(fundToken, currencies)
           const toSend = goalToken === fundToken ? setAllowance(weiAmount, LiquidPledging) : setAllowance(weiAmount)
           setSubmissionState(AUTHORIZATION_SUBMITTED)
           return toSend
@@ -152,7 +153,9 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
             .catch(e => console.log({e})).finally(() => resetForm())
         }
 
-        const send = generateSend(projectId, goalToken, fundToken, weiAmount, userAccount)
+        const args = [projectId, goalToken, fundToken, weiAmount, userAccount]
+        console.log({args})
+        const send = generateSend(...args)
         send
           .on('transactionHash', (hash) => {
             optimisticUpdate(client, pledgesInfo, weiAmount)
