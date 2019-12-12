@@ -28,7 +28,7 @@ const getCompoundRates = async prices => {
   return values
 }
 export const getPrices = async (currencies = ['ETH', 'SNT', 'DAI']) => {
-  const prices = await cc.priceMulti(currencies, ['USD'])
+  const prices = await cc.priceMulti(currencies.slice(0, 65), ['USD'])
   const compound = await getCompoundRates(prices)
   return { ...prices, ...compound, WETH: {...prices['ETH'] } }
 }
