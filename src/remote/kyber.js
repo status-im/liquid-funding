@@ -13,13 +13,17 @@ function createERC20Instance(address) {
   return new web3.eth.Contract(ERC20._jsonInterface, address)
 }
 
+const imageUrls = {
+  DAI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png'
+}
+
 function mapToCurrencyFormat(currency) {
   const { id, address, symbol, decimals } = currency
   const contract = createERC20Instance(address)
   return {
     value: address,
     label: symbol,
-    img: `${TOKEN_API}/${id}.png`,
+    img:  imageUrls[symbol] || `${TOKEN_API}/${id}.png`,
     width: '2rem',
     contract,
     humanReadibleFn: generateHumanReadibleFn(decimals),
@@ -37,7 +41,7 @@ function currencyFilter(currency) {
 
 export const kyberCurrencies = {
   ropsten: 'https://ropsten-api.kyber.network/currencies',
-  livenet: 'https://api.kyber.network/currencies'
+  mainnet: 'https://api.kyber.network/currencies'
 }
 
 export const getKyberCurrencies = async network => {
@@ -45,7 +49,7 @@ export const getKyberCurrencies = async network => {
   const res = await fetch(uri)
   let currencies = await res.json()
   currencies = currencies.data
-  if (network !== 'livenet') {
+  if (network !== 'mainnet') {
     const res = await fetch(kyberCurrencies['livenet'])
     let livenetCurrencies = await res.json()
     livenetCurrencies = livenetCurrencies.data

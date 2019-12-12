@@ -8,6 +8,7 @@ import { toEther, toWei, compoundWhole, compoundToChain } from './conversions'
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
 export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/coins'
 export const TOKEN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/tokens'
+export const NEW_TOKEN_ICON_API = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/'
 export const currencies = [
   {
     value: 'ETH',

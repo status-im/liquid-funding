@@ -17,6 +17,8 @@
     "start": "node scripts/start.js",
     "ropsten": "REACT_APP_NETWORK=ropsten node scripts/start.js",
     "ropsten:build": "REACT_APP_NETWORK=ropsten node --max-old-space-size=4000 scripts/build.js",
+    "mainnet": "REACT_APP_NETWORK=mainnet node scripts/start.js",
+    "mainnet:build": "REACT_APP_NETWORK=mainnet node --max-old-space-size=4000 scripts/build.js",
     "build": "node scripts/build.js",
     "postbuild": "PUBLIC_URL=/ react-snap"
   },
