@@ -93,8 +93,8 @@ class App extends React.Component {
 
   enableEthereum = async () => {
     try {
-      await window.ethereum.enable()
-      const account = await web3.eth.getCoinbase()
+      const accounts = await EmbarkJS.enableEthereum();
+      const account = accounts[0]
       this.setState({ account })
       this.web3Init()
       return account
