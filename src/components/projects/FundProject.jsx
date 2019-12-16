@@ -17,11 +17,10 @@ import { getAmountFromPledgesInfo } from '../../utils/pledges'
 import { useProjectData } from './hooks'
 import { getMediaType, getMediaSrc, formatProjectId } from '../../utils/project'
 import { getDateCreated } from '../../utils/dates'
-import { toBN } from '../../utils/conversions'
 import { getTokenLabel, getTokenByAddress } from '../../utils/currencies'
 import MediaView from '../base/MediaView'
 import StatusTextField from '../base/TextField'
-import { getProfileById, pledgeLifetimeReceived } from './queries'
+import { getProfileById } from './queries'
 import styles from './styles/FundProject'
 import CurrencySelect from '../base/CurrencySelect'
 import Loading from '../base/Loading'
@@ -89,20 +88,6 @@ function generateSend(projectId, goalToken, fundToken, amount, account) {
     .send({from: account})
 }
 
-const optimisticUpdate = (client, pledgesInfo, weiAmount) => {
-  const { __typename } = pledgesInfo
-  const updatedLifetimeReceived = toBN(weiAmount).add(toBN(pledgesInfo.lifetimeReceived)).toString()
-  const id = `${__typename}:${pledgesInfo.id}`
-  client.writeFragment({
-    id,
-    fragment: pledgeLifetimeReceived,
-    data: {
-      lifetimeReceived: updatedLifetimeReceived,
-      __typename
-    }
-  })
-}
-
 const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling, client }) => {
   const { account, currencies, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const [submissionState, setSubmissionState] = useState(NOT_SUBMITTED)
@@ -146,11 +131,16 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
           setSubmissionState(AUTHORIZATION_SUBMITTED)
           return toSend
             .send({ from: account })
+            .on('transactionHash', (hash) => {
+              setSubmissionState(SUBMITTED)
+              openSnackBar('success', `Submitted approve request to chain. TX Hash: ${hash}`)
+            })
             .then(async res => {
               console.log({res})
               setSubmissionState(APPROVED)
             })
-            .catch(e => console.log({e})).finally(() => resetForm())
+            .catch(e => console.log({e}))
+            .finally(() => resetForm({ values }))
         }
 
         const args = [projectId, goalToken, fundToken, weiAmount, userAccount]
@@ -158,7 +148,6 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         const send = generateSend(...args)
         send
           .on('transactionHash', (hash) => {
-            optimisticUpdate(client, pledgesInfo, weiAmount)
             setSubmissionState(SUBMITTED)
             openSnackBar('success', `Submitted funding request to chain. TX Hash: ${hash}`)
           })
@@ -280,12 +269,12 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
                 />
                 <div className={classes.amountText}>{getTokenLabel(values.fundToken || manifest.goalToken, currencies)}</div>
               </div>}
-              <StatusButton
+              {activeStep !== IS_CONFIRMED && <StatusButton
                 disabled={disableButton}
                 buttonText={buttonText[activeStep]}
                 confirmed={activeStep === IS_CONFIRMED}
                 loading={showSpinner}
-              />
+              />}
               <FundStepper steps={STEPS} activeStep={activeStep} />
             </div>}
           </form>
