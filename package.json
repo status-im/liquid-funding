@@ -57,7 +57,7 @@
     "random-bytes": "^1.0.0",
     "react-snap": "^1.23.0",
     "solcpiler": "1.0.0-beta.8",
-    "web3": "1.0.0-beta.34",
+    "web3": "1.2.4",
     "webpack": "4.28.3",
     "worker-loader": "^2.0.0"
   },

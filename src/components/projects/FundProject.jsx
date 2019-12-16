@@ -31,7 +31,7 @@ import { errorStrings } from '../../constants/errors'
 
 const { REQUIRED, NOT_NUMBER } = errorStrings
 const schema = Yup.object().shape({
-  amount: Yup.number().typeError(NOT_NUMBER).required(REQUIRED).positive()
+  amount: Yup.number().typeError(NOT_NUMBER).required(REQUIRED)
 })
 const { addGiverAndDonate } = LiquidPledging.methods
 const { fundWithETH, fundWithToken } = SwapProxy.methods
@@ -59,30 +59,34 @@ const addProjectSucessMsg = response => {
 }
 const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirm']
 const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Submitted', 'Confirmed']
-function stepperProgress(values, projectData, submissionState, currencies) {
+async function stepperProgress(values, projectData, submissionState, currencies) {
+  if (!values.fundToken) return IS_APPROVED
   const { amount, fundToken } = values
+  if (Number(amount) === 0) return NOT_APPROVED
   if (submissionState === CONFIRMED) return IS_CONFIRMED
   if (submissionState === AUTHORIZATION_SUBMITTED) return NOT_APPROVED
   if (submissionState === SUBMITTED) return IS_SUBMITTED
   if (submissionState === APPROVED || fundToken === IS_ETH) return IS_APPROVED
   if (!projectData.account) return NOT_CONNECTED
-  const { manifest: { goalToken }, authorization } = projectData
-  const { chainReadibleFn } = getTokenByAddress(goalToken, currencies)
+  const { chainReadibleFn, getAllowance } = getTokenByAddress(fundToken, currencies)
+  const authorization = await getAllowance()
   const sanitizedAmount = amount.replace(/\D/g,'')
   const weiAmount = sanitizedAmount ? chainReadibleFn(sanitizedAmount) : '0'
   const isAuthorized = Number(authorization) >= Number(weiAmount)
+  console.log({submissionState, isAuthorized, weiAmount, authorization})
   if (!isAuthorized) return NOT_APPROVED
   return IS_APPROVED
 }
 
-function generateSend(projectId, goalToken, fundToken, amount, account) {
+async function generateSend(projectId, goalToken, fundToken, amount, account) {
   if (fundToken === IS_ETH) {
     return fundWithETH(projectId, goalToken)
       .send({from: account, value: amount})
   }
   if (fundToken.toLowerCase() === goalToken.toLowerCase()) {
+    let estimated = await addGiverAndDonate(projectId, goalToken, amount).estimateGas({ from: account })
     return addGiverAndDonate(projectId, goalToken, amount)
-      .send({from: account})
+      .send({from: account, gas: estimated})
   }
   return fundWithToken(projectId, fundToken, amount, goalToken)
     .send({from: account})
@@ -91,6 +95,15 @@ function generateSend(projectId, goalToken, fundToken, amount, account) {
 const SubmissionSection = ({ classes, projectData, projectId, profileData, startPolling, client }) => {
   const { account, currencies, enableEthereum, openSnackBar, prices } = useContext(FundingContext)
   const [submissionState, setSubmissionState] = useState(NOT_SUBMITTED)
+  const [activeStep, setActiveStep] = useState()
+  const [values, setValues] = useState({})
+  useEffect(() => {
+    async function getProgress() {
+      const progress = await stepperProgress(values, projectData, submissionState, currencies)
+      setActiveStep(progress)
+    }
+    getProgress()
+  }, [values, projectData, submissionState, currencies])
   const { projectAge, projectAssets, manifest } = projectData
   const { pledgesInfos, projectInfo } = profileData
   const pledgesInfo = pledgesInfos[0]
@@ -106,8 +119,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
       initialValues={{
         amount: '',
       }}
-      validate={values => {
-        const activeStep = stepperProgress(values, projectData, submissionState, currencies)
+      validate={async values => {
+        const activeStep = await stepperProgress(values, projectData, submissionState, currencies)
         if (!activeStep) return
         return schema.validate(values)
           .catch(function(err) {
@@ -117,8 +130,8 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
             throw errors
           })
       }}
-      onSubmit={async (values, { resetForm }) => {
-        const activeStep = stepperProgress(values, projectData, submissionState, currencies)
+      onSubmit={async (values) => {
+        const activeStep = await stepperProgress(values, projectData, submissionState, currencies)
         if (!activeStep) return enableEthereum()
         const { amount, fundToken } = values
         const { goalToken } = manifest
@@ -129,8 +142,14 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
           const { setAllowance } = getTokenByAddress(fundToken, currencies)
           const toSend = goalToken === fundToken ? setAllowance(weiAmount, LiquidPledging) : setAllowance(weiAmount)
           setSubmissionState(AUTHORIZATION_SUBMITTED)
+          let estimated
+          try {
+            estimated = await toSend.estimateGas({ from: account })
+          } catch(e) {
+            return openSnackBar('error', `${e.message}`)
+          }
           return toSend
-            .send({ from: account })
+            .send({ from: account, gas: estimated+100 })
             .on('transactionHash', (hash) => {
               setSubmissionState(SUBMITTED)
               openSnackBar('success', `Submitted approve request to chain. TX Hash: ${hash}`)
@@ -140,12 +159,11 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
               setSubmissionState(APPROVED)
             })
             .catch(e => console.log({e}))
-            .finally(() => resetForm({ values }))
         }
 
         const args = [projectId, goalToken, fundToken, weiAmount, userAccount]
         console.log({args})
-        const send = generateSend(...args)
+        const send = await generateSend(...args)
         send
           .on('transactionHash', (hash) => {
             setSubmissionState(SUBMITTED)
@@ -176,11 +194,12 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         handleBlur,
         handleSubmit,
       }) => {
+        setValues(values)
         const { firstHalf, secondHalf, fullWidth } = classes
         const usdValue = manifest ? convertTokenAmountUsd(values.fundToken || manifest.goalToken, values.amount, prices, currencies) : 0
-        const activeStep = stepperProgress(values, projectData, submissionState, currencies)
         const showSpinner = activeStep === IS_SUBMITTED || submissionState === AUTHORIZATION_SUBMITTED
         const disableButton = submissionState === AUTHORIZATION_SUBMITTED || activeStep >= IS_SUBMITTED
+        console.log({submissionState, activeStep})
 
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
