@@ -104,7 +104,7 @@ contract SwapProxy is Pausable, SafeToken {
       require(expectedRate > 0);
       uint slippagePercent = 100 - ((slippageRate * 100) / expectedRate);
       require(slippagePercent <= maxSlippage);
-      uint maxDestinationAmount = (slippageRate / (10**18)) * msg.value;
+      uint maxDestinationAmount = getMaxDestinationAmount(expectedRate, msg.value);
       uint amount = kyberProxy.trade.value(msg.value)(ETH, msg.value, token, address(this), maxDestinationAmount, slippageRate, vault);
       require(amount > 0);
       require(EIP20Interface(token).approve(address(liquidPledging), amount));
@@ -134,12 +134,17 @@ contract SwapProxy is Pausable, SafeToken {
       require(EIP20Interface(token).approve(address(kyberProxy), 0));
       require(EIP20Interface(token).approve(address(kyberProxy), amount));
 
-      uint maxDestinationAmount = (slippageRate / (10**18)) * amount;
+      uint maxDestinationAmount = getMaxDestinationAmount(expectedRate, amount);
       uint receiverAmount = kyberProxy.trade(token, amount, receiverToken, address(this), maxDestinationAmount, slippageRate, vault);
       require(receiverAmount > 0);
       require(EIP20Interface(token).approve(address(liquidPledging), receiverAmount));
       liquidPledging.addGiverAndDonate(idReceiver, msg.sender, receiverToken, receiverAmount);
       Swap(msg.sender, token, receiverToken, amount, receiverAmount);
+    }
+
+    function getMaxDestinationAmount(uint expectedRate, uint amount) pure returns (uint256) {
+      uint val = (expectedRate * amount) / 10**18;
+      return val;
     }
 
     function transferOut(address asset, address to, uint amount) public onlyOwner {
