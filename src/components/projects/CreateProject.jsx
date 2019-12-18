@@ -250,7 +250,7 @@ const SubmissionSection = ({ classes, history }) => {
                 setSubmissionState(CONFIRMED)
                 openSnackBar('success', addProjectSucessMsg(res))
                 setTimeout(() => {
-                  history.push(`/fund-project/${getProjectId(res)}`)
+                  history.push(`/fund-project/${getProjectId(res)}?new=true`)
                   resetForm()
                 }, 5000)
               })
