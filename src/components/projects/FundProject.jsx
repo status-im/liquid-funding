@@ -78,15 +78,14 @@ async function stepperProgress(values, projectData, submissionState, currencies)
   return IS_APPROVED
 }
 
-async function generateSend(projectId, goalToken, fundToken, amount, account) {
+function generateSend(projectId, goalToken, fundToken, amount, account) {
   if (fundToken === IS_ETH) {
     return fundWithETH(projectId, goalToken)
       .send({from: account, value: amount})
   }
   if (fundToken.toLowerCase() === goalToken.toLowerCase()) {
-    let estimated = await addGiverAndDonate(projectId, goalToken, amount).estimateGas({ from: account })
     return addGiverAndDonate(projectId, goalToken, amount)
-      .send({from: account, gas: estimated})
+      .send({from: account})
   }
   return fundWithToken(projectId, fundToken, amount, goalToken)
     .send({from: account})
@@ -151,7 +150,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
           return toSend
             .send({ from: account, gas: estimated+100 })
             .on('transactionHash', (hash) => {
-              setSubmissionState(SUBMITTED)
+              setSubmissionState(AUTHORIZATION_SUBMITTED)
               openSnackBar('success', `Submitted approve request to chain. TX Hash: ${hash}`)
             })
             .then(async res => {
@@ -163,8 +162,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
 
         const args = [projectId, goalToken, fundToken, weiAmount, userAccount]
         console.log({args})
-        const send = await generateSend(...args)
-        send
+        generateSend(...args)
           .on('transactionHash', (hash) => {
             setSubmissionState(SUBMITTED)
             openSnackBar('success', `Submitted funding request to chain. TX Hash: ${hash}`)
@@ -182,7 +180,6 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
           .finally(() => {
             client.resetStore()
           })
-
         console.log({amount, getProjectId, addProjectSucessMsg, account, openSnackBar})
       }}
     >
@@ -199,7 +196,6 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         const usdValue = manifest ? convertTokenAmountUsd(values.fundToken || manifest.goalToken, values.amount, prices, currencies) : 0
         const showSpinner = activeStep === IS_SUBMITTED || submissionState === AUTHORIZATION_SUBMITTED
         const disableButton = submissionState === AUTHORIZATION_SUBMITTED || activeStep >= IS_SUBMITTED
-        console.log({submissionState, activeStep})
 
         return (
           <form onSubmit={handleSubmit} className={classes.submissionRoot}>
@@ -290,7 +286,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
               </div>}
               {activeStep !== IS_CONFIRMED && <StatusButton
                 disabled={disableButton}
-                buttonText={buttonText[activeStep]}
+                buttonText={disableButton ? 'Submitted' : buttonText[activeStep]}
                 confirmed={activeStep === IS_CONFIRMED}
                 loading={showSpinner}
               />}
