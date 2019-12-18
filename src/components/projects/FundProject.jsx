@@ -3,6 +3,7 @@ import { Formik } from 'formik'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import idx from 'idx'
+import queryString from 'query-string'
 import { useQuery } from '@apollo/react-hooks'
 import LiquidPledging from '../../embarkArtifacts/contracts/LiquidPledging'
 import SwapProxy from '../../embarkArtifacts/contracts/SwapProxy'
@@ -73,7 +74,6 @@ async function stepperProgress(values, projectData, submissionState, currencies)
   const sanitizedAmount = amount.replace(/\D/g,'')
   const weiAmount = sanitizedAmount ? chainReadibleFn(sanitizedAmount) : '0'
   const isAuthorized = Number(authorization) >= Number(weiAmount)
-  console.log({submissionState, isAuthorized, weiAmount, authorization})
   if (!isAuthorized) return NOT_APPROVED
   return IS_APPROVED
 }
@@ -300,9 +300,10 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
   )
 }
 
-function FundProject({ match, history }) {
+function FundProject({ match, history, location: { search } }) {
   const projectId = match.params.id
   const classes = useStyles()
+  const [queryParams, setQueryParams] = useState({})
   const { account, currencies } = useContext(FundingContext)
   const { loading, error, data, stopPolling, startPolling, client } = useQuery(getProfileById, {
     variables: { id: formatProjectId(projectId) }
@@ -313,7 +314,20 @@ function FundProject({ match, history }) {
     stopPolling()
   }, [data])
 
-  if (loading || !currencies) return <Loading />
+  useEffect(() => {
+    const queryParams = queryString.parse(search)
+    if (queryParams.new) {
+      startPolling(3000)
+      setQueryParams({ ...queryParams })
+    }
+
+    if (data && data.profile) {
+      stopPolling()
+      return setQueryParams({})
+    }
+  }, [data && data.profile])
+
+  if (loading || !currencies || queryParams.new) return <Loading />
   if (error) return <div>{`Error! ${error.message}`}</div>
   if(!data.profile) return <Typography className={classes.noProject}>Project Not Found</Typography>
   const isCreator = projectData.creator === account
