@@ -29,9 +29,9 @@
         "name": "cETH",
         "address": "0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5"
       },
-      "0xc09457fd28c8ada6814c50387837bcb7392cd98a35f88360e92e959e69d5d59d": {
+      "0x7d02e04b28e6483ef5be2fc5a710c982caa8325b5f226f196fdbe5d9e97af942": {
         "name": "SwapProxy",
-        "address": "0x397cF7eC9534acb28EAAbCAa03f3f4b542E4d436"
+        "address": "0x10E1FC179cd37CFed5B77AC4b65D17f0B789360E"
       }
     }
   }
