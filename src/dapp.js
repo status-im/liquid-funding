@@ -3,6 +3,7 @@
 import React from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from './embarkArtifacts/embarkjs'
+import EthScan, { HttpProvider } from '@mycrypto/eth-scan'
 import LiquidPledging from './embarkArtifacts/contracts/LiquidPledging'
 import Snackbar from '@material-ui/core/Snackbar'
 import { ApolloProvider } from '@apollo/react-hooks'
@@ -35,6 +36,7 @@ class App extends React.Component {
 
   componentDidMount(){
     const network = process.env.REACT_APP_NETWORK || 'ropsten'
+    this.scanner = new EthScan(new HttpProvider('https://mainnet.infura.io/v3/a2687d7078ff46d3b5f3f58cb97d3e44'))
     this.setCurrencies(network)
     this.setGraphClient(network)
     this.grabAddress()
@@ -53,7 +55,8 @@ class App extends React.Component {
   setCurrencies = async network => {
     const kyberCurrencies = await getKyberCurrencies(network)
     this.currencies = [...currencies, ...kyberCurrencies].sort(currencyOrder)
-    this.getAndSetPrices()
+    await this.getAndSetPrices()
+    this.getAndSetBalances()
   }
 
   setGraphClient = network => {
@@ -96,6 +99,7 @@ class App extends React.Component {
       const accounts = await EmbarkJS.enableEthereum();
       const account = accounts[0]
       this.setState({ account })
+      this.getAndSetBalances(account)
       this.web3Init()
       return account
     } catch (error) {
@@ -107,6 +111,14 @@ class App extends React.Component {
     const currencies = this.currencies.map(c => c.label)
     const prices = await getPrices(currencies)
     this.setState({ prices })
+  }
+
+  getAndSetBalances = async acc => {
+    const { account } = this.state
+    if (!acc && !account) return
+    const addresses = this.currencies.filter(c => c.label !== 'ETH').map(c => c.value)
+    const balances = await this.scanner.getTokensBalance(acc || account, addresses)
+    this.setState({ balances })
   }
 
   openSnackBar = (variant, message) => {
@@ -159,12 +171,13 @@ class App extends React.Component {
   }
 
   render() {
-    const { account, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices } = this.state
+    const { account, balances, needsInit, lpAllowance: _lpAllowance, loading, authorizedPayments, snackbar, prices } = this.state
     const { appendFundProfile, appendPledges, transferPledgeAmounts, openSnackBar, closeSnackBar, currencies, syncWithRemote, updateUsdPrice, client, enableEthereum } = this
     const fundingContext = {
       appendPledges,
       appendFundProfile,
       account,
+      balances,
       currencies,
       enableEthereum,
       transferPledgeAmounts,

@@ -22,14 +22,14 @@ CurrencySelect.propTypes = {
   publishing: PropTypes.bool
 }
 
-const orderCurrencies = (currencies, publishing) => {
+const orderCurrencies = (currencies, balances, publishing) => {
   if (publishing) {
     const temp = [...currencies]
     let weth = currencies.findIndex(e => e.label === 'WETH')
     temp[0] = temp[weth]
     return temp.filter(e => e !== undefined)
   }
-  return currencies
+  return balances ? currencies.filter(c => c.label === 'ETH' || (balances[c.value] && !balances[c.value].isZero())) : currencies
 }
 
 function CurrencySelect({
@@ -45,10 +45,9 @@ function CurrencySelect({
   publishing
 }) {
   const context = useContext(FundingContext)
-  const { account } = context
+  const { account, currencies, balances: accountBalances } = context
   const [balances, setBalances] = useState({})
   const [allowances, setAllowances] = useState({})
-  const { currencies } = context
 
   const updateBalancesAllowances = () => {
     const latestBalances = {}
@@ -99,7 +98,7 @@ function CurrencySelect({
       onBlur={onBlur}
       value={value || ''}
     >
-      {!!currencies && orderCurrencies(currencies, publishing).map((option, idx) => (
+      {!!currencies && orderCurrencies(currencies, accountBalances, publishing).map((option, idx) => (
         <MenuItem style={{display: 'flex', alignItems: 'center'}} key={option.value} value={option.value}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             {option.icon || <img
