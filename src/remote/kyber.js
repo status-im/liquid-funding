@@ -33,9 +33,10 @@ function mapToCurrencyFormat(currency) {
   }
 }
 
+const omitCurrencies = new Set(['ETH', 'OMG'])
 function currencyFilter(currency) {
   if (isNil(currency)) return false
-  if (currency.symbol === 'ETH') return false
+  if (omitCurrencies.has(currency.symbol)) return false
   return true
 }
 
