@@ -2,12 +2,13 @@
 import ERC20 from '../embarkArtifacts/contracts/ERC20'
 import { isNil } from 'ramda'
 import {
-  TOKEN_API,
+  NEW_TOKEN_ICON_API,
   generateHumanReadibleFn,
   generateChainReadibleFn,
   getLpAllowance,
   generateSetApprovalFn
 } from '../utils/currencies'
+import { checksumAddress } from '../utils/address'
 
 function createERC20Instance(address) {
   return new web3.eth.Contract(ERC20._jsonInterface, address)
@@ -23,7 +24,7 @@ function mapToCurrencyFormat(currency) {
   return {
     value: address,
     label: symbol,
-    img:  imageUrls[symbol] || `${TOKEN_API}/${id}.png`,
+    img:  imageUrls[symbol] || `${NEW_TOKEN_ICON_API}/${checksumAddress(id)}/logo.png`,
     width: '2rem',
     contract,
     humanReadibleFn: generateHumanReadibleFn(decimals),

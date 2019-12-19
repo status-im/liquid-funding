@@ -4,8 +4,9 @@ import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
-import { TOKEN_ICON_API } from '../../utils/currencies'
+import { NEW_TOKEN_ICON_API } from '../../utils/currencies'
 import { toEther } from '../../utils/conversions'
+import { checksumAddress } from '../../utils/address'
 import { getLpAllowance, standardTokenApproval } from '../../utils/initialize'
 import { FundingContext } from '../../context'
 
@@ -102,7 +103,7 @@ function CurrencySelect({
         <MenuItem style={{display: 'flex', alignItems: 'center'}} key={option.value} value={option.value}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             {option.icon || <img
-              src={option.img || `${TOKEN_ICON_API}/${option.value}.png`}
+              src={option.img || `${NEW_TOKEN_ICON_API}/${checksumAddress(option.value)}/logo.png`}
               style={{width: option.width, marginRight: '1rem'}}
             />}
             {option.label}
