@@ -28,7 +28,7 @@ function mapToCurrencyFormat(currency) {
     contract,
     humanReadibleFn: generateHumanReadibleFn(decimals),
     chainReadibleFn: generateChainReadibleFn(decimals),
-    getAllowance: () => getLpAllowance(contract),
+    getAllowance: spender => getLpAllowance(contract, spender),
     setAllowance: generateSetApprovalFn(contract)
   }
 }

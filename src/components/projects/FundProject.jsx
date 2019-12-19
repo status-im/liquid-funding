@@ -67,10 +67,12 @@ async function stepperProgress(values, projectData, submissionState, currencies)
   if (submissionState === CONFIRMED) return IS_CONFIRMED
   if (submissionState === AUTHORIZATION_SUBMITTED) return NOT_APPROVED
   if (submissionState === SUBMITTED) return IS_SUBMITTED
-  if (submissionState === APPROVED || fundToken === IS_ETH) return IS_APPROVED
+  if (fundToken === IS_ETH) return IS_APPROVED
   if (!projectData.account) return NOT_CONNECTED
   const { chainReadibleFn, getAllowance } = getTokenByAddress(fundToken, currencies)
-  const authorization = await getAllowance()
+  const { manifest: { goalToken } } = projectData
+  const spender = fundToken.toLowerCase() === goalToken.toLowerCase() ? LiquidPledging._address : SwapProxy._address
+  const authorization = await getAllowance(spender)
   const sanitizedAmount = amount.replace(/\D/g,'')
   const weiAmount = sanitizedAmount ? chainReadibleFn(sanitizedAmount) : '0'
   const isAuthorized = Number(authorization) >= Number(weiAmount)
