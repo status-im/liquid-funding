@@ -1,9 +1,7 @@
 /*global web3*/
 import SNT from '../embarkArtifacts/contracts/SNT'
-import cDAI from '../embarkArtifacts/contracts/cDAI'
-import cETH from '../embarkArtifacts/contracts/cETH'
 import SwapProxy from '../embarkArtifacts/contracts/SwapProxy'
-import { toEther, toWei, compoundWhole, compoundToChain } from './conversions'
+import { toEther, toWei } from './conversions'
 
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
 export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/coins'
