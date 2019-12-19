@@ -1,10 +1,3 @@
-let secret = {};
-try {
-  secret = require('../.secret.json');
-} catch(err) {
-  console.dir("warning: .secret.json file not found; this is only needed to deploy to testnet or livenet etc..");
-}
-
 const rinkebyBase = {
   enabled: true,
   dappConnection: [
@@ -12,7 +5,7 @@ const rinkebyBase = {
   ],
   strategy: 'explicit',
   tracking: './testnet.chains.json',
-  contracts: {
+  deploy: {
     LPVault: {
     },
     LiquidPledging: {
@@ -45,32 +38,8 @@ const rinkebyBase = {
 module.exports = {
   // default applies to all environments
   default: {
-    // Blockchain node to deploy the contracts
-    deployment: {
-      host: 'localhost', // Host of the blockchain node
-      port: 8545, // Port of the blockchain node
-      type: 'rpc', // Type of connection (ws or rpc),
-      // Accounts to use instead of the default account to populate your wallet
-      /*,accounts: [
-        {
-          privateKey: "your_private_key",
-          balance: "5 ether"  // You can set the balance of the account in the dev environment
-                              // Balances are in Wei, but you can specify the unit with its name
-        },
-        {
-          privateKeyFile: "path/to/file", // Either a keystore or a list of keys, separated by , or ;
-          password: "passwordForTheKeystore" // Needed to decrypt the keystore file
-        },
-        {
-          mnemonic: "12 word mnemonic",
-          addressIndex: "0", // Optionnal. The index to start getting the address
-          numAddresses: "1", // Optionnal. The number of addresses to get
-          hdpath: "m/44'/60'/0'/0/" // Optionnal. HD derivation path
-        }
-      ]*/
-    },
-    // order of connections the dapp should connect to
     dappConnection: [
+      '$EMBARK',
       '$WEB3', // uses pre existing web3 object if available (e.g in Mist)
       'ws://localhost:8546',
       'http://localhost:8545',
@@ -88,19 +57,20 @@ module.exports = {
     //            contracts section.
     strategy: 'explicit',
 
-    contracts: {},
+    deploy: {},
   },
 
   // default environment, merges with the settings in default
   // assumed to be the intended environment by `embark run`
   development: {
     dappConnection: [
+      '$EMBARK',
       '$WEB3', // uses pre existing web3 object if available (e.g in Mist)
       'ws://localhost:8546',
       'http://localhost:8545',
     ],
     strategy: 'explicit',
-    contracts: {
+    deploy: {
       LPVault: {},
       LiquidPledging: {
         instanceOf: 'LiquidPledgingMock'
@@ -116,6 +86,17 @@ module.exports = {
       },
       ACL: {
         file: "@aragon/os/contracts/acl/ACL.sol"
+      },
+      cDAI: {
+        instanceOf: "StandardToken",
+        address: '0xf5dce57282a584d2746faf1593d3121fcac444dc'
+      },
+      cETH: {
+        instanceOf: "StandardToken",
+        address: '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5'
+      },
+      SNT: {
+        address: '0x744d70FDBE2Ba4CF95131626614a1763DF805B9E'
       }
     },
 
@@ -158,21 +139,8 @@ module.exports = {
   // used with "embark run ropsten"
   ropsten: {
     tracking: './ropsten.chains.json',
-    deployment: {
-      accounts: [
-        {
-          mnemonic: secret.mnemonic,
-          hdpath: secret.hdpath || "m/44'/1'/0'/0/",
-          numAddresses: "10"
-        }
-      ],
-      host: `ropsten.infura.io/${secret.infuraKey}`,
-      port: false,
-      protocol: 'https',
-      type: "rpc"
-    },
     strategy: 'explicit',
-    contracts: {
+    deploy: {
       DAI: {
         instanceOf: "StandardToken",
         address: "0xaD6D458402F60fD3Bd25163575031ACDce07538D"
@@ -203,21 +171,7 @@ module.exports = {
   },
 
   rinkeby: rinkebyBase,
-  rinkebyInfura: Object.assign({}, rinkebyBase, {
-    deployment: {
-      accounts: [
-        {
-          mnemonic: secret.mnemonic,
-          hdpath: secret.hdpath || "m/44'/1'/0'/0/",
-          numAddresses: "10"
-        }
-      ],
-      host: `rinkeby.infura.io/${secret.infuraKey}`,
-      port: false,
-      protocol: 'https',
-      type: "rpc"
-    }
-  }),
+  rinkebyInfura: rinkebyBase,
   // merges with the settings in default
   // used with "embark run livenet"
   livenet: {
@@ -227,19 +181,7 @@ module.exports = {
     ],
     strategy: 'explicit',
     tracking: './livenet.chains.json',
-    deployment: {
-      accounts: [
-        {
-          privateKeyFile: secret.privateKeyFile,
-          password: secret.password
-        }
-      ],
-      host: "mainnet.infura.io/v3/a2687d7078ff46d3b5f3f58cb97d3e44",
-      port: false,
-      protocol: 'https',
-      type: "rpc"
-    },
-    contracts: {
+    deploy: {
       LPVault: {},
       LiquidPledging: {
         address: '0x603A7249E64b8cACe20ffb55926145346ca42A97',
