@@ -1,15 +1,12 @@
-/*global web3*/
 /*global process*/
 import React from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import EmbarkJS from './embarkArtifacts/embarkjs'
 import EthScan, { HttpProvider } from '@mycrypto/eth-scan'
-import LiquidPledging from './embarkArtifacts/contracts/LiquidPledging'
 import Snackbar from '@material-ui/core/Snackbar'
 import { ApolloProvider } from '@apollo/react-hooks'
 import ApolloClient from 'apollo-boost'
-import { initVaultAndLP, vaultPledgingNeedsInit, standardTokenApproval } from './utils/initialize'
-import { getAuthorizedPayments } from './utils/events'
+import { initVaultAndLP, standardTokenApproval } from './utils/initialize'
 import { FundingContext } from './context'
 import MainCointainer from './components/MainCointainer'
 import Footer from './components/Footer'
@@ -23,8 +20,6 @@ import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
 import { currencies, currencyOrder } from './utils/currencies'
 import { uris } from './remote/graph'
 import { getKyberCurrencies } from './remote/kyber'
-
-const { getNetworkType } = web3.eth.net
 
 class App extends React.Component {
   state = {
@@ -100,7 +95,6 @@ class App extends React.Component {
       const account = accounts[0]
       this.setState({ account })
       this.getAndSetBalances(account)
-      this.web3Init()
       return account
     } catch (error) {
       console.error('Enable Ethereum :', {error})
@@ -144,30 +138,6 @@ class App extends React.Component {
     const key = generatePairKey(ticker, 'USD')
     const price = await getUsdPrice(ticker)
     this.setState({ prices: { ...prices, [key]: price }})
-  }
-
-  web3Init = () => {
-    EmbarkJS.onReady(async (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        getNetworkType().then(async network => {
-          const { environment } = EmbarkJS
-          const isInitialized = await vaultPledgingNeedsInit()
-          if (isInitialized) {
-            if (environment === 'development') console.log('mock_time:', await LiquidPledging.mock_time.call())
-            const authorizedPayments = await getAuthorizedPayments()
-            this.syncWithRemote()
-            this.setState({
-              network,
-              environment,
-              authorizedPayments,
-              needsInit: false
-            })
-          }
-        })
-      }
-    })
   }
 
   render() {
