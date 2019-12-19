@@ -157,9 +157,11 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
             })
             .then(async res => {
               console.log({res})
-              setSubmissionState(APPROVED)
+              if (Number(amount) !== 0) setSubmissionState(APPROVED)
+              else setSubmissionState(NOT_APPROVED)
             })
             .catch(e => console.log({e}))
+
         }
 
         const args = [projectId, goalToken, fundToken, weiAmount, userAccount]
