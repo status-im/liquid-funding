@@ -42,6 +42,8 @@ const styles1 = theme => ({
   message: {
     display: 'flex',
     alignItems: 'center',
+    overflowWrap: 'break-word',
+    wordBreak: 'break-all'
   },
 });
 
