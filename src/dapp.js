@@ -20,6 +20,7 @@ import { getUsdPrice, getPrices, generatePairKey } from './utils/prices'
 import { currencies, currencyOrder } from './utils/currencies'
 import { uris } from './remote/graph'
 import { getKyberCurrencies } from './remote/kyber'
+import Infura from './remote/infura'
 
 class App extends React.Component {
   state = {
@@ -31,7 +32,7 @@ class App extends React.Component {
 
   componentDidMount(){
     const network = process.env.REACT_APP_NETWORK || 'ropsten'
-    this.scanner = new EthScan(new HttpProvider('https://mainnet.infura.io/v3/a2687d7078ff46d3b5f3f58cb97d3e44'))
+    this.scanner = new EthScan(new HttpProvider(Infura[network]))
     this.setCurrencies(network)
     this.setGraphClient(network)
     this.grabAddress()
