@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
+import { uniqBy, filter, isNil, compose } from 'ramda'
 import { NEW_TOKEN_ICON_API } from '../../utils/currencies'
 import { toEther } from '../../utils/conversions'
 import { checksumAddress } from '../../utils/address'
@@ -28,7 +29,10 @@ const orderCurrencies = (currencies, balances, publishing) => {
     const temp = [...currencies]
     let weth = currencies.findIndex(e => e.label === 'WETH')
     temp[0] = temp[weth]
-    return temp.filter(e => e !== undefined)
+    const dedupe = uniqBy(e => e.value)
+    const removeNils = filter(e => !isNil(e))
+    const process = compose(removeNils, dedupe)
+    return process(temp)
   }
   return balances ? currencies.filter(c => c.label === 'ETH' || (balances[c.value] && !balances[c.value].isZero())) : currencies
 }
