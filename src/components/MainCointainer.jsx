@@ -1,4 +1,4 @@
-import React,{ Suspense, lazy, useState, useEffect }  from 'react';
+import React,{ Suspense, lazy, useState, useEffect, memo }  from 'react';
 import { Route, Link, Switch, withRouter } from 'react-router-dom'
 import useWindowScrollPosition from '@rehooks/window-scroll-position'
 import PropTypes from 'prop-types';
@@ -387,5 +387,5 @@ PersistentDrawerLeft.propTypes = {
   children: PropTypes.node
 };
 
-const DrawerWithRouter = withRouter(PersistentDrawerLeft)
+const DrawerWithRouter = withRouter(memo(PersistentDrawerLeft))
 export default DrawerWithRouter

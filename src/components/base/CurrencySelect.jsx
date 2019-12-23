@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -25,10 +25,10 @@ CurrencySelect.propTypes = {
 }
 
 const orderCurrencies = (currencies, balances, publishing) => {
+  if (!currencies) return
   if (publishing) {
-    const temp = [...currencies]
     let weth = currencies.findIndex(e => e.label === 'WETH')
-    temp[0] = temp[weth]
+    const temp = [currencies[weth], ...currencies.slice(1)]
     const dedupe = uniqBy(e => e.value)
     const removeNils = filter(e => !isNil(e))
     const process = compose(removeNils, dedupe)
@@ -89,6 +89,11 @@ function CurrencySelect({
     if (account && showBalances && currencies) updateBalancesAllowances()
   }, [account, currencies])
 
+  const filteredCurrencies = useMemo(
+    () => orderCurrencies(currencies, accountBalances, publishing),
+    [currencies, accountBalances, publishing]
+  )
+
   return (
     <TextField
       className={className}
@@ -103,7 +108,7 @@ function CurrencySelect({
       onBlur={onBlur}
       value={value || ''}
     >
-      {!!currencies && orderCurrencies(currencies, accountBalances, publishing).map((option, idx) => (
+      {!!currencies && filteredCurrencies.map((option, idx) => (
         <MenuItem style={{display: 'flex', alignItems: 'center'}} key={option.value} value={option.value}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             {option.icon || <img

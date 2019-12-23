@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react'
+import React, { useContext, useState, useMemo, useEffect, memo } from 'react'
 import { Formik } from 'formik'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
@@ -357,4 +357,4 @@ function FundProject({ match, history, location: { search } }) {
   )
 }
 
-export default FundProject
+export default memo(FundProject)

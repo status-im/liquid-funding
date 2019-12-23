@@ -1,5 +1,5 @@
 /*eslint complexity: ["error", 25]*/
-import React, { createRef, useState, useContext } from 'react'
+import React, { createRef, useState, useContext, memo } from 'react'
 import { Formik } from 'formik'
 import classnames from 'classnames'
 import ReactMarkdown from 'react-markdown'
@@ -514,4 +514,4 @@ function CreateProject({ classes, history }) {
 }
 
 const StyledProject = withStyles(styles)(CreateProject)
-export default withRouter(StyledProject)
+export default withRouter(memo(StyledProject))

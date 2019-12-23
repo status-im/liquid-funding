@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from 'react'
+import React, { Fragment, useContext, useState, memo } from 'react'
 import useWindowSize from '@rehooks/window-size'
 import { Link } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
@@ -190,4 +190,4 @@ function ListProjects() {
   )
 }
 
-export default ListProjects
+export default memo(ListProjects)
