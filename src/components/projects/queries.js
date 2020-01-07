@@ -79,7 +79,7 @@ query Profile($id: ID!) {
     pledgesInfos {
       ...PledgesInfoFields
     }
-    pledges(where: {amount_gt: 0, pledgeState_lt: 1}) {
+    pledges(where: {amount_gt: 0}) {
       ...PledgeFields
     }
     projectInfo {
