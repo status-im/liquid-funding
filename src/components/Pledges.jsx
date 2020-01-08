@@ -122,7 +122,7 @@ function TableRow({ pledge, amtFormatter, tokenLabel, selectedPledges, setSelect
       <Typography className={classes.rowAmount}>{amtFormatter(amount)} {tokenLabel}</Typography>
       <Typography className={classes.rowId}>{toDecimal(id)}</Typography>
       <Typography className={classes.rowFunded}>{getDateFromTimestamp(creationTime, true)}</Typography>
-      <Checkbox classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} color="primary" disableRipple checked={isSelected} onChange={handleChange} />
+      <Checkbox disabled={pledgeTypes[pledgeState] === PAID} classes={{ root: classnames(classes.select, classes.checkBox), checked: classes.checked }} color="primary" disableRipple checked={isSelected} onChange={handleChange} />
     </Fragment>
   )
 }
@@ -147,10 +147,13 @@ function Pledges({ match }) {
 
   const amtFormatter = getHumanAmountFormatter(goalToken, currencies)
   const tokenLabel = getTokenLabel(goalToken, currencies)
-  const allSelected = selectedPledges.length === pledges.length
+  const filteredPledges = pledges.filter(({ pledgeState }) => pledgeTypes[pledgeState] !== PAID)
+  const allSelected = selectedPledges.length === filteredPledges.length
   const selectAll = () => {
     if (allSelected) return setSelected([])
-    setSelected(pledges.map(p => p.id))
+    setSelected(
+      filteredPledges.map(p => p.id)
+    )
   }
 
   const withdrawPledges = () => {
@@ -173,6 +176,7 @@ function Pledges({ match }) {
         openSnackBar('success', 'Funding Confirmed')
         setSubmitted(false)
         setConfirmed(true)
+        setSelected([])
       })
       .catch(e => {
         openSnackBar('error', 'An error has occured')
