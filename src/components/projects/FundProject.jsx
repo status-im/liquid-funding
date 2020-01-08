@@ -61,7 +61,9 @@ const addProjectSucessMsg = response => {
 const STEPS = ['Connect', 'Authorize Amount', 'Fund', 'Confirm']
 const buttonText = ['Connect', 'Authorize Amount', 'Fund', 'Submitted', 'Confirmed']
 async function stepperProgress(values, projectData, submissionState, currencies) {
-  if (!values.fundToken) return IS_APPROVED
+  if (!values.fundToken) {
+    return !projectData.account ? NOT_CONNECTED : IS_APPROVED
+  }
   const { amount, fundToken } = values
   if (Number(amount) === 0) return NOT_APPROVED
   if (submissionState === CONFIRMED) return IS_CONFIRMED
