@@ -138,7 +138,7 @@ const SubmissionSection = ({ classes, projectData, projectId, profileData, start
         if (!activeStep) return enableEthereum()
         const { amount, fundToken } = values
         const { goalToken } = manifest
-        const { chainReadibleFn } = getTokenByAddress(goalToken, currencies)
+        const { chainReadibleFn } = getTokenByAddress(fundToken, currencies)
         const userAccount = account ? account : await enableEthereum()
         const weiAmount = chainReadibleFn(amount)
         if (activeStep === NOT_APPROVED) {
