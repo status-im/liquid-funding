@@ -5,11 +5,16 @@ const ghpublish = promisify(publish)
 /* fix for "Unhandled promise rejections" */
 process.on('unhandledRejection', err => { throw err })
 
+const Args = process.argv.slice(2)
+const USE_HTTPS = Args[0] && Args[0].toUpperCase() === 'HTTPS'
+
 const branch = 'gh-pages'
 const org = 'status-im'
 const repo = 'liquid-funding'
 /* use SSH auth by default */
-const repoUrl = `git@github.com:${org}/${repo}.git`
+const repoUrl = USE_HTTPS
+  ? `https://github.com/${org}/${repo}.git`
+  : `git@github.com:${org}/${repo}.git`
 
 /* alternative auth using GitHub user and API token */
 if (process.env.GH_USER != undefined) {
