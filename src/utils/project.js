@@ -46,9 +46,13 @@ export const getMediaSrc = assets => {
   if (validMedia) {
     if (media.url) return media.url
     if (media.file && media.file !== '/root/') {
-      return formatMedia(
-        assets.find(a => getName(a) === getFile(media.file)).content
-      )
+      try {
+        return formatMedia(
+          assets.find(a => getName(a) === getFile(media.file)).content
+        )
+      } catch(err) {
+        console.log({err})
+      }
     }
   }
 }
