@@ -326,30 +326,6 @@ const SubmissionSection = ({ classes, history, projectData, projectId }) => {
                 value={values.repo || ''}
               />
               <IconTextField
-                iconName="addPerson"
-                endAdornment={(
-                  <InputAdornment position="start">
-                    <span
-                      className={classes.adornmentText}
-                      onClick={() => {
-                        const activeField = 'avatar'
-                        setStatus({ ...status, activeField })
-                        uploadInput.click()
-                      }
-                      }
-                    >Browse
-                    </span>
-                  </InputAdornment>
-                )}
-                className={fullWidth}
-                idFor="avatar"
-                name="avatar"
-                placeholder="upload or enter link to creator avatar"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.avatar || ''}
-              />
-              <IconTextField
                 iconName="photo"
                 endAdornment={(
                   <InputAdornment position="start">
@@ -373,7 +349,7 @@ const SubmissionSection = ({ classes, history, projectData, projectId }) => {
                 onBlur={handleBlur}
                 value={values.media || ''}
               />
-              {Array.isArray(values.media) && <MediaView isVideo={isVideo(uploads.media[0])} className={fullWidth} source={URL.createObjectURL(uploads.media[0])} />}
+              {values.media && <MediaView isVideo={isVideo(uploads.media[0])} className={fullWidth} source={URL.createObjectURL(uploads.media[0])} />}
               {status && status.showPreview &&
                <div className={classnames(classes.markdown, fullWidth)}>
                  <div
