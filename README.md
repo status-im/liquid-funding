@@ -28,3 +28,10 @@ Welcome to the code for the liquid-funding dapp which uses the liquidpledging co
 [NodeJS](https://nodejs.org/) (v8.4.0 or higher) 
 [npm](https://www.npmjs.com/) (5.4.1 or higher)
 [Embark](https://embark.status.im/) (v4.0.0 or higher)
+
+## Deployment Details
+| Contract                   | Ropsten Address                            | Mainnet Address                            |
+| ---------------------------|------------------------------------------- | ------------------------------------------ |
+| LiquidPledging             | 0x2cEfae94eB05737827D245E9cb6c1ca3C2A0Fe52 | 0x603A7249E64b8cACe20ffb55926145346ca42A97 |
+| LPVault                    | 0x8B860ed047f832294AE249042F17bC0E4C629274 | 0x1DC9F06caf1558287b1b8Afc8a152a739D1F3d38 |
+| SwapProxy                  | 0x73d3731F9c21e21785Ec5677CC39AB4880CAaFe9 | 0x10E1FC179cd37CFed5B77AC4b65D17f0B789360E |
