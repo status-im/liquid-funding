@@ -1,7 +1,7 @@
 /*global web3*/
 import SNT from '../embarkArtifacts/contracts/SNT'
 import SwapProxy from '../embarkArtifacts/contracts/SwapProxy'
-import { toEther, toWei } from './conversions'
+import { toEther, toWei, toBN } from './conversions'
 
 export const TOKEN_ICON_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/images'
 export const TOKEN_COIN_API = 'https://raw.githubusercontent.com/TrustWallet/tokens/master/coins'
@@ -72,10 +72,10 @@ export const generateSetApprovalFn = contract =>
   (amount, spender = SwapProxy) => transferApproval(contract, amount, spender)
 
 export const generateHumanReadibleFn = decimals =>
-  num => (num / (10**decimals)).toString()
+  num => (toBN(num).div(toBN(10**decimals))).toString()
 
 export const generateChainReadibleFn = decimals =>
-  num => (num * (10**decimals)).toString()
+  num => (toBN(num).mul(toBN(10**decimals))).toString()
 
 const order = ['ETH', 'SNT', 'DAI'].reverse()
 export const currencyOrder = (a, b) => order.indexOf(b.label) - order.indexOf(a.label)
