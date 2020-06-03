@@ -73,7 +73,7 @@
     "@material-ui/icons": "^3.0.1",
     "@material-ui/styles": "^4.3.3",
     "@mycrypto/eth-scan": "^1.1.0",
-    "@nozbe/watermelondb": "^0.9.0",
+    "@nozbe/watermelondb": "^0.15.1",
     "@nozbe/with-observables": "^1.0.2",
     "@rehooks/window-scroll-position": "^1.0.1",
     "@rehooks/window-size": "^1.0.2",
