@@ -7,6 +7,9 @@
     "lib": "lib",
     "test": "test"
   },
+  "engines": {
+    "node": "^=10.0.0"
+  },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "npm run build && mocha --harmony",
